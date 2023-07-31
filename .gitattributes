@@ -1,0 +1,9 @@
+*.html linguist-detectable=false
+*.css linguist-detectable=false
+*.js linguist-detectable=false
+*.config.js linguist-detectable=false
+*.cjs linguist-detectable=false
+*.tsx linguist-language=TypeScript
+web/.husky/* linguist-vendored
+api/.husky/* linguist-vendored
+api/.husky/* linguist-vendored
