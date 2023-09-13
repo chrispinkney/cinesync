@@ -6,7 +6,9 @@ export default function Home() {
 
 	useEffect(() => {
 		(async () => {
-			const res = await fetch('http://localhost:3000');
+			const res = await fetch(
+				process.env.NEXT_PUBLIC_URL || 'http://localhost:3000',
+			);
 			const hello = await res.json();
 			setHello(hello);
 		})();
