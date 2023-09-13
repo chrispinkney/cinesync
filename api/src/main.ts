@@ -9,9 +9,12 @@ const address = '0.0.0.0';
 const port = 3000;
 
 async function bootstrap() {
+	const adapter = new FastifyAdapter();
+	adapter.enableCors({ origin: true });
+
 	const app = await NestFactory.create<NestFastifyApplication>(
 		AppModule,
-		new FastifyAdapter(),
+		adapter,
 	);
 	await app.listen(port, address);
 }
