@@ -7,10 +7,14 @@ import {
 	Post,
 	Patch,
 	Delete,
+	UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UsersService } from './users.service';
+import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
+
+@UseInterceptors(RemoveFieldsInterceptor)
 @Controller('auth')
 export class UsersController {
 	constructor(private usersService: UsersService) {}
