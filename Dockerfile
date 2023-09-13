@@ -9,18 +9,17 @@ WORKDIR "/cinesync"
 
 # Copy package files
 COPY api/package.json .
-# COPY api/prisma prisma
+COPY api/prisma prisma
 
 # Context: Dependencies
 FROM build AS dependencies
 
-# ARG POSTGRES_PRISMA_URL
-# ARG POSTGRES_URL_NON_POOLING
+ARG DATABASE_URL
 
 # Install Modules
 RUN npm install
-# RUN npm install -g prisma
-# RUN npm run db:generate
+RUN npm install -g prisma
+RUN npm run db:generate
 
 # -------------------------------------
 # Context: Builder
