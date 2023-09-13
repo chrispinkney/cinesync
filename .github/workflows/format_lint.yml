@@ -1,0 +1,71 @@
+name: Format and Lint project
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  files-changed:
+    name: Files Changed check
+    runs-on: ubuntu-latest
+    outputs:
+      web: ${{ steps.changes.outputs.web }}
+      api: ${{ steps.changes.outputs.api }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            web:
+              - 'web/**'
+            api:
+              - 'api/**'
+
+  web:
+    needs: files-changed
+    if: ${{ needs.files-changed.outputs.web == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: web/package.json
+
+      - name: Run eslint and prettier checks
+        run: |
+          cd web
+          npm install
+          npm run lint
+          npm run format
+
+  api:
+    needs: files-changed
+    if: ${{ needs.files-changed.outputs.api == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: api/package.json
+
+      - name: Run eslint and prettier checks
+        run: |
+          cd api
+          npm install
+          npm run lint
+          npm run format
