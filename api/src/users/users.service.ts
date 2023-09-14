@@ -11,6 +11,11 @@ export class UsersService {
 	constructor(private prisma: PrismaService) {}
 
 	async getUser(id: number) {
+		// if an id is not passed return null- used in GET /whoami
+		if (!id) {
+			return null;
+		}
+
 		try {
 			const user = await this.prisma.user.findUnique({
 				where: { id },
@@ -32,11 +37,7 @@ export class UsersService {
 				where: { email },
 			});
 
-			if (!user) {
-				throw new NotFoundException('User not found');
-			}
-
-			return user;
+			return user || null;
 		} catch (error) {
 			throw new InternalServerErrorException('Failed to get user');
 		}
