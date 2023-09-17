@@ -2,8 +2,9 @@
 	<img width="430" height="130" src="web\public\logo.png">
 </h1>
 
-[![js-airbnb/prettier-style](https://img.shields.io/badge/code%20style-airbnb%2Fprettier-blue)](https://github.com/airbnb/javascript)
+![Node.js CI](https://github.com/chrispinkney/cinesync/actions/workflows/docker.yml/badge.svg)
 ![Node.js CI](https://github.com/chrispinkney/cinesync/actions/workflows/format_lint.yml/badge.svg)
+![Vercel](https://vercelbadge.vercel.app/api/chrispinkney/cinesync)
 
 ## What is CineSync?
 
@@ -11,20 +12,21 @@ CineSync is a web application that allows movie enthusiasts to synchronize and s
 
 The target audience for CineSync would primarily consist of movie enthusiasts and individuals who enjoy watching films. The platform aims to cater to a diverse range of users with varying levels of interest in movies, from casual viewers to avid cinephiles.
 
-
 ## How can I run the app?
+
 ### Initial Setup
+
 CineSync is currently running on Node v18.
 
 - `git clone https://github.com/chrispinkney/cinesync.git`
 - `cd cinesync/api`
 - `npm i`
-- `npm run prepare`
+- `npm run db:generate`
 - `cd ../web`
 - `npm i`
-- `npm run prepare`
 
 ### Running Cinesync
+
 - `cd cinesync/api`
 - `npm run dev`
 - `cd ../web`
@@ -40,4 +42,4 @@ CineSync was built using several wonderful pieces of technology:
 
 - The PostgreSQL database operates via the [Prisma](https://github.com/prisma/prisma#readme) framework ORM, simplifying the interaction between the application and the database.
 
-- CineSync also employs several other miscellaneous pieces of tech such as: [prettier](https://github.com/prettier/prettier#readme), [eslint](https://www.npmjs.com/package/eslint), and [husky](https://github.com/typicode/husky#readme).
+- CineSync also employs several other important miscellaneous pieces of tech such as: [TypeScript](https://github.com/microsoft/TypeScript), [Prettier](https://github.com/prettier/prettier#readme), [ESlint](https://www.npmjs.com/package/eslint), and [Husky](https://github.com/typicode/husky#readme).
