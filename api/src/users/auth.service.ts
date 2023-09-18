@@ -5,13 +5,15 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import * as argon2 from 'argon2';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class AuthService {
 	constructor(private usersService: UsersService) {}
 
-	async signup(username: string, email: string, password: string) {
+	async signup(createUser: CreateUserDto) {
 		// See if email is in use
+		const { username, email, password } = createUser;
 		const userExists = await this.usersService.getUserByEmail(email);
 
 		if (userExists !== null) {

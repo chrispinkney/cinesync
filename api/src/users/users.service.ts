@@ -43,10 +43,13 @@ export class UsersService {
 		}
 	}
 
-	async createUser(createUserDto: CreateUserDto) {
+	async createUser(createUser: CreateUserDto) {
 		try {
 			const user = await this.prisma.user.create({
-				data: createUserDto,
+				data: {
+					...createUser,
+					role: 'USER',
+				},
 			});
 
 			return user;
