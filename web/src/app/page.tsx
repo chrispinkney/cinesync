@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-export default function Home() {
+const Home = () => {
 	const [hello, setHello] = useState<{ hello: string } | undefined>();
 
 	useEffect(() => {
@@ -19,4 +19,6 @@ export default function Home() {
 			<h1>hello {hello?.hello}</h1>
 		</main>
 	);
-}
+};
+
+export default Home;
