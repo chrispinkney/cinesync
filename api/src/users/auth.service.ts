@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Injectable,
 	InternalServerErrorException,
+	NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import * as argon2 from 'argon2';
@@ -41,7 +42,7 @@ export class AuthService {
 		const user = await this.usersService.getUserByEmail(email);
 
 		if (!user) {
-			throw new BadRequestException('User not found');
+			throw new NotFoundException('User not found');
 		}
 
 		const passwordsMatch = await argon2.verify(user.password, password);

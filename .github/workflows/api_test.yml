@@ -1,0 +1,49 @@
+name: API Unit/e2e Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  files-changed:
+    name: Files Changed check
+    runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.changes.outputs.api }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            api:
+              - 'api/**'
+
+  api:
+    needs: files-changed
+    if: ${{ needs.files-changed.outputs.api == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: api/package.json
+
+      - name: Run tests
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+        run: |
+          cd api
+          npm install
+          npm run test
+          npm run test:e2e

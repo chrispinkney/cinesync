@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,9 +17,9 @@ const cookieSession = require('cookie-session');
 		AppService,
 		{
 			provide: APP_PIPE,
-			useValue: {
+			useValue: new ValidationPipe({
 				whitelist: true,
-			},
+			}),
 		},
 		PrismaService,
 	],
