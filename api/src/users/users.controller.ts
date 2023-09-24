@@ -19,6 +19,7 @@ import { RemoveFieldsInterceptor } from './interceptors/remove-fields.intercepto
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthGuard } from '../guards/auth.guard';
+import { AdminGuard } from '../guards/admin.guard';
 
 @UseInterceptors(RemoveFieldsInterceptor)
 @Controller('auth')
@@ -48,24 +49,26 @@ export class UsersController {
 
 	@UseGuards(AuthGuard)
 	@Post('/signout')
-	signout(@Session() session: any) {
+	signout(@Session() session: Record<string, null>) {
 		session.userId = null;
 	}
 
 	@Post('/signup')
-	async signup(@Body() body: CreateUserDto, @Session() session: any) {
-		const user = await this.authService.signup(
-			body.username,
-			body.email,
-			body.password,
-		);
+	async signup(
+		@Body() body: CreateUserDto,
+		@Session() session: Record<string, number>,
+	) {
+		const user = await this.authService.signup(body);
 		session.userId = user.id;
 
 		return user;
 	}
 
 	@Post('/signin')
-	async signin(@Body() body: SigninUserDto, @Session() session: any) {
+	async signin(
+		@Body() body: SigninUserDto,
+		@Session() session: Record<string, number>,
+	) {
 		const user = await this.authService.signin(body.email, body.password);
 		session.userId = user.id;
 
@@ -78,9 +81,13 @@ export class UsersController {
 		return this.usersService.updateUser(parseInt(id), body);
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuard, AdminGuard)
 	@Delete('/:id')
-	removeUser(@Param('id') id: string) {
-		return this.usersService.removeUser(parseInt(id));
+	async removeUser(
+		@Param('id') id: string,
+		@Session() session: Record<string, null>,
+	) {
+		await this.usersService.removeUser(parseInt(id));
+		return this.signout(session);
 	}
 }
