@@ -1,0 +1,29 @@
+version: '3.1'
+
+services:
+  db:
+    container_name: db
+    image: postgres:15-alpine
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=cinesync-dev
+      - POSTGRES_PASSWORD=@BarelyAnInconvenience@
+      - POSTGRES_DB=cinesync-dev
+      - TZ=America/Toronto
+    volumes:
+      - ./api/postgres-data:/var/lib/postgresql/data
+  api:
+    container_name: api
+    build:
+      context: .
+    environment:
+      - TZ=America/Toronto
+      - DATABASE_URL=postgresql://cinesync-dev:@BarelyAnInconvenience@@db:5432/cinesync-dev
+      - COOKIE_SECRET=localsecret
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    restart: always
