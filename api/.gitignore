@@ -399,3 +399,6 @@ dist
 .webpack
 .serverless/**/*.zip
 package-lock.json
+
+# local db
+postgres-data
