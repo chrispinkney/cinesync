@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,38 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  USER
-}
-
-model User {
-  id						Int					@id @default(autoincrement())
-  username			String			@unique
-  email					String			@unique
-  password			String
-  created_at		DateTime		@default(now())
-  updated_at		DateTime		@updatedAt
-  lists					List[]
-	role					Role
+model List {
+  id         Int      @id @default(autoincrement())
+  name       String
+  is_private Boolean
+	creator_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Movie      Movie[]
+  User       User[]
 }
 
 model Movie {
-  id						Int					@id @default(autoincrement())
-  title 				String
-  description		String?
-  genre					String[]
-  release_year	Int?
-  lists					List[]
+  id           Int      @id @default(autoincrement())
+  title        String		@unique
+  description  String?
+  genre        String[]
+  release_year Int?
+  List         List[]
 }
 
-model List {
-  id						Int					@id @default(autoincrement())
-  name					String
-  is_private		Boolean
-  creator				Int
-  created_at		DateTime		@default(now())
-	updated_at		DateTime		@updatedAt
-  movies				Movie[]
-  users					User[]
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  email      String   @unique
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  role       Role
+  List       List[]
+}
+
+enum Role {
+  ADMIN
+  USER
 }
