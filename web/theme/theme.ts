@@ -12,7 +12,7 @@ const lato = Lato({
 const themeOptions: ThemeOptions = {
 	typography: {
 		fontFamily: lato.style.fontFamily,
-		fontSize: 12,
+		fontSize: 14,
 	},
 	palette: darkMode
 		? {
