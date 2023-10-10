@@ -33,7 +33,7 @@ const ListCardShareModal = ({
 		} else {
 			setIsRecipientEmailInvalid(false);
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/lists/create?` +
+				`${process.env.NEXT_PUBLIC_URL}/lists/share/${listId}?` +
 					new URLSearchParams({
 						email: recipientEmail,
 					}),
