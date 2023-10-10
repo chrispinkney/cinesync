@@ -1,8 +1,11 @@
 import ListCard from '@/components/ListCard/ListCard';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { tempList } from '@/tempData';
+import ListCreationButton from '@/components/ListCreationButton/ListCreationButton';
 
-const Home = () => {
+const Home = async () => {
+	// const res = await fetch('/');
+
 	return (
 		<main>
 			<Grid container spacing={4}>
@@ -12,6 +15,7 @@ const Home = () => {
 					</Grid>
 				))}
 			</Grid>
+			<ListCreationButton />
 		</main>
 	);
 };
