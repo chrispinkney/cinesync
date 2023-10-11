@@ -3,7 +3,7 @@ import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { tempList } from '@/tempData';
 import ListCreationButton from '@/components/ListCreation/ListCreationButton';
 
-const Home = async () => {
+const Page = async () => {
 	// const res = await fetch('/');
 
 	return (
@@ -20,4 +20,4 @@ const Home = async () => {
 	);
 };
 
-export default Home;
+export default Page;

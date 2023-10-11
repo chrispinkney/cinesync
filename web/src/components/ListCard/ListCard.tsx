@@ -19,7 +19,9 @@ const ListCard = ({ id, name, movies }: MovieList) => {
 			<Card>
 				<CardActionArea component={Link} href={`/list/${id}`}>
 					<CardContent sx={{ height: 420 }}>
-						<Typography variant="h5">{name}</Typography>
+						<Typography variant="h5" align="center">
+							{name}
+						</Typography>
 						<Typography variant="caption">{`${movieCount} movie${
 							movieCount == 1 ? '' : 's'
 						}`}</Typography>

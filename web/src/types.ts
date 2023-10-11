@@ -10,7 +10,7 @@ type Movie = {
 	id?: number;
 	title: string;
 	description?: string;
-	genre: string;
+	genre: string[];
 	year: number;
 };
 
