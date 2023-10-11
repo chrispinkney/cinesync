@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import Header from '@/components/Header/Header';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import Loading from '@/app/loading';
-import Footer from '@/components/Footer/Footer';
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
@@ -31,7 +30,6 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
 					>
 						<Suspense fallback={<Loading />}>{children}</Suspense>
 					</Box>
-					<Footer />
 				</body>
 			</ThemeRegistry>
 		</html>
