@@ -20,6 +20,7 @@ import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthGuard } from '../guards/auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
+import { EmailService } from '../email/email.service';
 
 @UseInterceptors(RemoveFieldsInterceptor)
 @Controller('auth')
@@ -27,6 +28,7 @@ export class UsersController {
 	constructor(
 		private usersService: UsersService,
 		private authService: AuthService,
+		private emailService: EmailService,
 	) {}
 
 	@UseGuards(AuthGuard)
@@ -61,6 +63,8 @@ export class UsersController {
 		const user = await this.authService.signup(body);
 		session.userId = user.id;
 
+		await this.emailService.sendSignupEmail(body.email, body.username);
+
 		return user;
 	}
 
@@ -86,8 +90,10 @@ export class UsersController {
 	async removeUser(
 		@Param('id') id: string,
 		@Session() session: Record<string, null>,
+		@CurrentUser() user: CreateUserDto,
 	) {
 		await this.usersService.removeUser(id);
+		await this.emailService.sendAccountDeletionEmail(user.email);
 		return this.signout(session);
 	}
 }

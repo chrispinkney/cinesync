@@ -6,12 +6,13 @@ import { UsersModule } from './users/users.module';
 import { ListsModule } from './lists/lists.module';
 import { PrismaService } from './prisma/prisma.service';
 import { APP_PIPE } from '@nestjs/core';
+import { EmailModule } from './email/email.module';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const cookieSession = require('cookie-session');
 
 @Module({
-	imports: [ConfigModule.forRoot(), UsersModule, ListsModule],
+	imports: [ConfigModule, UsersModule, ListsModule, EmailModule],
 	controllers: [AppController],
 	providers: [
 		AppService,
