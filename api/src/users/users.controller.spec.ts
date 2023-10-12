@@ -5,11 +5,14 @@ import { AuthService } from './auth.service';
 import { User } from '@prisma/client';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { EmailModule } from '../email/email.module';
+import { EmailService } from '../email/email.service';
 
 describe('UsersController', () => {
 	let controller: UsersController;
 	let fakeUsersService: Partial<UsersService>;
 	let fakeAuthService: Partial<AuthService>;
+	let fakeEmailService: Partial<EmailService>;
 
 	beforeEach(async () => {
 		fakeUsersService = {
@@ -57,6 +60,14 @@ describe('UsersController', () => {
 				return Promise.resolve({ id: '-1', username, email } as User);
 			},
 		};
+		fakeEmailService = {
+			sendSignupEmail: () => {
+				return Promise.resolve();
+			},
+			sendAccountDeletionEmail: () => {
+				return Promise.resolve();
+			},
+		};
 
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [UsersController],
@@ -70,7 +81,12 @@ describe('UsersController', () => {
 					provide: AuthService,
 					useValue: fakeAuthService,
 				},
+				{
+					provide: EmailService,
+					useValue: fakeEmailService,
+				},
 			],
+			imports: [EmailModule],
 		}).compile();
 
 		controller = module.get<UsersController>(UsersController);

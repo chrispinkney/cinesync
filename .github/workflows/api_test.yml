@@ -42,6 +42,8 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+          MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
+          MAILGUN_KEY: ${{ secrets.MAILGUN_KEY }}
         run: |
           cd api
           npm install

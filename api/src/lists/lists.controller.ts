@@ -18,12 +18,16 @@ import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { UserDto } from '../users/dtos/user.dto';
 import { RemoveListFieldsInterceptor } from './interceptors/remove-list-fields.interceptor';
 import { ListAuthorizationGuard } from '../guards/list.guard';
+import { EmailService } from '../email/email.service';
 
 @UseInterceptors(RemoveListFieldsInterceptor)
 @UseGuards(AuthGuard)
 @Controller('lists')
 export class ListsController {
-	constructor(private listsService: ListsService) {}
+	constructor(
+		private listsService: ListsService,
+		private emailService: EmailService,
+	) {}
 
 	@UseGuards(ListAuthorizationGuard)
 	@Get('/:listId')
@@ -41,7 +45,7 @@ export class ListsController {
 		return this.listsService.createList(body, user.id);
 	}
 
-	@Post('/share/:listId')
+	@Post('/shareId/:listId')
 	shareList(
 		@Param('listId') listId: string,
 		@Query('id') recipientId: string,
@@ -55,12 +59,24 @@ export class ListsController {
 	}
 
 	@Post('/share/:listId')
-	shareListByEmail(
+	async shareListByEmail(
 		@Param('listId') listId: string,
 		@Query('email') email: string,
 		@CurrentUser() user: UserDto,
 	) {
-		return this.listsService.shareListByEmail(parseInt(listId), email, user.id);
+		const list = await this.listsService.shareListByEmail(
+			parseInt(listId),
+			email,
+			user.id,
+		);
+
+		await this.emailService.sendListSharingEmail(
+			[email, user.email],
+			listId,
+			user.username,
+		);
+
+		return list;
 	}
 
 	@Post('/unshare/:listId')
