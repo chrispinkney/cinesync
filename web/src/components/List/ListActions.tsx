@@ -1,16 +1,13 @@
 'use client';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
-import EditIcon from '@mui/icons-material/Edit';
-import CardActions from '@mui/material/CardActions';
 import IconButton from '@mui/material/IconButton';
-import { useState } from 'react';
-import ListCardShareModal from '@/components/ListCard/ListCardShareModal';
-import ListCardDeleteConfirmationModal from '@/components/ListCard/ListCardDeleteConfirmationModal';
-import Link from '@mui/material/Link';
+import { Fragment, useState } from 'react';
+import ListShareModal from '@/components/List/ListShareModal';
+import ListDeleteConfirmationModal from '@/components/List/ListDeleteConfirmationModal';
 import Tooltip from '@mui/material/Tooltip';
 
-const ListCardActions = ({ listId }: { listId: number }) => {
+const ListActions = ({ listId }: { listId: number }) => {
 	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
 
@@ -20,23 +17,13 @@ const ListCardActions = ({ listId }: { listId: number }) => {
 	const handleShareModalClose = () => setShareModalOpen(false);
 
 	return (
-		<CardActions disableSpacing>
-			<Tooltip title="Edit list">
-				<IconButton
-					aria-label="edit list"
-					component={Link}
-					href={`/list/${listId}`}
-				>
-					<EditIcon />
-				</IconButton>
-			</Tooltip>
+		<Fragment>
 			<Tooltip title="Share list">
 				<IconButton aria-label="share list" onClick={handleShareModalOpen}>
 					<ShareIcon />
 				</IconButton>
 			</Tooltip>
-
-			<ListCardShareModal
+			<ListShareModal
 				open={shareModalOpen}
 				handleClose={handleShareModalClose}
 				listId={listId}
@@ -50,13 +37,13 @@ const ListCardActions = ({ listId }: { listId: number }) => {
 					<DeleteIcon />
 				</IconButton>
 			</Tooltip>
-			<ListCardDeleteConfirmationModal
+			<ListDeleteConfirmationModal
 				open={deleteConfirmationOpen}
 				handleClose={handleDeleteConfirmationClose}
 				listId={listId}
 			/>
-		</CardActions>
+		</Fragment>
 	);
 };
 
-export default ListCardActions;
+export default ListActions;

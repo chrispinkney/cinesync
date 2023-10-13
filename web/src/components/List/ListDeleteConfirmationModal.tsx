@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import { redirect } from 'next/navigation';
 import { useState } from 'react';
 
-const ListCardDeleteConfirmationModal = ({
+const ListDeleteConfirmationModal = ({
 	open,
 	handleClose,
 	listId,
@@ -84,4 +84,4 @@ const ListCardDeleteConfirmationModal = ({
 	);
 };
 
-export default ListCardDeleteConfirmationModal;
+export default ListDeleteConfirmationModal;

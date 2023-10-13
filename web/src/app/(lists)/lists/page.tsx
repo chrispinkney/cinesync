@@ -1,7 +1,7 @@
-import ListCard from '@/components/ListCard/ListCard';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { tempList } from '@/tempData';
-import ListCreationButton from '@/components/ListCreation/ListCreationButton';
+import ListCard from '@/components/List/ListCard/ListCard';
+import ListCreationButton from '@/components/List/ListCreation/ListCreationButton';
 
 const Page = async () => {
 	// const res = await fetch('/');

@@ -10,7 +10,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
-const ListCardShareModal = ({
+const ListShareModal = ({
 	open,
 	handleClose,
 	listId,
@@ -112,4 +112,4 @@ const ListCardShareModal = ({
 	);
 };
 
-export default ListCardShareModal;
+export default ListShareModal;

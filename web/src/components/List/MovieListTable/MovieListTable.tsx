@@ -9,40 +9,45 @@ import {
 	GridRowId,
 	GridRowModel,
 	GridRowsProp,
-	GridToolbarContainer,
 } from '@mui/x-data-grid';
 import Grow from '@mui/material/Grow';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import GenreDropDown from './GenreDropdown';
-import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import { useState } from 'react';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
+import { Fragment, useState } from 'react';
+import MovieListTableEditToolbar from './MovieListTableEditToolbar';
+import ListActions from '../ListActions';
 
-interface EditToolbarProps {
-	highestId: number;
-	setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
-	saveList: () => void;
-}
+const MovieListTable = (movieList: MovieList) => {
+	const initialRows: GridRowsProp = movieList.movies;
+	const [rows, setRows] = useState(initialRows);
+	const [newMovieId, setNewMovieId] = useState(initialRows.length);
 
-const MovieListTable = ({ id, name, movies }: MovieList) => {
+	const addMovie = () => {
+		setRows((oldRows) => [
+			...oldRows,
+			{
+				newMovieId,
+				title: '',
+				description: '',
+				genre: [],
+				year: '',
+				isNew: true,
+			},
+		]);
+		setNewMovieId(newMovieId + 1);
+	};
+
 	const processRowUpdate = (newRow: GridRowModel) => {
 		const updatedRow = { ...newRow, isNew: false };
 		setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
 		return updatedRow;
 	};
 
-	// Add callback function to rows to allow rendered cell (genres) to update row data
-	const initialRows: GridRowsProp = movies.map((element) => {
-		return {
-			...element,
-			updateGenres: (updatedRow: GridRowModel) => processRowUpdate(updatedRow),
-		};
-	});
-	const [rows, setRows] = useState(initialRows);
+	const updateGenres = (row: GridRowModel) => {
+		processRowUpdate(row);
+	};
 
 	const handleRowEditStop: GridEventListener<'rowEditStop'> = (
 		params,
@@ -54,29 +59,30 @@ const MovieListTable = ({ id, name, movies }: MovieList) => {
 	};
 
 	const saveList = async () => {
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/lists/update/${id}`,
-			{
-				method: 'PATCH',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					updateListDto: {
-						Movie: rows.map((row) => {
-							return {
-								title: row.title,
-								description: row.description,
-								genre: row.genre,
-								release_year: row.year,
-							};
-						}),
-					},
-				}),
-			},
-		);
-		alert(response.statusText);
+		console.dir(rows);
+		// const response = await fetch(
+		// 	`${process.env.NEXT_PUBLIC_URL}/lists/update/${id}`,
+		// 	{
+		// 		method: 'PATCH',
+		// 		headers: {
+		// 			Accept: 'application/json',
+		// 			'Content-Type': 'application/json',
+		// 		},
+		// 		body: JSON.stringify({
+		// 			updateListDto: {
+		// 				Movie: rows.map((row) => {
+		// 					return {
+		// 						title: row.title,
+		// 						description: row.description,
+		// 						genre: row.genre,
+		// 						release_year: row.year,
+		// 					};
+		// 				}),
+		// 			},
+		// 		}),
+		// 	},
+		// );
+		// alert(response.statusText);
 	};
 
 	const handleDeleteClick = (id: GridRowId) => () => {
@@ -119,7 +125,7 @@ const MovieListTable = ({ id, name, movies }: MovieList) => {
 			headerName: 'Genres',
 			flex: 1,
 			editable: true,
-			renderCell: GenreDropDown,
+			renderCell: (params) => <GenreDropDown {...{ params, updateGenres }} />,
 			headerAlign: 'center',
 			sortable: false,
 			filterable: false,
@@ -155,55 +161,9 @@ const MovieListTable = ({ id, name, movies }: MovieList) => {
 		},
 	];
 
-	const EditToolbar = (props: EditToolbarProps) => {
-		const { highestId, setRows, saveList } = props;
-		const [newId, setNewId] = useState(highestId);
-
-		const handleAddClick = () => {
-			const id = newId;
-			setNewId(newId + 1);
-			setRows((oldRows) => [
-				...oldRows,
-				{
-					id,
-					title: '',
-					description: '',
-					genre: [],
-					year: '',
-					updateGenres: (updatedRow: GridRowModel) =>
-						processRowUpdate(updatedRow),
-					isNew: true,
-				},
-			]);
-		};
-
-		const handleSaveClick = () => {
-			saveList();
-		};
-
-		return (
-			<GridToolbarContainer sx={{ p: 1 }}>
-				<Tooltip title="Add movie">
-					<IconButton onClick={handleAddClick}>
-						<AddIcon />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="Save list">
-					<IconButton
-						aria-label="save list"
-						onClick={handleSaveClick}
-						sx={{ ml: 'auto' }}
-					>
-						<SaveIcon />
-					</IconButton>
-				</Tooltip>
-			</GridToolbarContainer>
-		);
-	};
-
 	return (
-		<Grow in={true}>
-			<Box component={Paper} sx={{ width: '100%' }}>
+		<Fragment>
+			<Box component={Paper} sx={{ width: '100%', mt: 3 }}>
 				<DataGrid
 					rows={rows}
 					columns={columns}
@@ -223,14 +183,14 @@ const MovieListTable = ({ id, name, movies }: MovieList) => {
 					}}
 					pageSizeOptions={[10, 25, 50]}
 					slots={{
-						toolbar: EditToolbar,
+						toolbar: MovieListTableEditToolbar,
 					}}
 					slotProps={{
-						toolbar: { highestId: movies.length, setRows, saveList },
+						toolbar: { addMovie, saveList },
 					}}
 				/>
 			</Box>
-		</Grow>
+		</Fragment>
 	);
 };
 

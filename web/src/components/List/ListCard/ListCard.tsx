@@ -7,7 +7,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import Link from 'next/link';
-import ListCardActions from '@/components/ListCard/ListCardActions';
+import CardActions from '@mui/material/CardActions';
+import ListActions from '../ListActions';
 
 const ListCard = ({ id, name, movies }: MovieList) => {
 	const movieCount = movies.length;
@@ -42,7 +43,9 @@ const ListCard = ({ id, name, movies }: MovieList) => {
 						</List>
 					</CardContent>
 				</CardActionArea>
-				<ListCardActions listId={id} />
+				<CardActions disableSpacing>
+					<ListActions listId={id} />
+				</CardActions>
 			</Card>
 		</Grow>
 	);

@@ -8,13 +8,15 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { SelectChangeEvent } from '@mui/material/Select/SelectInput';
-import {
-	GridRenderCellParams,
-	GridRenderEditCellParams,
-} from '@mui/x-data-grid/models/params/gridCellParams';
+import { GridRowModel, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
 
-const GenreDropDown = (params: GridRenderCellParams) => {
+type GenreDropDownProps = {
+	params: GridRenderCellParams;
+	updateGenres: (row: GridRowModel) => void;
+};
+
+const GenreDropDown = ({ params, updateGenres }: GenreDropDownProps) => {
 	const { row, value } = params;
 	const initialGenres: string[] = value;
 	const [selectedGenres, setSelectedGenres] = useState<string[]>(initialGenres);
@@ -62,7 +64,7 @@ const GenreDropDown = (params: GridRenderCellParams) => {
 		setSelectedGenres(updatedGenres);
 		let updatedRow = row;
 		updatedRow.genre = updatedGenres;
-		row.updateGenres(updatedRow);
+		updateGenres(updatedRow);
 	};
 
 	return (

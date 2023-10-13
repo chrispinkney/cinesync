@@ -3,7 +3,7 @@ import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import Tooltip from '@mui/material/Tooltip';
 import { Fragment, useState } from 'react';
-import ListCreationModal from '@/components/ListCreation/ListCreationModal';
+import ListCreationModal from './ListCreationModal';
 
 const ListCreationButton = () => {
 	const [open, setOpen] = useState(false);
