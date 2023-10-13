@@ -11,7 +11,7 @@ model List {
   id         Int      @id @default(autoincrement())
   name       String
   is_private Boolean
-	creator_id Int
+	creator_id String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   Movie      Movie[]
@@ -28,7 +28,7 @@ model Movie {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   username   String   @unique
   email      String   @unique
   password   String
