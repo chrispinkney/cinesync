@@ -10,7 +10,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 export class UsersService {
 	constructor(private prisma: PrismaService) {}
 
-	async getUser(id: number) {
+	async getUser(id: string) {
 		// if an id is not passed return null- used in GET /whoami
 		if (!id) {
 			return null;
@@ -58,7 +58,7 @@ export class UsersService {
 		}
 	}
 
-	async updateUser(id: number, attrs: Partial<CreateUserDto>) {
+	async updateUser(id: string, attrs: Partial<CreateUserDto>) {
 		try {
 			const user = await this.prisma.user.findUnique({
 				where: { id },
@@ -79,7 +79,7 @@ export class UsersService {
 		}
 	}
 
-	async removeUser(id: number) {
+	async removeUser(id: string) {
 		try {
 			const user = await this.prisma.user.findUnique({
 				where: { id },

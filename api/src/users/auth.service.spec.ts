@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { Role, User } from '@prisma/client';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 
 describe('AuthService', () => {
 	let service: AuthService;
@@ -19,7 +20,7 @@ describe('AuthService', () => {
 			},
 			createUser: (createUserDto: CreateUserDto) => {
 				const user: User = {
-					id: users.length + 1,
+					id: uuidv4(),
 					...createUserDto,
 					created_at: new Date(),
 					updated_at: new Date(),

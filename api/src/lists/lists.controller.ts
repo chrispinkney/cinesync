@@ -49,7 +49,7 @@ export class ListsController {
 	) {
 		return this.listsService.shareListById(
 			parseInt(listId),
-			parseInt(recipientId),
+			recipientId,
 			user.id,
 		);
 	}
@@ -71,7 +71,7 @@ export class ListsController {
 	) {
 		return this.listsService.unshareListById(
 			parseInt(listId),
-			parseInt(recipientId),
+			recipientId,
 			user.id,
 		);
 	}

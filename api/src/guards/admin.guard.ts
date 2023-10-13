@@ -14,7 +14,7 @@ export class AdminGuard implements CanActivate {
 
 		// check if the user is trying to access their own account
 		const userId = request.params.id;
-		if (user.id === parseInt(userId)) {
+		if (user.id === userId) {
 			return true;
 		}
 

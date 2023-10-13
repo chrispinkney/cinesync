@@ -13,7 +13,7 @@ describe('UsersController', () => {
 
 	beforeEach(async () => {
 		fakeUsersService = {
-			getUser: (id: number) => {
+			getUser: (id: string) => {
 				return Promise.resolve({
 					id,
 					username: 'testuser',
@@ -25,7 +25,7 @@ describe('UsersController', () => {
 			},
 			getUserByEmail: (email: string) => {
 				return Promise.resolve({
-					id: 1,
+					id: '-1',
 					username: 'testuser',
 					email,
 					password: 'test',
@@ -33,8 +33,8 @@ describe('UsersController', () => {
 					updated_at: new Date(),
 				} as User);
 			},
-			removeUser: (id: number) => {
-				if (id === -1) {
+			removeUser: (id: string) => {
+				if (id === '-1') {
 					const removedUser = {
 						id,
 						username: 'testuser',
@@ -51,10 +51,10 @@ describe('UsersController', () => {
 		};
 		fakeAuthService = {
 			signup: (createUser: CreateUserDto) => {
-				return Promise.resolve({ id: -1, ...createUser } as User);
+				return Promise.resolve({ id: '-1', ...createUser } as User);
 			},
 			signin: (username: string, email: string) => {
-				return Promise.resolve({ id: -1, username, email } as User);
+				return Promise.resolve({ id: '-1', username, email } as User);
 			},
 		};
 
@@ -100,7 +100,7 @@ describe('UsersController', () => {
 		const user = await controller.fetchUserById('-1');
 
 		expect(user).toBeDefined();
-		expect(user?.id).toEqual(-1);
+		expect(user?.id).toEqual('-1');
 	});
 
 	it('fetchUserById throws an error if user with given id is not found', async () => {
@@ -112,25 +112,25 @@ describe('UsersController', () => {
 	});
 
 	it('signin updates session object and returns user', async () => {
-		const session = { userId: -2 };
+		const session = { userId: '-2' };
 		const user = await controller.signin(
 			{ email: 'test@test.test', password: 'test' },
 			session,
 		);
 
-		expect(user.id).toEqual(-1);
-		expect(session.userId).toEqual(-1);
+		expect(user.id).toEqual('-1');
+		expect(session.userId).toEqual('-1');
 	});
 
 	it('signin updates session object and returns user', async () => {
-		const session = { userId: -2 };
+		const session = { userId: '-2' };
 		const user = await controller.signin(
 			{ email: 'test@test.test', password: 'test' },
 			session,
 		);
 
-		expect(user.id).toEqual(-1);
-		expect(session.userId).toEqual(-1);
+		expect(user.id).toEqual('-1');
+		expect(session.userId).toEqual('-1');
 	});
 
 	it('signin throws an error if invalid credentials are provided', async () => {
@@ -157,6 +157,6 @@ describe('UsersController', () => {
 		);
 
 		expect(user).toBeDefined();
-		expect(user.id).toEqual(-1);
+		expect(user.id).toEqual('-1');
 	});
 });

@@ -11,7 +11,7 @@ import { UpdateListDto } from './dtos/update-list.dto';
 export class ListsService {
 	constructor(private prisma: PrismaService) {}
 
-	async getList(listId: number, userId: number) {
+	async getList(listId: number, userId: string) {
 		const list = await this.prisma.user.findUnique({
 			where: { id: userId },
 			include: {
@@ -29,7 +29,7 @@ export class ListsService {
 		return list;
 	}
 
-	async getLists(userId: number) {
+	async getLists(userId: string) {
 		const user = await this.prisma.user.findUnique({
 			where: { id: userId },
 			include: {
@@ -44,7 +44,7 @@ export class ListsService {
 		return user;
 	}
 
-	async createList(createList: CreateListDto, userId: number) {
+	async createList(createList: CreateListDto, userId: string) {
 		try {
 			const list = await this.prisma.list.create({
 				data: {
@@ -103,7 +103,7 @@ export class ListsService {
 	async updateList(
 		listId: number,
 		updateListDto: UpdateListDto,
-		userId: number,
+		userId: string,
 	) {
 		try {
 			const list = await this.prisma.list.findUnique({
@@ -172,7 +172,7 @@ export class ListsService {
 		}
 	}
 
-	async deleteList(listId: number, userId: number) {
+	async deleteList(listId: number, userId: string) {
 		try {
 			const list = await this.prisma.list.findUnique({
 				where: { id: listId },
@@ -207,7 +207,7 @@ export class ListsService {
 		}
 	}
 
-	async deleteListItem(listId: number, movieId: number, userId: number) {
+	async deleteListItem(listId: number, movieId: number, userId: string) {
 		try {
 			const list = await this.prisma.list.findUnique({
 				where: { id: listId },
@@ -239,7 +239,7 @@ export class ListsService {
 		}
 	}
 
-	async shareListByEmail(listId: number, email: string, userId: number) {
+	async shareListByEmail(listId: number, email: string, userId: string) {
 		try {
 			const sharee = await this.prisma.user.findUnique({
 				where: { email },
@@ -274,7 +274,7 @@ export class ListsService {
 		}
 	}
 
-	async shareListById(listId: number, recipientId: number, userId: number) {
+	async shareListById(listId: number, recipientId: string, userId: string) {
 		try {
 			const list = await this.prisma.list.findUnique({
 				where: { id: listId },
@@ -305,7 +305,7 @@ export class ListsService {
 		}
 	}
 
-	async unshareListById(listId: number, recipientId: number, userId: number) {
+	async unshareListById(listId: number, recipientId: string, userId: string) {
 		try {
 			const list = await this.prisma.list.findUnique({
 				where: { id: listId },

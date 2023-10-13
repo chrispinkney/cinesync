@@ -38,7 +38,7 @@ export class UsersController {
 	@UseGuards(AuthGuard)
 	@Get('/:id')
 	fetchUserById(@Param('id') id: string) {
-		return this.usersService.getUser(parseInt(id));
+		return this.usersService.getUser(id);
 	}
 
 	@UseGuards(AuthGuard)
@@ -56,7 +56,7 @@ export class UsersController {
 	@Post('/signup')
 	async signup(
 		@Body() body: CreateUserDto,
-		@Session() session: Record<string, number>,
+		@Session() session: Record<string, string>,
 	) {
 		const user = await this.authService.signup(body);
 		session.userId = user.id;
@@ -67,7 +67,7 @@ export class UsersController {
 	@Post('/signin')
 	async signin(
 		@Body() body: SigninUserDto,
-		@Session() session: Record<string, number>,
+		@Session() session: Record<string, string>,
 	) {
 		const user = await this.authService.signin(body.email, body.password);
 		session.userId = user.id;
@@ -78,7 +78,7 @@ export class UsersController {
 	@UseGuards(AuthGuard)
 	@Patch('/:id')
 	updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
-		return this.usersService.updateUser(parseInt(id), body);
+		return this.usersService.updateUser(id, body);
 	}
 
 	@UseGuards(AuthGuard, AdminGuard)
@@ -87,7 +87,7 @@ export class UsersController {
 		@Param('id') id: string,
 		@Session() session: Record<string, null>,
 	) {
-		await this.usersService.removeUser(parseInt(id));
+		await this.usersService.removeUser(id);
 		return this.signout(session);
 	}
 }
