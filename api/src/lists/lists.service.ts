@@ -11,18 +11,12 @@ import { UpdateListDto } from './dtos/update-list.dto';
 export class ListsService {
 	constructor(private prisma: PrismaService) {}
 
-	async getList(listId: number, userId: string) {
-		const list = await this.prisma.user.findUnique({
-			where: { id: userId },
+	async getList(listId: number) {
+		const list = await this.prisma.list.findUnique({
+			where: { id: listId },
 			include: {
-				List: {
-					where: {
-						id: listId,
-					},
-					include: {
-						Movie: true,
-					},
-				},
+				Movie: true,
+				User: true,
 			},
 		});
 
@@ -97,6 +91,34 @@ export class ListsService {
 			return list;
 		} catch (error) {
 			throw new InternalServerErrorException('Failed to create list');
+		}
+	}
+
+	async updateListPrivacy(listId: number, userId: string) {
+		try {
+			const list = await this.prisma.list.findUnique({
+				where: { id: listId },
+				include: { User: true, Movie: true },
+			});
+
+			if (!list) {
+				throw new NotFoundException(`List with ID ${listId} not found`);
+			}
+
+			if (list.creator_id === userId && (list.name || list.is_private)) {
+				const updatedList = await this.prisma.list.update({
+					where: { id: listId },
+					data: {
+						is_private: !list.is_private,
+					},
+				});
+
+				return updatedList;
+			}
+
+			return `You do not have permission to make list ${listId} private.`;
+		} catch (error) {
+			throw new InternalServerErrorException('Failed to update list privacy');
 		}
 	}
 
