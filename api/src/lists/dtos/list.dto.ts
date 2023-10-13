@@ -1,4 +1,5 @@
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 
 class MovieItem {
 	@Expose()
@@ -42,5 +43,12 @@ class ListItem {
 
 export class ListDto {
 	@Expose()
+	@Type(() => ListItem)
+	@ValidateNested()
 	List: ListItem[];
+
+	@Expose()
+	@Type(() => MovieItem)
+	@ValidateNested()
+	Movie: MovieItem[];
 }

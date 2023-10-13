@@ -21,7 +21,6 @@ import { ListAuthorizationGuard } from '../guards/list.guard';
 import { EmailService } from '../email/email.service';
 
 @UseInterceptors(RemoveListFieldsInterceptor)
-@UseGuards(AuthGuard)
 @Controller('lists')
 export class ListsController {
 	constructor(
@@ -31,20 +30,23 @@ export class ListsController {
 
 	@UseGuards(ListAuthorizationGuard)
 	@Get('/:listId')
-	getList(@Param('listId') listId: string, @CurrentUser() user: UserDto) {
-		return this.listsService.getList(parseInt(listId), user.id);
+	getList(@Param('listId') listId: string) {
+		return this.listsService.getList(parseInt(listId));
 	}
 
+	@UseGuards(AuthGuard)
 	@Get('/')
 	getLists(@CurrentUser() user: UserDto) {
 		return this.listsService.getLists(user.id);
 	}
 
+	@UseGuards(AuthGuard)
 	@Post('/create')
 	createList(@Body() body: CreateListDto, @CurrentUser() user: UserDto) {
 		return this.listsService.createList(body, user.id);
 	}
 
+	@UseGuards(AuthGuard)
 	@Post('/shareId/:listId')
 	shareList(
 		@Param('listId') listId: string,
@@ -58,6 +60,7 @@ export class ListsController {
 		);
 	}
 
+	@UseGuards(AuthGuard)
 	@Post('/share/:listId')
 	async shareListByEmail(
 		@Param('listId') listId: string,
@@ -79,6 +82,7 @@ export class ListsController {
 		return list;
 	}
 
+	@UseGuards(AuthGuard)
 	@Post('/unshare/:listId')
 	unshareList(
 		@Param('listId') listId: string,
@@ -92,7 +96,16 @@ export class ListsController {
 		);
 	}
 
-	@UseGuards(ListAuthorizationGuard)
+	@UseGuards(ListAuthorizationGuard, AuthGuard)
+	@Patch('/updatePrivacy/:listId')
+	updateListPrivacy(
+		@Param('listId') listId: string,
+		@CurrentUser() user: UserDto,
+	) {
+		return this.listsService.updateListPrivacy(parseInt(listId), user.id);
+	}
+
+	@UseGuards(ListAuthorizationGuard, AuthGuard)
 	@Patch('/update/:listId')
 	updateList(
 		@Param('listId') listId: string,
@@ -107,6 +120,7 @@ export class ListsController {
 		return this.listsService.deleteList(parseInt(listId), user.id);
 	}
 
+	@UseGuards(AuthGuard)
 	@Delete('/delete/:listId/:movieId')
 	deleteListItem(
 		@Param('listId') listId: string,

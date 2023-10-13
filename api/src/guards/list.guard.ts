@@ -24,6 +24,21 @@ export class ListAuthorizationGuard implements CanActivate {
 				return false;
 			}
 
+			// allow access if list is public and no user is logged in
+			if (!list.is_private && !currentUser) {
+				return true;
+			}
+
+			// allow access if list is public and user is logged in
+			if (!list.is_private && currentUser) {
+				return true;
+			}
+
+			// restrict access if no user is logged in
+			if (!currentUser) {
+				return false;
+			}
+
 			// check if list belongs to the user or has been shared with the user
 			const isCreator = list.creator_id === currentUser.id;
 			const isSharedWithUser =
