@@ -1,11 +1,11 @@
 import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_PIPE } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { ListsModule } from './lists/lists.module';
 import { PrismaService } from './prisma/prisma.service';
-import { APP_PIPE } from '@nestjs/core';
 import { EmailModule } from './email/email.module';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

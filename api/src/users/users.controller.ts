@@ -11,16 +11,16 @@ import {
 	Session,
 	UseGuards,
 } from '@nestjs/common';
+import { EmailService } from '../email/email.service';
+import { UsersService } from './users.service';
+import { AuthService } from './auth.service';
+import { AuthGuard } from '../guards/auth.guard';
+import { AdminGuard } from '../guards/admin.guard';
+import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { SigninUserDto } from './dtos/signin-user.dto';
-import { UsersService } from './users.service';
-import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
-import { AuthService } from './auth.service';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { AuthGuard } from '../guards/auth.guard';
-import { AdminGuard } from '../guards/admin.guard';
-import { EmailService } from '../email/email.service';
 
 @UseInterceptors(RemoveFieldsInterceptor)
 @Controller('auth')
@@ -87,12 +87,12 @@ export class UsersController {
 
 	@UseGuards(AuthGuard, AdminGuard)
 	@Delete('/:id')
-	async removeUser(
+	async deleteUser(
 		@Param('id') id: string,
 		@Session() session: Record<string, null>,
 		@CurrentUser() user: CreateUserDto,
 	) {
-		await this.usersService.removeUser(id);
+		await this.usersService.deleteUser(id);
 		await this.emailService.sendAccountDeletionEmail(user.email);
 		return this.signout(session);
 	}

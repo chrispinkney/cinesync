@@ -1,12 +1,12 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { User } from '@prisma/client';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
-import { User } from '@prisma/client';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { CreateUserDto } from './dtos/create-user.dto';
-import { EmailModule } from '../email/email.module';
 import { EmailService } from '../email/email.service';
+import { EmailModule } from '../email/email.module';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 describe('UsersController', () => {
 	let controller: UsersController;
@@ -36,7 +36,7 @@ describe('UsersController', () => {
 					updated_at: new Date(),
 				} as User);
 			},
-			removeUser: (id: string) => {
+			deleteUser: (id: string) => {
 				if (id === '-1') {
 					const removedUser = {
 						id,
