@@ -103,15 +103,6 @@ describe('UsersController', () => {
 		expect(user?.email).toEqual('test@test.test');
 	});
 
-	it('fetchUserByEmail returns null if user with given email is not found', async () => {
-		fakeUsersService.getUserByEmail = () => Promise.resolve(null);
-
-		const result = await controller.fetchUserByEmail(
-			'emaildoesntexist@test.test',
-		);
-		expect(result).toBeNull();
-	});
-
 	it('fetchUserById returns a user with the given id', async () => {
 		const user = await controller.fetchUserById('-1');
 

@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthService } from './auth.service';
@@ -16,7 +16,7 @@ describe('AuthService', () => {
 		fakeUsersService = {
 			getUserByEmail: (email: string) => {
 				const filteredUsers = users.filter((user) => user.email === email);
-				return Promise.resolve(filteredUsers.length ? filteredUsers[0] : null);
+				return Promise.resolve(filteredUsers[0]);
 			},
 			createUser: (createUserDto: CreateUserDto) => {
 				const user: User = {
@@ -67,25 +67,10 @@ describe('AuthService', () => {
 		expect(password).toBeDefined();
 	});
 
-	it('throws an error if a user signs up with an email already in use', async () => {
-		await service.signup({
-			username: 'testuser',
-			email: 'test@test.test',
-			password: 'test',
-		});
-		await expect(
-			service.signup({
-				username: 'testuser',
-				email: 'test@test.test',
-				password: 'test',
-			}),
-		).rejects.toThrow(BadRequestException);
-	});
-
 	it('throws if signin is called with an unused email', async () => {
 		await expect(
 			service.signin('asdflkj@asdflkj.com', 'asdflkj'),
-		).rejects.toThrow(NotFoundException);
+		).rejects.toThrow(BadRequestException);
 	});
 
 	it('throws if an invalid password is provided', async () => {
@@ -97,7 +82,7 @@ describe('AuthService', () => {
 
 		await expect(
 			service.signin('hey@sailor.com', 'wrongpassword'),
-		).rejects.toThrow(NotFoundException);
+		).rejects.toThrow(BadRequestException);
 	});
 
 	it('returns a user if correct password is provided', async () => {

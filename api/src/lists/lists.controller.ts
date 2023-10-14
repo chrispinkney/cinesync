@@ -50,31 +50,16 @@ export class ListsController {
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@Post('/shareId/:listId')
-	shareList(
-		@Param('listId') listId: string,
-		@Query('id') recipientId: string,
-		@CurrentUser() user: UserDto,
-	) {
-		return this.listsService.shareListById(
-			parseInt(listId),
-			recipientId,
-			user.id,
-		);
-	}
-
-	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(AuthGuard)
-	@Post('/share/:listId')
-	async shareListByEmail(
-		@Param('listId') listId: string,
+	@UseGuards(AuthGuard, ListAuthorizationGuard)
+	@Post('/toggleShare')
+	async toggleShareList(
+		@Query('listId') listId: string,
 		@Query('email') email: string,
 		@CurrentUser() user: UserDto,
 	) {
-		const list = await this.listsService.shareListByEmail(
+		const list = await this.listsService.toggleShareList(
 			parseInt(listId),
 			email,
-			user.id,
 		);
 
 		await this.emailService.sendListSharingEmail(
@@ -87,59 +72,36 @@ export class ListsController {
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(AuthGuard)
-	@Post('/unshare/:listId')
-	unshareList(
-		@Param('listId') listId: string,
-		@Query('id') recipientId: string,
-		@CurrentUser() user: UserDto,
-	) {
-		return this.listsService.unshareListById(
-			parseInt(listId),
-			recipientId,
-			user.id,
-		);
-	}
-
-	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard, AuthGuard)
 	@Patch('/updatePrivacy/:listId')
-	updateListPrivacy(
-		@Param('listId') listId: string,
-		@CurrentUser() user: UserDto,
-	) {
-		return this.listsService.updateListPrivacy(parseInt(listId), user.id);
+	updateListPrivacy(@Param('listId') listId: string) {
+		return this.listsService.updateListPrivacy(parseInt(listId));
 	}
 
-	@UseInterceptors(RemoveListFieldsInterceptor)
+	@UseInterceptors(RemoveListCreateFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard, AuthGuard)
 	@Patch('/update/:listId')
-	updateList(
-		@Param('listId') listId: string,
-		@Body() body: UpdateListDto,
-		@CurrentUser() user: UserDto,
-	) {
-		return this.listsService.updateList(parseInt(listId), body, user.id);
+	updateList(@Param('listId') listId: string, @Body() body: UpdateListDto) {
+		return this.listsService.updateList(parseInt(listId), body);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
+	@UseGuards(AuthGuard, ListAuthorizationGuard)
 	@Delete('/delete/:listId')
 	deleteList(@Param('listId') listId: string, @CurrentUser() user: UserDto) {
 		return this.listsService.deleteList(parseInt(listId), user.id);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(AuthGuard)
-	@Delete('/delete/:listId/:movieId')
-	deleteListItem(
-		@Param('listId') listId: string,
-		@Param('movieId') movieId: string,
-		@CurrentUser() user: UserDto,
+	@UseGuards(AuthGuard, ListAuthorizationGuard)
+	@Delete('/deleteMovie')
+	deleteMovie(
+		@Query('listId') listId: string,
+		@Query('movieId') movieId: string,
 	) {
 		return this.listsService.deleteListItem(
 			parseInt(listId),
 			parseInt(movieId),
-			user.id,
 		);
 	}
 }

@@ -1,8 +1,4 @@
-import {
-	Injectable,
-	InternalServerErrorException,
-	NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateListDto } from './dtos/create-list.dto';
 import { UpdateListDto } from './dtos/update-list.dto';
 import { ListDao } from '../dao/list.dao';
@@ -12,92 +8,34 @@ export class ListsService {
 	constructor(private listDao: ListDao) {}
 
 	async getList(listId: number) {
-		try {
-			const list = await this.listDao.getList(listId);
-
-			if (!list) {
-				throw new NotFoundException(`List with id ${listId} not found`);
-			}
-
-			return list;
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to get list');
-		}
+		return await this.listDao.getList(listId);
 	}
 
 	async getLists(userId: string) {
-		try {
-			return await this.listDao.getLists(userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to get lists');
-		}
+		return await this.listDao.getLists(userId);
 	}
 
 	async createList(createList: CreateListDto, userId: string) {
-		try {
-			return await this.listDao.createList(createList, userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to create list');
-		}
+		return await this.listDao.createList(createList, userId);
 	}
 
-	async updateListPrivacy(listId: number, userId: string) {
-		try {
-			return await this.listDao.updateListPrivacy(listId, userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to update list privacy');
-		}
+	async updateListPrivacy(listId: number) {
+		return await this.listDao.updateListPrivacy(listId);
 	}
 
-	async updateList(
-		listId: number,
-		updateListDto: UpdateListDto,
-		userId: string,
-	) {
-		try {
-			return await this.listDao.updateList(listId, updateListDto, userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to update list');
-		}
+	async updateList(listId: number, updateListDto: UpdateListDto) {
+		return await this.listDao.updateList(listId, updateListDto);
 	}
 
 	async deleteList(listId: number, userId: string) {
-		try {
-			return await this.listDao.deleteList(listId, userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to delete list');
-		}
+		return await this.listDao.deleteList(listId, userId);
 	}
 
-	async deleteListItem(listId: number, movieId: number, userId: string) {
-		try {
-			return await this.listDao.deleteListItem(listId, movieId, userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to delete list item');
-		}
+	async deleteListItem(listId: number, movieId: number) {
+		return await this.listDao.deleteListItem(listId, movieId);
 	}
 
-	async shareListByEmail(listId: number, email: string, userId: string) {
-		try {
-			return await this.listDao.shareListByEmail(listId, email, userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to share list by email');
-		}
-	}
-
-	async shareListById(listId: number, recipientId: string, userId: string) {
-		try {
-			return await this.listDao.shareListById(listId, recipientId, userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to share list by id');
-		}
-	}
-
-	async unshareListById(listId: number, recipientId: string, userId: string) {
-		try {
-			return await this.listDao.unshareListById(listId, recipientId, userId);
-		} catch (error) {
-			throw new InternalServerErrorException('Failed to unshare list by id');
-		}
+	async toggleShareList(listId: number, email: string) {
+		return await this.listDao.toggleShareList(listId, email);
 	}
 }
