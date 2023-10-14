@@ -10,29 +10,33 @@ import {
 	GridRowModel,
 	GridRowsProp,
 } from '@mui/x-data-grid';
-import Grow from '@mui/material/Grow';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import GenreDropDown from './GenreDropdown';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { Fragment, useState } from 'react';
 import MovieListTableEditToolbar from './MovieListTableEditToolbar';
-import ListActions from '../ListActions';
 
 const MovieListTable = (movieList: MovieList) => {
-	const initialRows: GridRowsProp = movieList.movies;
+	// Add id to each movie for mui datagrid
+	const initialRows: GridRowsProp = movieList.Movie.map((movie, index) => ({
+		...movie,
+		id: index + 1,
+	}));
 	const [rows, setRows] = useState(initialRows);
-	const [newMovieId, setNewMovieId] = useState(initialRows.length);
+	const [newMovieId, setNewMovieId] = useState(initialRows.length + 1);
+	const [loading, setLoading] = useState(false);
+	const [success, setSuccess] = useState(false);
 
 	const addMovie = () => {
 		setRows((oldRows) => [
 			...oldRows,
 			{
-				newMovieId,
+				id: newMovieId,
 				title: '',
 				description: '',
 				genre: [],
-				year: '',
+				release_year: '',
 				isNew: true,
 			},
 		]);
@@ -59,30 +63,39 @@ const MovieListTable = (movieList: MovieList) => {
 	};
 
 	const saveList = async () => {
+		setLoading(true);
 		console.dir(rows);
-		// const response = await fetch(
-		// 	`${process.env.NEXT_PUBLIC_URL}/lists/update/${id}`,
-		// 	{
-		// 		method: 'PATCH',
-		// 		headers: {
-		// 			Accept: 'application/json',
-		// 			'Content-Type': 'application/json',
-		// 		},
-		// 		body: JSON.stringify({
-		// 			updateListDto: {
-		// 				Movie: rows.map((row) => {
-		// 					return {
-		// 						title: row.title,
-		// 						description: row.description,
-		// 						genre: row.genre,
-		// 						release_year: row.year,
-		// 					};
-		// 				}),
-		// 			},
-		// 		}),
-		// 	},
-		// );
-		// alert(response.statusText);
+		const response = await fetch(
+			`${process.env.NEXT_PUBLIC_URL}/lists/update/${movieList.id}`,
+			{
+				method: 'PATCH',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include',
+				body: JSON.stringify({
+					Movie: rows.map((row) => {
+						return {
+							title: row.title,
+							description: row.description,
+							genre: row.genre,
+							release_year: parseInt(row.release_year),
+						};
+					}),
+				}),
+			},
+		);
+
+		if (response.ok) {
+			setSuccess(true);
+			setTimeout(() => {
+				setSuccess(false);
+			}, 1000);
+		} else {
+			setSuccess(false);
+		}
+		setLoading(false);
 	};
 
 	const handleDeleteClick = (id: GridRowId) => () => {
@@ -131,7 +144,7 @@ const MovieListTable = (movieList: MovieList) => {
 			filterable: false,
 		},
 		{
-			field: 'year',
+			field: 'release_year',
 			headerName: 'Release Year',
 			flex: 0.2,
 			editable: true,
@@ -186,7 +199,7 @@ const MovieListTable = (movieList: MovieList) => {
 						toolbar: MovieListTableEditToolbar,
 					}}
 					slotProps={{
-						toolbar: { addMovie, saveList },
+						toolbar: { addMovie, saveList, loading, success },
 					}}
 				/>
 			</Box>

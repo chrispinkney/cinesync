@@ -10,9 +10,9 @@ import Link from 'next/link';
 import CardActions from '@mui/material/CardActions';
 import ListActions from '../ListActions';
 
-const ListCard = ({ id, name, movies }: MovieList) => {
-	const movieCount = movies.length;
-	const firstFiveMovies: Movie[] = movies.slice(0, 5);
+const ListCard = ({ id, name, Movie }: MovieList) => {
+	const movieCount = Movie.length;
+	const firstFiveMovies: MovieItem[] = Movie.slice(0, 5);
 	const remainingMovies: number = Math.max(movieCount - 5, 0);
 
 	return (

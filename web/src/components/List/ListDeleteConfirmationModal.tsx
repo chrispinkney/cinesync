@@ -7,7 +7,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Divider from '@mui/material/Divider';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const ListDeleteConfirmationModal = ({
@@ -19,6 +19,8 @@ const ListDeleteConfirmationModal = ({
 	handleClose: () => void;
 	listId: number;
 }) => {
+	const { refresh } = useRouter();
+
 	const [errorText, setErrorText] = useState('');
 	const handleSubmit = async () => {
 		const response = await fetch(
@@ -29,15 +31,17 @@ const ListDeleteConfirmationModal = ({
 					Accept: 'application/json',
 					'Content-Type': 'application/json',
 				},
+				credentials: 'include',
 			},
 		);
-		if (!response.ok || response.status >= 300) {
+		if (!response.ok) {
 			setErrorText(
 				`Unable to delete list: ${response.status} - ${response.statusText}`,
 			);
 		} else {
 			setErrorText('');
-			redirect(`/lists`);
+			handleClose();
+			refresh();
 		}
 	};
 	const handleCancel = () => {

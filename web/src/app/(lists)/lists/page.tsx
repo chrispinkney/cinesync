@@ -1,19 +1,35 @@
+'use client';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
-import { tempList } from '@/tempData';
 import ListCard from '@/components/List/ListCard/ListCard';
 import ListCreationButton from '@/components/List/ListCreation/ListCreationButton';
+import { useEffect, useState } from 'react';
 
-const Page = async () => {
-	// const res = await fetch('/');
+const Page = () => {
+	const [list, setList] = useState<MovieList[] | null>(null);
+
+	useEffect(() => {
+		(async () => {
+			const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/lists`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				credentials: 'include',
+			});
+			const fetchedList = (await response.json()).List;
+			setList(fetchedList);
+		})();
+	}, []);
 
 	return (
 		<main>
 			<Grid container spacing={4}>
-				{tempList.map(({ id, name, movies }) => (
-					<Grid xs={6} lg={4} xl={3} key={name}>
-						<ListCard id={id} name={name} movies={movies} />
-					</Grid>
-				))}
+				{list &&
+					list?.map(({ id, name, Movie }) => (
+						<Grid xs={6} lg={4} xl={3} key={id}>
+							<ListCard id={id} name={name} Movie={Movie} />
+						</Grid>
+					))}
 			</Grid>
 			<ListCreationButton />
 		</main>

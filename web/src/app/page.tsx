@@ -1,4 +1,5 @@
 'use client';
+import Login from '@/components/Login/Login';
 import { useState, useEffect } from 'react';
 
 const Home = () => {
@@ -17,6 +18,7 @@ const Home = () => {
 	return (
 		<main>
 			<h1>hello {hello?.hello}</h1>
+			<Login />
 		</main>
 	);
 };

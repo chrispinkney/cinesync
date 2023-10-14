@@ -10,7 +10,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 const ListCreationModal = ({
 	open,
@@ -19,6 +19,8 @@ const ListCreationModal = ({
 	open: boolean;
 	handleClose: () => void;
 }) => {
+	const { push } = useRouter();
+
 	const [listName, setListName] = useState('');
 	const [isListNameInvalid, setIsListNameInvalid] = useState(false);
 	const [errorText, setErrorText] = useState('');
@@ -40,20 +42,23 @@ const ListCreationModal = ({
 						Accept: 'application/json',
 						'Content-Type': 'application/json',
 					},
+					credentials: 'include',
 					body: JSON.stringify({
 						name: listName,
 					}),
 				},
 			);
-			if (!response.ok || response.status >= 300) {
+			if (!response.ok) {
 				setErrorText(
 					`Unable to create list: ${response.status} - ${response.statusText}`,
 				);
 			} else {
 				setListName('');
 				setErrorText('');
-				let newListId: number = (await response.json()).List[0].id;
-				redirect(`/lists/${newListId}`);
+				handleClose();
+				// New list not returned - will be corrected in future
+				// let newListId: number = (await response.json()).List[0].id;
+				// push(`/lists/${newListId}`);
 			}
 		}
 	};
@@ -93,6 +98,7 @@ const ListCreationModal = ({
 						variant="outlined"
 						value={listName}
 						onChange={handleTextChange}
+						onKeyDown={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
 						error={isListNameInvalid}
 						helperText={isListNameInvalid && 'List name must be populated.'}
 					/>

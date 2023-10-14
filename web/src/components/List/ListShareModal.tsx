@@ -87,6 +87,7 @@ const ListShareModal = ({
 						variant="outlined"
 						value={recipientEmail}
 						onChange={handleTextChange}
+						onKeyDown={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
 						error={isRecipientEmailInvalid}
 						helperText={
 							isRecipientEmailInvalid && 'Recipient email must be populated.'

@@ -6,7 +6,7 @@ type NavigationLink = {
 	icon: any;
 };
 
-type Movie = {
+type MovieItem = {
 	id?: number;
 	title: string;
 	description?: string;
@@ -21,8 +21,7 @@ type MovieList = {
 	creator_id?: number;
 	created_at?: Date;
 	updated_at?: Date;
-	movies: Movie[];
-	users?: User[];
+	Movie: MovieItem[];
 };
 
 type User = {
