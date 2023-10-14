@@ -9,8 +9,10 @@ import Typography from '@mui/material/Typography';
 import Link from 'next/link';
 import CardActions from '@mui/material/CardActions';
 import ListActions from '../ListActions';
+import { useLists } from '@/context/lists.context';
 
 const ListCard = ({ id, name, Movie }: MovieList) => {
+	const { refreshListsContext } = useLists();
 	const movieCount = Movie.length;
 	const firstFiveMovies: MovieItem[] = Movie.slice(0, 5);
 	const remainingMovies: number = Math.max(movieCount - 5, 0);
@@ -44,7 +46,7 @@ const ListCard = ({ id, name, Movie }: MovieList) => {
 					</CardContent>
 				</CardActionArea>
 				<CardActions disableSpacing>
-					<ListActions listId={id} />
+					<ListActions listId={id} refreshContext={refreshListsContext} />
 				</CardActions>
 			</Card>
 		</Grow>

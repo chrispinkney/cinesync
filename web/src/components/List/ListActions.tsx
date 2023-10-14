@@ -7,7 +7,13 @@ import ListShareModal from '@/components/List/ListShareModal';
 import ListDeleteConfirmationModal from '@/components/List/ListDeleteConfirmationModal';
 import Tooltip from '@mui/material/Tooltip';
 
-const ListActions = ({ listId }: { listId: number }) => {
+const ListActions = ({
+	listId,
+	refreshContext,
+}: {
+	listId: number;
+	refreshContext: () => Promise<void>;
+}) => {
 	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
 
@@ -41,6 +47,7 @@ const ListActions = ({ listId }: { listId: number }) => {
 				open={deleteConfirmationOpen}
 				handleClose={handleDeleteConfirmationClose}
 				listId={listId}
+				refreshContext={refreshContext}
 			/>
 		</Fragment>
 	);

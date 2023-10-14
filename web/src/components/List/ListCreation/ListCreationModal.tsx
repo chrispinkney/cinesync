@@ -53,6 +53,7 @@ const ListCreationModal = ({
 					`Unable to create list: ${response.status} - ${response.statusText}`,
 				);
 			} else {
+				alert('Cannot redirect without new list id, refresh manually');
 				setListName('');
 				setErrorText('');
 				handleClose();

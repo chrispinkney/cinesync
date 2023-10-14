@@ -16,15 +16,17 @@ import GenreDropDown from './GenreDropdown';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { Fragment, useState } from 'react';
 import MovieListTableEditToolbar from './MovieListTableEditToolbar';
+import { useMovieList } from '@/context/movielist.context';
 
-const MovieListTable = (movieList: MovieList) => {
-	// Add id to each movie for mui datagrid
-	const initialRows: GridRowsProp = movieList.Movie.map((movie, index) => ({
-		...movie,
-		id: index + 1,
-	}));
+const MovieListTable = () => {
+	const { movieList } = useMovieList();
+	const initialRows: GridRowsProp = movieList.Movie;
 	const [rows, setRows] = useState(initialRows);
-	const [newMovieId, setNewMovieId] = useState(initialRows.length + 1);
+
+	// We don't know all potential movie ids in db, so all ids for new movies added to data grid will start with 1M
+	const [newMovieId, setNewMovieId] = useState(1000000);
+
+	// States for save list action
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 
@@ -49,6 +51,7 @@ const MovieListTable = (movieList: MovieList) => {
 		return updatedRow;
 	};
 
+	// Callback for rendered GenreDropDown cells
 	const updateGenres = (row: GridRowModel) => {
 		processRowUpdate(row);
 	};
@@ -137,7 +140,7 @@ const MovieListTable = (movieList: MovieList) => {
 			field: 'genre',
 			headerName: 'Genres',
 			flex: 1,
-			editable: true,
+			editable: false,
 			renderCell: (params) => <GenreDropDown {...{ params, updateGenres }} />,
 			headerAlign: 'center',
 			sortable: false,

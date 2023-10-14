@@ -1,4 +1,5 @@
 'use client';
+import { useLists } from '@/context/lists.context';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
@@ -7,22 +8,27 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import Divider from '@mui/material/Divider';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 const ListDeleteConfirmationModal = ({
 	open,
 	handleClose,
 	listId,
+	refreshContext,
 }: {
 	open: boolean;
 	handleClose: () => void;
 	listId: number;
+	refreshContext: () => Promise<void>;
 }) => {
-	const { refresh } = useRouter();
+	const { replace } = useRouter();
+	const pathname = usePathname();
 
 	const [errorText, setErrorText] = useState('');
+
 	const handleSubmit = async () => {
+		// Send delete request to api
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_URL}/lists/delete/${listId}`,
 			{
@@ -41,7 +47,12 @@ const ListDeleteConfirmationModal = ({
 		} else {
 			setErrorText('');
 			handleClose();
-			refresh();
+			// Redirect to /lists
+			if (pathname == '/lists') {
+				refreshContext();
+			} else {
+				replace('/lists');
+			}
 		}
 	};
 	const handleCancel = () => {
