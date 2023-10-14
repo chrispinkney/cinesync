@@ -9,44 +9,36 @@ export class ListAuthorizationGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest();
 		const { currentUser } = request;
 
-		const listId = parseInt(request.params.listId);
+		const listId =
+			parseInt(request.params.listId) || parseInt(request.query.listId);
 
-		try {
-			const list = await this.prisma.list.findUnique({
-				where: { id: listId },
-				include: {
-					User: true,
-				},
-			});
+		const list = await this.prisma.list.findUniqueOrThrow({
+			where: { id: listId },
+			include: {
+				User: true,
+			},
+		});
 
-			// check if list exists
-			if (!list) {
-				return false;
-			}
-
-			// allow access if list is public and no user is logged in
-			if (!list.is_private && !currentUser) {
-				return true;
-			}
-
-			// allow access if list is public and user is logged in
-			if (!list.is_private && currentUser) {
-				return true;
-			}
-
-			// restrict access if no user is logged in
-			if (!currentUser) {
-				return false;
-			}
-
-			// check if list belongs to the user or has been shared with the user
-			const isCreator = list.creator_id === currentUser.id;
-			const isSharedWithUser =
-				list.User.find((user) => user.id === currentUser.id) !== undefined;
-
-			return isCreator || isSharedWithUser;
-		} catch (error) {
-			throw new Error('Failed to check list permission');
+		// allow access if list is public and no user is logged in
+		if (!list.is_private && !currentUser) {
+			return true;
 		}
+
+		// allow access if list is public and user is logged in
+		if (!list.is_private && currentUser) {
+			return true;
+		}
+
+		// restrict access if no user is logged in
+		if (!currentUser) {
+			return false;
+		}
+
+		// check if list belongs to the user or has been shared with the user
+		const isCreator = list.creator_id === currentUser.id;
+		const isSharedWithUser =
+			list.User.find((user) => user.id === currentUser.id) !== undefined;
+
+		return isCreator || isSharedWithUser;
 	}
 }

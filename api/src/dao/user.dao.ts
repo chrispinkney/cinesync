@@ -7,13 +7,13 @@ export class UserDao {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getUser(id: string) {
-		return await this.prisma.user.findUnique({
+		return await this.prisma.user.findUniqueOrThrow({
 			where: { id },
 		});
 	}
 
 	async getUserByEmail(email: string) {
-		return await this.prisma.user.findUnique({
+		return await this.prisma.user.findUniqueOrThrow({
 			where: { email },
 		});
 	}

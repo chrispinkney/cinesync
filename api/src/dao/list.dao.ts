@@ -8,7 +8,7 @@ export class ListDao {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getList(listId: number) {
-		return await this.prisma.list.findUnique({
+		return await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
 			select: {
 				id: true,
@@ -24,7 +24,7 @@ export class ListDao {
 	}
 
 	async getLists(userId: string) {
-		return this.prisma.user.findUnique({
+		return this.prisma.user.findUniqueOrThrow({
 			where: { id: userId },
 			include: {
 				List: {
@@ -91,7 +91,7 @@ export class ListDao {
 			);
 		}
 
-		const createdList = await this.prisma.list.findUnique({
+		const createdList = await this.prisma.list.findUniqueOrThrow({
 			where: { id: list.id },
 			include: {
 				Movie: true,
@@ -101,44 +101,21 @@ export class ListDao {
 		return createdList;
 	}
 
-	async updateListPrivacy(listId: number, userId: string) {
-		const list = await this.prisma.list.findUnique({
+	async updateListPrivacy(listId: number) {
+		const list = await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
 			include: { User: true, Movie: true },
 		});
 
-		if (!list) {
-			return null;
-		}
-
-		if (list.creator_id === userId && (list.name || list.is_private)) {
-			const updatedList = await this.prisma.list.update({
-				where: { id: listId },
-				data: {
-					is_private: !list.is_private,
-				},
-			});
-
-			return updatedList;
-		}
-
-		return `You do not have permission to make list ${listId} private.`;
+		return await this.prisma.list.update({
+			where: { id: listId },
+			data: {
+				is_private: !list.is_private,
+			},
+		});
 	}
 
-	async updateList(
-		listId: number,
-		updateListDto: UpdateListDto,
-		userId: string,
-	) {
-		const list = await this.prisma.list.findUnique({
-			where: { id: listId },
-			include: { User: true, Movie: true },
-		});
-
-		if (!list) {
-			return null;
-		}
-
+	async updateList(listId: number, updateListDto: UpdateListDto) {
 		let newMovies = [];
 		// add new movies to list
 		if (updateListDto?.Movie?.length) {
@@ -153,6 +130,7 @@ export class ListDao {
 							genre: movie.genre,
 							release_year: movie.release_year,
 						},
+						// do not update the movie table
 						update: {},
 					}),
 				),
@@ -175,163 +153,66 @@ export class ListDao {
 			);
 		}
 
-		// update name, is_private only if they have values & the user is the creator
-		let updatedList;
-		if (list.creator_id === userId && (list.name || list.is_private)) {
-			updatedList = await this.prisma.list.update({
-				where: { id: listId },
-				data: {
-					name: list.name,
-					is_private: list.is_private,
-				},
-				include: { Movie: true },
-			});
-		}
-
-		return updatedList;
+		return await this.prisma.list.update({
+			where: { id: listId },
+			data: {
+				name: updateListDto.name,
+				is_private: updateListDto.is_private,
+			},
+			include: { Movie: true },
+		});
 	}
 
 	async deleteList(listId: number, userId: string) {
-		const list = await this.prisma.list.findUnique({
-			where: { id: listId },
-			include: {
-				User: {
-					where: {
-						id: userId,
+		return await this.prisma.user.update({
+			where: { id: userId },
+			data: {
+				List: {
+					delete: {
+						id: listId,
+						creator_id: userId,
 					},
 				},
 			},
 		});
-
-		if (list?.creator_id === userId) {
-			await this.prisma.user.update({
-				where: { id: userId },
-				data: {
-					List: {
-						delete: {
-							id: listId,
-							creator_id: userId,
-						},
-					},
-				},
-			});
-
-			return `list with ID ${listId} has been deleted`;
-		} else {
-			return `You do not have permission to delete list with ID ${listId}`;
-		}
 	}
 
-	async deleteListItem(listId: number, movieId: number, userId: string) {
-		const list = await this.prisma.list.findUnique({
+	async deleteListItem(listId: number, movieId: number) {
+		await this.prisma.list.update({
 			where: { id: listId },
-			include: {
-				User: {
-					where: {
-						id: userId,
-					},
+			data: {
+				Movie: {
+					disconnect: { id: movieId },
 				},
 			},
 		});
-
-		if (list?.User) {
-			await this.prisma.list.update({
-				where: { id: list.id },
-				data: {
-					Movie: {
-						disconnect: { id: movieId },
-					},
-				},
-			});
-
-			return `Movie with ID ${movieId} has been removed`;
-		} else {
-			return `You do not have permission to update list with ID ${listId}`;
-		}
 	}
 
-	async shareListByEmail(listId: number, email: string, userId: string) {
-		const sharee = await this.prisma.user.findUnique({
+	async toggleShareList(listId: number, email: string) {
+		const user = await this.prisma.user.findUniqueOrThrow({
 			where: { email },
-		});
-
-		const list = await this.prisma.list.findUnique({
-			where: { id: listId },
 			include: {
-				User: {
+				List: {
 					where: {
-						id: userId,
+						id: listId,
 					},
 				},
 			},
 		});
 
-		if (list?.creator_id === userId) {
-			await this.prisma.list.update({
-				where: { id: listId },
-				data: {
-					User: {
-						connect: [{ id: sharee?.id }],
-					},
-				},
-			});
-			return `list with ID ${listId} has been shared with ${email}`;
-		} else {
-			return `You do not have permission to share list with ID ${listId}`;
-		}
-	}
+		const isConnected = user.List.some((list) => list.id === listId);
 
-	async shareListById(listId: number, recipientId: string, userId: string) {
-		const list = await this.prisma.list.findUnique({
+		return await this.prisma.list.update({
 			where: { id: listId },
-			include: {
+			data: {
 				User: {
-					where: {
-						id: userId,
-					},
+					...(isConnected
+						? {
+								disconnect: { email },
+						  }
+						: { connect: { email } }),
 				},
 			},
 		});
-
-		if (list?.creator_id === userId) {
-			await this.prisma.list.update({
-				where: { id: listId },
-				data: {
-					User: {
-						connect: [{ id: recipientId }],
-					},
-				},
-			});
-			return `list with ID ${listId} has been shared with ${recipientId}`;
-		} else {
-			return `You do not have permission to share list with ID ${listId}`;
-		}
-	}
-
-	async unshareListById(listId: number, recipientId: string, userId: string) {
-		const list = await this.prisma.list.findUnique({
-			where: { id: listId },
-			include: {
-				User: {
-					where: {
-						id: userId,
-					},
-				},
-			},
-		});
-
-		if (list?.creator_id === userId) {
-			await this.prisma.list.update({
-				where: { id: listId },
-				data: {
-					User: {
-						disconnect: [{ id: recipientId }],
-					},
-				},
-			});
-			return `list with ID ${listId} has been unshared with ${recipientId}`;
-		} else {
-			return `You do not have permission to unshare list with ID ${listId}`;
-		}
 	}
 }
