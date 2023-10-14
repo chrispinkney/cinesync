@@ -1,19 +1,24 @@
 'use client';
 
 import {
+	Dispatch,
 	Fragment,
 	ReactNode,
+	SetStateAction,
 	createContext,
 	useContext,
 	useEffect,
 	useState,
 } from 'react';
+import { GridRowsProp } from '@mui/x-data-grid';
 
 // Create context as undefined until fetch is completed
 const MovieListContext = createContext<
 	| {
 			movieList: MovieList;
 			refreshMovieListContext: () => Promise<void>;
+			movieListTableRows: GridRowsProp;
+			setMovieListTableRows: Dispatch<SetStateAction<GridRowsProp>>;
 	  }
 	| undefined
 >(undefined);
@@ -26,6 +31,9 @@ export const MovieListContextProvider = ({
 	listId: number;
 }) => {
 	const [movieList, setMovieList] = useState<MovieList | null>(null);
+	const [movieListTableRows, setMovieListTableRows] = useState<GridRowsProp>(
+		[],
+	);
 
 	// refreshMovieListContext will be provided so that child components can easily re-fetch data so page will be re-rendered
 	const refreshMovieListContext = async () => {
@@ -41,6 +49,7 @@ export const MovieListContextProvider = ({
 		);
 		const fetchedMovieList = (await response.json()).List[0];
 		setMovieList(fetchedMovieList);
+		setMovieListTableRows(fetchedMovieList.Movie);
 	};
 
 	// Fetch once upon initial context load
@@ -53,7 +62,12 @@ export const MovieListContextProvider = ({
 		<Fragment>
 			{movieList != undefined && (
 				<MovieListContext.Provider
-					value={{ movieList, refreshMovieListContext }}
+					value={{
+						movieList,
+						refreshMovieListContext,
+						movieListTableRows,
+						setMovieListTableRows,
+					}}
 				>
 					{children}
 				</MovieListContext.Provider>

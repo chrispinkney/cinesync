@@ -8,7 +8,6 @@ import {
 	GridRowEditStopReasons,
 	GridRowId,
 	GridRowModel,
-	GridRowsProp,
 } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -19,9 +18,12 @@ import MovieListTableEditToolbar from './MovieListTableEditToolbar';
 import { useMovieList } from '@/context/movielist.context';
 
 const MovieListTable = () => {
-	const { movieList } = useMovieList();
-	const initialRows: GridRowsProp = movieList.Movie;
-	const [rows, setRows] = useState(initialRows);
+	const {
+		movieList,
+		refreshMovieListContext,
+		movieListTableRows,
+		setMovieListTableRows,
+	} = useMovieList();
 
 	// We don't know all potential movie ids in db, so all ids for new movies added to data grid will start with 1M
 	const [newMovieId, setNewMovieId] = useState(1000000);
@@ -31,7 +33,7 @@ const MovieListTable = () => {
 	const [success, setSuccess] = useState(false);
 
 	const addMovie = () => {
-		setRows((oldRows) => [
+		setMovieListTableRows((oldRows) => [
 			...oldRows,
 			{
 				id: newMovieId,
@@ -46,9 +48,10 @@ const MovieListTable = () => {
 	};
 
 	const processRowUpdate = (newRow: GridRowModel) => {
-		const updatedRow = { ...newRow, isNew: false };
-		setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-		return updatedRow;
+		setMovieListTableRows(
+			movieListTableRows.map((row) => (row.id === newRow.id ? newRow : row)),
+		);
+		return newRow;
 	};
 
 	// Callback for rendered GenreDropDown cells
@@ -67,7 +70,6 @@ const MovieListTable = () => {
 
 	const saveList = async () => {
 		setLoading(true);
-		console.dir(rows);
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_URL}/lists/update/${movieList.id}`,
 			{
@@ -78,7 +80,7 @@ const MovieListTable = () => {
 				},
 				credentials: 'include',
 				body: JSON.stringify({
-					Movie: rows.map((row) => {
+					Movie: movieListTableRows.map((row) => {
 						return {
 							title: row.title,
 							description: row.description,
@@ -94,6 +96,7 @@ const MovieListTable = () => {
 			setSuccess(true);
 			setTimeout(() => {
 				setSuccess(false);
+				refreshMovieListContext();
 			}, 1000);
 		} else {
 			setSuccess(false);
@@ -101,8 +104,33 @@ const MovieListTable = () => {
 		setLoading(false);
 	};
 
-	const handleDeleteClick = (id: GridRowId) => () => {
-		setRows(rows.filter((row) => row.id !== id));
+	const handleDeleteClick = async (rowId: GridRowId) => {
+		const rowIsNew: boolean = movieListTableRows.find((row) => row.id == rowId)
+			?.isNew;
+		if (rowIsNew) {
+			setMovieListTableRows(
+				movieListTableRows.filter((row) => row.id !== rowId),
+			);
+		} else {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_URL}/lists/delete/${movieList.id}/${rowId}`,
+				{
+					method: 'DELETE',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					credentials: 'include',
+				},
+			);
+			if (response.ok) {
+				alert('deleted');
+				refreshMovieListContext();
+				setMovieListTableRows(
+					movieListTableRows.filter((row) => row.id !== rowId),
+				);
+			}
+		}
 	};
 
 	const columns: GridColDef[] = [
@@ -169,7 +197,7 @@ const MovieListTable = () => {
 					<GridActionsCellItem
 						icon={<DeleteIcon />}
 						label="Delete"
-						onClick={handleDeleteClick(id)}
+						onClick={() => handleDeleteClick(id)}
 						color="inherit"
 					/>,
 				];
@@ -181,7 +209,7 @@ const MovieListTable = () => {
 		<Fragment>
 			<Box component={Paper} sx={{ width: '100%', mt: 3 }}>
 				<DataGrid
-					rows={rows}
+					rows={movieListTableRows}
 					columns={columns}
 					onRowEditStop={handleRowEditStop}
 					processRowUpdate={processRowUpdate}
