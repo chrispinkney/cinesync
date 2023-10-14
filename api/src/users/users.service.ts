@@ -3,23 +3,16 @@ import {
 	InternalServerErrorException,
 	NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { UserDao } from '../dao/user.dao';
 
 @Injectable()
 export class UsersService {
-	constructor(private prisma: PrismaService) {}
+	constructor(private userDao: UserDao) {}
 
 	async getUser(id: string) {
-		// if an id is not passed return null- used in GET /whoami
-		if (!id) {
-			return null;
-		}
-
 		try {
-			const user = await this.prisma.user.findUnique({
-				where: { id },
-			});
+			const user = await this.userDao.getUser(id);
 
 			if (!user) {
 				throw new NotFoundException('User not found');
@@ -27,32 +20,21 @@ export class UsersService {
 
 			return user;
 		} catch (error) {
-			throw new InternalServerErrorException('Failed to get user');
+			throw new InternalServerErrorException('Failed to get user by id');
 		}
 	}
 
 	async getUserByEmail(email: string) {
 		try {
-			const user = await this.prisma.user.findUnique({
-				where: { email },
-			});
-
-			return user || null;
+			return await this.userDao.getUserByEmail(email);
 		} catch (error) {
-			throw new InternalServerErrorException('Failed to get user');
+			throw new InternalServerErrorException('Failed to get user by email');
 		}
 	}
 
 	async createUser(createUser: CreateUserDto) {
 		try {
-			const user = await this.prisma.user.create({
-				data: {
-					...createUser,
-					role: 'USER',
-				},
-			});
-
-			return user;
+			return await this.userDao.createUser(createUser);
 		} catch (error) {
 			throw new InternalServerErrorException('Failed to create user');
 		}
@@ -60,42 +42,23 @@ export class UsersService {
 
 	async updateUser(id: string, attrs: Partial<CreateUserDto>) {
 		try {
-			const user = await this.prisma.user.findUnique({
-				where: { id },
-			});
-
-			if (!user) {
-				throw new NotFoundException('User not found');
-			}
-
-			const updatedUser = await this.prisma.user.update({
-				where: { id },
-				data: attrs,
-			});
-
-			return updatedUser;
+			return await this.userDao.updateUser(id, attrs);
 		} catch (error) {
 			throw new InternalServerErrorException('Failed to update user');
 		}
 	}
 
-	async removeUser(id: string) {
+	async deleteUser(id: string) {
 		try {
-			const user = await this.prisma.user.findUnique({
-				where: { id },
-			});
+			const user = await this.userDao.getUser(id);
 
 			if (!user) {
 				throw new NotFoundException('User not found');
 			}
 
-			const deletedUser = await this.prisma.user.delete({
-				where: { id },
-			});
-
-			return deletedUser;
+			return await this.userDao.deleteUser(id);
 		} catch (error) {
-			throw new InternalServerErrorException('Failed to update user');
+			throw new InternalServerErrorException('Failed to delete user');
 		}
 	}
 }

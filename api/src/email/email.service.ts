@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Mailgun from 'mailgun.js';
 import { IMailgunClient } from 'mailgun.js/Interfaces';
@@ -38,13 +38,14 @@ export class EmailService {
 	private async sendEmail(messageData: EmailData) {
 		if (isProduction === 'production') {
 			try {
-				const email = await this.mailgunClient.messages.create(
+				return await this.mailgunClient.messages.create(
 					mailgunDomain,
 					messageData,
 				);
-				console.log(`EmailService  sendEmail  email:`, email);
 			} catch (error) {
-				console.log('Error attempting to send email: ', error);
+				throw new InternalServerErrorException(
+					'Error attempting to send email',
+				);
 			}
 		}
 	}

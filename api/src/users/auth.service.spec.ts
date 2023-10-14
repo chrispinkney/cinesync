@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Role, User } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
 import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
-import { Role, User } from '@prisma/client';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { v4 as uuidv4 } from 'uuid';
 
 describe('AuthService', () => {
 	let service: AuthService;

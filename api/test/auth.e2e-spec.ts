@@ -1,7 +1,7 @@
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { AppModule } from './../src/app.module';
-import { INestApplication } from '@nestjs/common';
 
 describe('Authentication System (e2e)', () => {
 	let app: INestApplication;

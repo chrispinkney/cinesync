@@ -4,8 +4,8 @@ import {
 	InternalServerErrorException,
 	NotFoundException,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
 import * as argon2 from 'argon2';
+import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
