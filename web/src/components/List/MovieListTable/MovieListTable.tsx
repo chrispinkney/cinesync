@@ -195,6 +195,7 @@ const MovieListTable = () => {
 			getActions: ({ id }) => {
 				return [
 					<GridActionsCellItem
+						key={id}
 						icon={<DeleteIcon />}
 						label="Delete"
 						onClick={() => handleDeleteClick(id)}
