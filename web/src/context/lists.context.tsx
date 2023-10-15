@@ -28,6 +28,7 @@ export const ListsContextProvider = ({ children }: { children: ReactNode }) => {
 		});
 		const fetchedLists = (await response.json()).List;
 		setLists(fetchedLists);
+		console.dir(fetchedLists);
 	};
 
 	// Fetch once upon initial context load
