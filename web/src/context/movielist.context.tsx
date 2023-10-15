@@ -44,6 +44,7 @@ export const MovieListContextProvider = ({
 				headers: {
 					'Content-Type': 'application/json',
 				},
+				mode: 'cors',
 				credentials: 'include',
 			},
 		);

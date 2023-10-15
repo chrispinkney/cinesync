@@ -40,6 +40,12 @@ const ListShareModal = ({
 					}),
 				{
 					method: 'POST',
+					headers: {
+						Accept: 'application/json',
+						'Content-Type': 'application/json',
+					},
+					mode: 'cors',
+					credentials: 'include',
 				},
 			);
 			if (!response.ok || response.status >= 300) {

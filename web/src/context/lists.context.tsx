@@ -24,6 +24,7 @@ export const ListsContextProvider = ({ children }: { children: ReactNode }) => {
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			mode: 'cors',
 			credentials: 'include',
 		});
 		const fetchedLists = (await response.json()).List;
