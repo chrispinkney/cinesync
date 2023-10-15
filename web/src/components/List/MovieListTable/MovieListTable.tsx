@@ -113,7 +113,11 @@ const MovieListTable = () => {
 			);
 		} else {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/lists/delete/${movieList.id}/${rowId}`,
+				`${process.env.NEXT_PUBLIC_URL}/lists/deleteMovie?` +
+					new URLSearchParams({
+						listId: movieList.id.toString(),
+						movieId: rowId.toString(),
+					}),
 				{
 					method: 'DELETE',
 					headers: {

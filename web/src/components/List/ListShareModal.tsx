@@ -33,8 +33,9 @@ const ListShareModal = ({
 		} else {
 			setIsRecipientEmailInvalid(false);
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/lists/share/${listId}?` +
+				`${process.env.NEXT_PUBLIC_URL}/lists/toggleShare?` +
 					new URLSearchParams({
+						listId: listId.toString(),
 						email: recipientEmail,
 					}),
 				{
@@ -95,7 +96,7 @@ const ListShareModal = ({
 					/>
 					<Box display="flex" justifyContent="center" alignItems="center">
 						<ButtonGroup variant="contained">
-							<Button onClick={handleSubmit}>Share</Button>
+							<Button onClick={handleSubmit}>Share/Unshare</Button>
 							<Button color="error" onClick={handleCancel}>
 								Cancel
 							</Button>

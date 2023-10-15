@@ -47,7 +47,7 @@ export const MovieListContextProvider = ({
 				credentials: 'include',
 			},
 		);
-		const fetchedMovieList = (await response.json()).List[0];
+		const fetchedMovieList = (await response.json()).list;
 		setMovieList(fetchedMovieList);
 		setMovieListTableRows(fetchedMovieList.Movie);
 	};
