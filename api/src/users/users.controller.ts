@@ -10,6 +10,8 @@ import {
 	UseInterceptors,
 	Session,
 	UseGuards,
+	HttpCode,
+	HttpStatus,
 } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { UsersService } from './users.service';
@@ -51,6 +53,7 @@ export class UsersController {
 
 	@UseGuards(AuthGuard)
 	@Post('/signout')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	signout(@Session() session: Record<string, null>) {
 		session.userId = null;
 	}
@@ -69,6 +72,7 @@ export class UsersController {
 	}
 
 	@Post('/signin')
+	@HttpCode(HttpStatus.OK)
 	async signin(
 		@Body() body: SigninUserDto,
 		@Session() session: Record<string, string>,
@@ -86,6 +90,7 @@ export class UsersController {
 	}
 
 	@UseGuards(AuthGuard, AdminGuard)
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@Delete('/:id')
 	async deleteUser(
 		@Param('id') id: string,

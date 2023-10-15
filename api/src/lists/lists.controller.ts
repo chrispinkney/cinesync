@@ -9,6 +9,8 @@ import {
 	UseGuards,
 	UseInterceptors,
 	Query,
+	HttpCode,
+	HttpStatus,
 } from '@nestjs/common';
 import { ListsService } from './lists.service';
 import { EmailService } from '../email/email.service';
@@ -74,6 +76,7 @@ export class ListsController {
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard, AuthGuard)
 	@Patch('/updatePrivacy/:listId')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	updateListPrivacy(@Param('listId') listId: string) {
 		return this.listsService.updateListPrivacy(parseInt(listId));
 	}
@@ -88,6 +91,7 @@ export class ListsController {
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(AuthGuard, ListAuthorizationGuard)
 	@Delete('/delete/:listId')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	deleteList(@Param('listId') listId: string, @CurrentUser() user: UserDto) {
 		return this.listsService.deleteList(parseInt(listId), user.id);
 	}
@@ -95,6 +99,7 @@ export class ListsController {
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(AuthGuard, ListAuthorizationGuard)
 	@Delete('/deleteMovie')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	deleteMovie(
 		@Query('listId') listId: string,
 		@Query('movieId') movieId: string,

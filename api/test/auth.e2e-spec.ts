@@ -39,7 +39,7 @@ describe('Authentication System (e2e)', () => {
 		await request(app.getHttpServer())
 			.delete(`/auth/${id}`)
 			.set('Cookie', cookie)
-			.expect(200);
+			.expect(204);
 	});
 
 	it('signup as a new user then get the currently logged in user', async () => {
@@ -71,6 +71,6 @@ describe('Authentication System (e2e)', () => {
 		await request(app.getHttpServer())
 			.delete(`/auth/${id}`)
 			.set('Cookie', cookie)
-			.expect(200);
+			.expect(204);
 	});
 });
