@@ -29,9 +29,9 @@ const ListCard = ({ id, name, Movie }: MovieList) => {
 							movieCount == 1 ? '' : 's'
 						}`}</Typography>
 						<List>
-							{firstFiveMovies.map(({ title, year }) => (
+							{firstFiveMovies.map(({ title, release_year }) => (
 								<ListItem dense={true} key={title}>
-									<ListItemText primary={title} secondary={year} />
+									<ListItemText primary={title} secondary={release_year} />
 								</ListItem>
 							))}
 							{!!remainingMovies && (

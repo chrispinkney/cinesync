@@ -11,7 +11,7 @@ type MovieItem = {
 	title: string;
 	description?: string;
 	genre: string[];
-	year: number;
+	release_year: number;
 };
 
 type MovieList = {
