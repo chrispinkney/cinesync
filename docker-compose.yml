@@ -21,7 +21,10 @@ services:
     environment:
       - TZ=America/Toronto
       - DATABASE_URL=postgresql://cinesync-dev:@BarelyAnInconvenience@@db:5432/cinesync-dev
-      - COOKIE_SECRET=localsecret
+      - COOKIE_SECRET=${COOKIE_SECRET}
+      - MAILGUN_KEY=${MAILGUN_KEY}
+      - MAILGUN_DOMAIN=${MAILGUN_DOMAIN}
+      - NODE_ENV=
     ports:
       - 3000:3000
     depends_on:

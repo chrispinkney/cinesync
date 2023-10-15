@@ -28,6 +28,7 @@ CineSync is currently running on Node v18.
 ### Running Cinesync
 
 - Backend:
+  - `cd api`
   - `docker-compose up --build`
 - Frontend:
   - `cd web`
@@ -36,7 +37,7 @@ CineSync is currently running on Node v18.
 ### Frontend development
 
 - You can run the full backend (API + DB) using docker, or just the db using docker and the api in CLI:
-  - Full backend: `docker-compose up --build`
+  - Full backend: `cd api && docker-compose up --build`
   - Just the `db`: `docker-compose up --build db`, and the api with `cd api && npm run dev`
 - The first time the db is started a migration needs to be applied: `npx prisma migrate dev`
 - To stop the containers: `docker-compose down`
