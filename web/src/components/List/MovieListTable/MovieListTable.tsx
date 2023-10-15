@@ -124,7 +124,6 @@ const MovieListTable = () => {
 				},
 			);
 			if (response.ok) {
-				alert('deleted');
 				refreshMovieListContext();
 				setMovieListTableRows(
 					movieListTableRows.filter((row) => row.id !== rowId),
