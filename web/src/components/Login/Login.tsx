@@ -38,8 +38,8 @@ const Login = () => {
 							},
 							credentials: 'include',
 							body: JSON.stringify({
-								email: process.env.NEXT_PUBLIC_LOGIN_EMAIL,
-								password: process.env.NEXT_PUBLIC_LOGIN_PASSWORD,
+								email: 'test@test.test',
+								password: 'test',
 							}),
 						},
 					);
