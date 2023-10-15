@@ -23,6 +23,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { SigninUserDto } from './dtos/signin-user.dto';
+import { ListsService } from '../lists/lists.service';
 
 @UseInterceptors(RemoveFieldsInterceptor)
 @Controller('auth')
@@ -31,6 +32,7 @@ export class UsersController {
 		private usersService: UsersService,
 		private authService: AuthService,
 		private emailService: EmailService,
+		private listsService: ListsService,
 	) {}
 
 	@UseGuards(AuthGuard)
@@ -97,6 +99,13 @@ export class UsersController {
 		@Session() session: Record<string, null>,
 		@CurrentUser() user: CreateUserDto,
 	) {
+		// delete all lists associated with user
+		const userLists = await this.listsService.getLists(id);
+		await Promise.all(
+			userLists.List.map((list) => this.listsService.deleteList(list.id, id)),
+		);
+
+		// delete user
 		await this.usersService.deleteUser(id);
 		await this.emailService.sendAccountDeletionEmail(user.email);
 		return this.signout(session);

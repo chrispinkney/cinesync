@@ -7,12 +7,15 @@ import { AuthService } from './auth.service';
 import { EmailService } from '../email/email.service';
 import { EmailModule } from '../email/email.module';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { ListsService } from '../lists/lists.service';
+import { ListsModule } from '../lists/lists.module';
 
 describe('UsersController', () => {
 	let controller: UsersController;
 	let fakeUsersService: Partial<UsersService>;
 	let fakeAuthService: Partial<AuthService>;
 	let fakeEmailService: Partial<EmailService>;
+	let fakeListsService: Partial<ListsService>;
 
 	beforeEach(async () => {
 		fakeUsersService = {
@@ -68,6 +71,49 @@ describe('UsersController', () => {
 				return Promise.resolve();
 			},
 		};
+		fakeListsService = {
+			getLists: (id: string) => {
+				return Promise.resolve({
+					id,
+					username: 'asdf',
+					email: 'asdf@asdf.asdf',
+					password: '123',
+					created_at: new Date(),
+					updated_at: new Date(),
+					role: 'USER',
+					List: [
+						{
+							id: 25,
+							name: 'My Watchlist_chrischris',
+							is_private: true,
+							creator_id: '123',
+							created_at: new Date(),
+							updated_at: new Date(),
+							Movie: [
+								{
+									id: 1,
+									title: 'Movie2',
+									description: 'Description for Movie 2',
+									genre: ['Horror', 'Family'],
+									release_year: 666,
+								},
+							],
+						},
+					],
+				});
+			},
+			deleteList: (listId: number, userId: string) => {
+				return Promise.resolve({
+					id: userId,
+					username: 'asdf',
+					email: 'asdf@asdf.asdf',
+					password: userId,
+					created_at: new Date(),
+					updated_at: new Date(),
+					role: 'USER',
+				});
+			},
+		};
 
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [UsersController],
@@ -85,8 +131,12 @@ describe('UsersController', () => {
 					provide: EmailService,
 					useValue: fakeEmailService,
 				},
+				{
+					provide: ListsService,
+					useValue: fakeListsService,
+				},
 			],
-			imports: [EmailModule],
+			imports: [EmailModule, ListsModule],
 		}).compile();
 
 		controller = module.get<UsersController>(UsersController);
