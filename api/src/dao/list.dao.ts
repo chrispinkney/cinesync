@@ -8,7 +8,7 @@ export class ListDao {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getList(listId: string) {
-		return await this.prisma.list.findUniqueOrThrow({
+		const list = await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
 			select: {
 				id: true,
@@ -21,6 +21,10 @@ export class ListDao {
 				User: true,
 			},
 		});
+
+		list.User = list.User.filter((user) => user.id === list.creator_id);
+
+		return list;
 	}
 
 	async getLists(userId: string) {
