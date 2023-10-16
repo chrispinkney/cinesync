@@ -1,0 +1,43 @@
+# Dockerfile
+#
+# -------------------------------------
+# Context: Build
+FROM node:lts-alpine as build
+
+# Set Working Directory Context
+WORKDIR "/cinesync"
+
+# Copy package files
+COPY web/package.json .
+COPY web/next.config.js .
+
+# Context: Dependencies
+FROM build AS dependencies
+
+ARG NEXT_PUBLIC_URL
+ENV NEXT_PUBLIC_URL ${NEXT_PUBLIC_URL}
+
+# Install Modules
+RUN npm install
+
+# -------------------------------------
+# Context: Builder
+FROM dependencies as builder
+
+# Copy necessary files to build cinesync
+COPY web/ .
+COPY web/next.config.js .
+
+# run build
+RUN npm run build
+
+# -------------------------------------
+# Context: Release
+FROM build AS release
+
+# GET deployment code from previous containers
+COPY --from=dependencies /cinesync/node_modules /cinesync/node_modules
+COPY --from=builder /cinesync/out /cinesync/out
+
+# Running cinesync when the image gets built
+CMD ["sh", "-c", "npm run start"]
