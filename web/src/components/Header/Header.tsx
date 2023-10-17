@@ -28,7 +28,7 @@ const placeHolderUserInfo: IPlaceHolderUserInfo = {
 
 const HeaderNavigationLinks: NavigationLink[] = [
 	{ text: 'Settings', href: '/settings', icon: SettingsIcon },
-	{ text: 'Logout', href: '/logout', icon: LogoutIcon },
+	{ text: 'Logout', href: '/signout', icon: LogoutIcon },
 ];
 
 const Header = () => {

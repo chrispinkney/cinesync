@@ -11,12 +11,12 @@ import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import InfoIcon from '@mui/icons-material/Info';
 
 const TopNavigationLinks: NavigationLink[] = [
-	{ text: 'Home', href: '/', icon: HomeIcon },
-	{ text: 'My Lists', href: '/lists', icon: FormatListBulletedIcon },
+	{ text: 'Home', href: '/dashboard', icon: HomeIcon },
+	{ text: 'My Lists', href: '/dashboard/lists', icon: FormatListBulletedIcon },
 ];
 
 const BottomNavigationLinks: NavigationLink[] = [
-	{ text: 'About', href: '/about', icon: InfoIcon },
+	{ text: 'About', href: '/dashboard/about', icon: InfoIcon },
 ];
 
 const Sidebar = () => {
