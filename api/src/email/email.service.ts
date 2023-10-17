@@ -65,7 +65,7 @@ export class EmailService {
 			<p>Hi there ${username},</p>
 			<p>We're thrilled to welcome you to CineSync! 🎉</p>
 			<p>Thank you for joining our community. You're now part of a growing network of users who want to curate, manage, and share their most loved movies.</p>
-			<p>To get started and learn more about our service, visit our about page at <a href="https://cinesync.me/about">https://cinesync.me/about</a>. There you can find information about our application and how it works.
+			<p>To get started and learn more about our service, visit our about page at <a href="https://cinesync.me/dashboard/about">https://cinesync.me/dashboard/about</a>. There you can find information about our application and how it works.
 			<br/>If you have any questions or need assistance, please don't hesitate to reach out to our team at <a href="mailto:cinesync@proton.me">cinesync@proton.me</a>.</p>
 			<p>We look forward to seeing you thrive in our community and hope you enjoy every moment of your journey with us.</p>
 			<p>With love,</p>
@@ -94,7 +94,7 @@ export class EmailService {
 			</style>
 			<p>Hi there ${users},</p>
 			<p>${listOwner} has shared the movie list "${listId}" with you on CineSync! 🎬</p>
-			<p>Click <a href="https://cinesync.me/lists/${listId}">here</a> to view the list.
+			<p>Click <a href="https://cinesync.me/dashboard/lists/${listId}">here</a> to view the list.
 			<br/>If you have any questions or need assistance, please don't hesitate to reach out to our team at <a href="mailto:cinesync@proton.me">cinesync@proton.me</a>.</p>
 			<p>Enjoy exploring the movies!</p>
 			<p>With love,</p>
