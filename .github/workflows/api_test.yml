@@ -41,7 +41,7 @@ jobs:
       - name: Run tests
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           MAILGUN_DOMAIN: ${{ secrets.MAILGUN_DOMAIN }}
           MAILGUN_KEY: ${{ secrets.MAILGUN_KEY }}
         run: |

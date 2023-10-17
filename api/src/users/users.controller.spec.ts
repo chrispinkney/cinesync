@@ -59,7 +59,7 @@ describe('UsersController', () => {
 			signup: (createUser: CreateUserDto) => {
 				return Promise.resolve({ id: '-1', ...createUser } as User);
 			},
-			signin: (username: string, email: string) => {
+			validateUser: (username: string, email: string) => {
 				return Promise.resolve({ id: '-1', username, email } as User);
 			},
 		};
@@ -191,7 +191,7 @@ describe('UsersController', () => {
 	});
 
 	it('signin throws an error if invalid credentials are provided', async () => {
-		fakeAuthService.signin = () => {
+		fakeAuthService.validateUser = () => {
 			return Promise.reject(new BadRequestException());
 		};
 
