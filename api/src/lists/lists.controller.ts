@@ -41,6 +41,7 @@ export class ListsController {
 	@UseGuards(AuthGuard)
 	@Get('/')
 	getLists(@CurrentUser() user: UserDto) {
+		console.log(`ListsController  getLists  user:`, user);
 		return this.listsService.getLists(user.id);
 	}
 

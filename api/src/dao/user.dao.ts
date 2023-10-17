@@ -7,6 +7,7 @@ export class UserDao {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getUser(id: string) {
+		console.log(`UserDao  getUser  id:`, id);
 		return await this.prisma.user.findUniqueOrThrow({
 			where: { id },
 		});

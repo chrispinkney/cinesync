@@ -5,27 +5,29 @@ import {
 	Body,
 	Get,
 	Post,
-	Patch,
 	Delete,
-	UseInterceptors,
 	Session,
 	UseGuards,
 	HttpCode,
 	HttpStatus,
+	Res,
+	Req,
+	BadRequestException,
 } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '../guards/auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
-import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { SigninUserDto } from './dtos/signin-user.dto';
 import { ListsService } from '../lists/lists.service';
+import { Response, Request } from 'express';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
-@UseInterceptors(RemoveFieldsInterceptor)
+// @UseInterceptors(RemoveFieldsInterceptor)
 @Controller('auth')
 export class UsersController {
 	constructor(
@@ -56,8 +58,13 @@ export class UsersController {
 	@UseGuards(AuthGuard)
 	@Post('/signout')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	signout(@Session() session: Record<string, null>) {
+	signout(
+		@Session() session: Record<string, null>,
+		@Res({ passthrough: true }) response: Response, // {passthrough: true} apparently sends the cookie to the frontend
+	) {
 		session.userId = null;
+		// response.clearCookie('jwt');
+		response.setHeader('Authorization', '');
 	}
 
 	@Post('/signup')
@@ -73,20 +80,30 @@ export class UsersController {
 		return user;
 	}
 
+	@UseGuards(LocalAuthGuard)
 	@Post('/signin')
 	@HttpCode(HttpStatus.OK)
 	async signin(
-		@Body() body: SigninUserDto,
-		@Session() session: Record<string, string>,
+		// @Body() body: SigninUserDto,
+		// @Session() session: Record<string, string>,
+		// @Res({ passthrough: true }) response: Response, // {passthrough: true} apparently sends the cookie to the frontend
+		@Req() req: Request,
 	) {
-		const user = await this.authService.signin(body.email, body.password);
-		session.userId = user.id;
+		if (!req.user) throw new BadRequestException('req contains no user');
+		console.log(`UsersController  req.user:`, req.user);
+		const user = await this.authService.login(req.user);
+		// session.userId = user.id;
 
 		return user;
 	}
 
+	@UseGuards(JwtAuthGuard)
+	@Get('/user/profile')
+	getProfile(@Req() req: Request) {
+		return req.user;
+	}
+
 	@UseGuards(AuthGuard)
-	@Patch('/:id')
 	updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
 		return this.usersService.updateUser(id, body);
 	}
@@ -98,6 +115,7 @@ export class UsersController {
 		@Param('id') id: string,
 		@Session() session: Record<string, null>,
 		@CurrentUser() user: CreateUserDto,
+		@Res({ passthrough: true }) response: Response, // {passthrough: true} apparently sends the cookie to the frontend
 	) {
 		// delete all lists associated with user
 		const userLists = await this.listsService.getLists(id);
@@ -108,6 +126,6 @@ export class UsersController {
 		// delete user
 		await this.usersService.deleteUser(id);
 		await this.emailService.sendAccountDeletionEmail(user.email);
-		return this.signout(session);
+		return this.signout(session, response);
 	}
 }
