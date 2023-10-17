@@ -55,6 +55,7 @@ const Header = () => {
 							width={150}
 							alt="CineSync Logo"
 							style={{ margin: '1px' }}
+							priority={true}
 						/>
 					</Link>
 				</Box>
