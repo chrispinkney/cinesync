@@ -7,7 +7,7 @@ export class ListAuthorizationGuard implements CanActivate {
 
 	async canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest();
-		const { currentUser } = request;
+		const { user } = request;
 
 		const listId =
 			parseInt(request.params.listId) || parseInt(request.query.listId);
@@ -19,25 +19,20 @@ export class ListAuthorizationGuard implements CanActivate {
 			},
 		});
 
-		// allow access if list is public and no user is logged in
-		if (!list.is_private && !currentUser) {
-			return true;
-		}
-
 		// allow access if list is public and user is logged in
-		if (!list.is_private && currentUser) {
+		if (!list.is_private && user) {
 			return true;
 		}
 
 		// restrict access if no user is logged in
-		if (!currentUser) {
+		if (!user) {
 			return false;
 		}
 
 		// check if list belongs to the user or has been shared with the user
-		const isCreator = list.creator_id === currentUser.id;
+		const isCreator = list.creator_id === user.id;
 		const isSharedWithUser =
-			list.User.find((user) => user.id === currentUser.id) !== undefined;
+			list.User.find((user) => user.id === user.id) !== undefined;
 
 		return isCreator || isSharedWithUser;
 	}

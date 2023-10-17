@@ -19,11 +19,12 @@ describe('Authentication System (e2e)', () => {
 		await app.close();
 	});
 
-	it('handles a signup and delete request', async () => {
+	it('handles a signup, signin, and delete requests', async () => {
 		const username = 'asdf';
 		const email = 'asdf@asdf.asdf';
 
-		const res = await request(app.getHttpServer())
+		// signup
+		await request(app.getHttpServer())
 			.post('/auth/signup')
 			.send({
 				username,
@@ -32,13 +33,20 @@ describe('Authentication System (e2e)', () => {
 			})
 			.expect(201);
 
-		// delete user after creation
-		const cookie = res.headers['set-cookie'];
-		const id = res.body.id;
+		// signin
+		const signin = await request(app.getHttpServer())
+			.post('/auth/signin')
+			.send({
+				email,
+				password: 'asdf',
+			})
+			.expect(200);
 
+		// delete
+		const token = `Bearer ${signin.body.access_token}`;
 		await request(app.getHttpServer())
-			.delete(`/auth/${id}`)
-			.set('Cookie', cookie)
+			.delete('/auth/delete')
+			.set('Authorization', token)
 			.expect(204);
 	});
 
@@ -46,7 +54,8 @@ describe('Authentication System (e2e)', () => {
 		const username = 'asdf';
 		const email = 'asdf@asdf.com';
 
-		const res = await request(app.getHttpServer())
+		// signup
+		await request(app.getHttpServer())
 			.post('/auth/signup')
 			.send({
 				username,
@@ -55,22 +64,30 @@ describe('Authentication System (e2e)', () => {
 			})
 			.expect(201);
 
-		const cookie = res.headers['set-cookie'];
-		const id = res.body.id;
-
-		const { body } = await request(app.getHttpServer())
-			.get('/auth/whoami')
-			.set('Cookie', cookie)
+		// signin
+		const signin = await request(app.getHttpServer())
+			.post('/auth/signin')
+			.send({
+				email,
+				password: 'asdf',
+			})
 			.expect(200);
 
-		expect(body.id).toEqual(id);
-		expect(body.username).toEqual(username);
-		expect(body.email).toEqual(email);
+		// whoami
+		const token = `Bearer ${signin.body.access_token}`;
+		const whoami = await request(app.getHttpServer())
+			.get('/auth/whoami')
+			.set('Authorization', token)
+			.expect(200);
+
+		expect(whoami.body.id).toBeDefined();
+		expect(whoami.body.username).toEqual(username);
+		expect(whoami.body.email).toEqual(email);
 
 		// delete user after creation
 		await request(app.getHttpServer())
-			.delete(`/auth/${id}`)
-			.set('Cookie', cookie)
+			.delete('/auth/delete')
+			.set('Authorization', token)
 			.expect(204);
 	});
 });

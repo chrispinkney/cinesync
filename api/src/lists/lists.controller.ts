@@ -11,18 +11,20 @@ import {
 	Query,
 	HttpCode,
 	HttpStatus,
+	Req,
+	BadRequestException,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { ListsService } from './lists.service';
 import { EmailService } from '../email/email.service';
-import { AuthGuard } from '../guards/auth.guard';
 import { ListAuthorizationGuard } from '../guards/list.guard';
 import { RemoveListFieldsInterceptor } from './interceptors/remove-list-fields.interceptor';
 import { RemoveListCreateFieldsInterceptor } from './interceptors/remove-list-create-fields.interceptor';
-import { CurrentUser } from '../users/decorators/current-user.decorator';
 import { CreateListDto } from './dtos/create-list.dto';
 import { UpdateListDto } from './dtos/update-list.dto';
-import { UserDto } from '../users/dtos/user.dto';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('lists')
 export class ListsController {
 	constructor(
@@ -38,43 +40,45 @@ export class ListsController {
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(AuthGuard)
 	@Get('/')
-	getLists(@CurrentUser() user: UserDto) {
-		return this.listsService.getLists(user.id);
+	getLists(@Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.listsService.getLists(req.user.id);
 	}
 
 	@UseInterceptors(RemoveListCreateFieldsInterceptor)
-	@UseGuards(AuthGuard)
 	@Post('/create')
-	createList(@Body() body: CreateListDto, @CurrentUser() user: UserDto) {
-		return this.listsService.createList(body, user.id);
+	createList(@Body() body: CreateListDto, @Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.listsService.createList(body, req.user.id);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(AuthGuard, ListAuthorizationGuard)
+	@UseGuards(ListAuthorizationGuard)
 	@Post('/toggleShare')
 	async toggleShareList(
 		@Query('listId') listId: string,
 		@Query('email') email: string,
-		@CurrentUser() user: UserDto,
+		@Req() req: Request,
 	) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+
 		const list = await this.listsService.toggleShareList(
 			parseInt(listId),
 			email,
 		);
 
 		await this.emailService.sendListSharingEmail(
-			[email, user.email],
+			[email, req.user.email],
 			listId,
-			user.username,
+			req.user.username,
 		);
 
 		return list;
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(ListAuthorizationGuard, AuthGuard)
+	@UseGuards(ListAuthorizationGuard)
 	@Patch('/updatePrivacy/:listId')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	updateListPrivacy(@Param('listId') listId: string) {
@@ -82,22 +86,23 @@ export class ListsController {
 	}
 
 	@UseInterceptors(RemoveListCreateFieldsInterceptor)
-	@UseGuards(ListAuthorizationGuard, AuthGuard)
+	@UseGuards(ListAuthorizationGuard)
 	@Patch('/update/:listId')
 	updateList(@Param('listId') listId: string, @Body() body: UpdateListDto) {
 		return this.listsService.updateList(parseInt(listId), body);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(AuthGuard, ListAuthorizationGuard)
+	@UseGuards(ListAuthorizationGuard)
 	@Delete('/delete/:listId')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	deleteList(@Param('listId') listId: string, @CurrentUser() user: UserDto) {
-		return this.listsService.deleteList(parseInt(listId), user.id);
+	deleteList(@Param('listId') listId: string, @Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.listsService.deleteList(parseInt(listId), req.user.id);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(AuthGuard, ListAuthorizationGuard)
+	@UseGuards(ListAuthorizationGuard)
 	@Delete('/deleteMovie')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	deleteMovie(

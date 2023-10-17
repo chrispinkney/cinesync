@@ -69,7 +69,7 @@ describe('AuthService', () => {
 
 	it('throws if signin is called with an unused email', async () => {
 		await expect(
-			service.signin('asdflkj@asdflkj.com', 'asdflkj'),
+			service.validateUser('asdflkj@asdflkj.com', 'asdflkj'),
 		).rejects.toThrow(BadRequestException);
 	});
 
@@ -81,7 +81,7 @@ describe('AuthService', () => {
 		});
 
 		await expect(
-			service.signin('hey@sailor.com', 'wrongpassword'),
+			service.validateUser('hey@sailor.com', 'wrongpassword'),
 		).rejects.toThrow(BadRequestException);
 	});
 
@@ -92,7 +92,7 @@ describe('AuthService', () => {
 			password: 'test',
 		});
 
-		const user = await service.signin('test@test.test', 'test');
+		const user = await service.validateUser('test@test.test', 'test');
 		expect(user).toBeDefined();
 	});
 });

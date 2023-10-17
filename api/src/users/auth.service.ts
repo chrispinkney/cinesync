@@ -1,11 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class AuthService {
-	constructor(private usersService: UsersService) {}
+	constructor(
+		private usersService: UsersService,
+		private jwtService: JwtService,
+		private configService: ConfigService,
+	) {}
 
 	async signup(createUser: CreateUserDto) {
 		// See if email is in use
@@ -24,7 +30,7 @@ export class AuthService {
 		return user;
 	}
 
-	async signin(email: string, password: string) {
+	async validateUser(email: string, password: string) {
 		try {
 			const user = await this.usersService.getUserByEmail(email);
 
@@ -38,5 +44,21 @@ export class AuthService {
 		} catch (error) {
 			throw new BadRequestException('Email or Password are incorrect');
 		}
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	async login(user: any) {
+		const payload = { username: user.email, sub: user.id };
+
+		return {
+			access_token: this.jwtService.sign(payload, {
+				secret: this.configService.get<string>('JWT_SECRET'),
+				...(this.configService.get<string>('NODE_ENV') === 'production'
+					? {
+							expiresIn: '7d',
+					  }
+					: null),
+			}),
+		};
 	}
 }

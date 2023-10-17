@@ -5,25 +5,40 @@ import {
 	Body,
 	Get,
 	Post,
-	Patch,
 	Delete,
-	UseInterceptors,
-	Session,
 	UseGuards,
 	HttpCode,
 	HttpStatus,
+	Res,
+	Req,
+	BadRequestException,
+	UseInterceptors,
+	Patch,
 } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '../guards/auth.guard';
 import { AdminGuard } from '../guards/admin.guard';
-import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
-import { CurrentUser } from './decorators/current-user.decorator';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { SigninUserDto } from './dtos/signin-user.dto';
 import { ListsService } from '../lists/lists.service';
+import { Response, Request } from 'express';
+import { LocalAuthGuard } from '../guards/local-auth.guard';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
+import { Role } from '@prisma/client';
+
+declare global {
+	// eslint-disable-next-line @typescript-eslint/no-namespace
+	namespace Express {
+		interface User {
+			id: string;
+			username: string;
+			email: string;
+			role: Role;
+		}
+	}
+}
 
 @UseInterceptors(RemoveFieldsInterceptor)
 @Controller('auth')
@@ -35,79 +50,74 @@ export class UsersController {
 		private listsService: ListsService,
 	) {}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard)
 	@Get('/whoami')
-	whoAmI(@CurrentUser() user: CreateUserDto) {
-		return user;
+	whoAmI(@Req() req: Request) {
+		return req.user;
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard)
 	@Get('/:id')
 	fetchUserById(@Param('id') id: string) {
 		return this.usersService.getUser(id);
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard)
 	@Get()
 	fetchUserByEmail(@Query('email') email: string) {
 		return this.usersService.getUserByEmail(email);
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(JwtAuthGuard)
 	@Post('/signout')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	signout(@Session() session: Record<string, null>) {
-		session.userId = null;
+	signout(@Res({ passthrough: true }) response: Response) {
+		response.setHeader('Authorization', '');
 	}
 
 	@Post('/signup')
-	async signup(
-		@Body() body: CreateUserDto,
-		@Session() session: Record<string, string>,
-	) {
+	async signup(@Body() body: CreateUserDto) {
 		const user = await this.authService.signup(body);
-		session.userId = user.id;
 
 		await this.emailService.sendSignupEmail(body.email, body.username);
 
 		return user;
 	}
 
+	@UseGuards(LocalAuthGuard)
 	@Post('/signin')
 	@HttpCode(HttpStatus.OK)
-	async signin(
-		@Body() body: SigninUserDto,
-		@Session() session: Record<string, string>,
-	) {
-		const user = await this.authService.signin(body.email, body.password);
-		session.userId = user.id;
+	async signin(@Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		const user = await this.authService.login(req.user);
 
 		return user;
 	}
 
-	@UseGuards(AuthGuard)
-	@Patch('/:id')
-	updateUser(@Param('id') id: string, @Body() body: UpdateUserDto) {
-		return this.usersService.updateUser(id, body);
+	@UseGuards(JwtAuthGuard)
+	@Patch('/update')
+	updateUser(@Req() req: Request, @Body() body: UpdateUserDto) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.usersService.updateUser(req.user.id, body);
 	}
 
-	@UseGuards(AuthGuard, AdminGuard)
+	@UseGuards(JwtAuthGuard, AdminGuard)
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Delete('/:id')
-	async deleteUser(
-		@Param('id') id: string,
-		@Session() session: Record<string, null>,
-		@CurrentUser() user: CreateUserDto,
-	) {
+	@Delete('/delete')
+	async deleteUser(@Req() req: Request) {
 		// delete all lists associated with user
-		const userLists = await this.listsService.getLists(id);
+		if (!req.user) throw new BadRequestException('req contains no user');
+
+		const userLists = await this.listsService.getLists(req.user.id);
 		await Promise.all(
-			userLists.List.map((list) => this.listsService.deleteList(list.id, id)),
+			userLists.List.map((list) =>
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				this.listsService.deleteList(list.id, req.user!.id),
+			),
 		);
 
 		// delete user
-		await this.usersService.deleteUser(id);
-		await this.emailService.sendAccountDeletionEmail(user.email);
-		return this.signout(session);
+		await this.usersService.deleteUser(req.user.id);
+		await this.emailService.sendAccountDeletionEmail(req.user.email);
 	}
 }

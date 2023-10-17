@@ -5,15 +5,15 @@ import { Role } from '@prisma/client';
 export class AdminGuard implements CanActivate {
 	canActivate(context: ExecutionContext): boolean {
 		const request = context.switchToHttp().getRequest();
-		const user = request.currentUser;
+		const user = request.user;
 
-		// Allow administrators to proceed
+		// allow administrators to proceed
 		if (user.role === Role.ADMIN) {
 			return true;
 		}
 
 		// check if the user is trying to access their own account
-		const userId = request.params.id;
+		const userId = request.user.id;
 		if (user.id === userId) {
 			return true;
 		}
