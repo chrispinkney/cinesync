@@ -9,6 +9,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 		super({ usernameField: 'email' });
 	}
 
+	// only used for /signin
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	async validate(username: string, password: string) {
 		const user = await this.authService.validateUser(username, password);

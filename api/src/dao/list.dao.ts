@@ -28,6 +28,9 @@ export class ListDao {
 			where: { id: userId },
 			include: {
 				List: {
+					orderBy: {
+						created_at: 'desc',
+					},
 					select: {
 						id: true,
 						name: true,

@@ -1,14 +1,16 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
 	constructor(
 		private usersService: UsersService,
 		private jwtService: JwtService,
+		private configService: ConfigService,
 	) {}
 
 	async signup(createUser: CreateUserDto) {
@@ -50,7 +52,12 @@ export class AuthService {
 
 		return {
 			access_token: this.jwtService.sign(payload, {
-				secret: process.env.JWT_SECRET,
+				secret: this.configService.get<string>('JWT_SECRET'),
+				...(this.configService.get<string>('NODE_ENV') === 'production'
+					? {
+							expiresIn: '7d',
+					  }
+					: null),
 			}),
 		};
 	}

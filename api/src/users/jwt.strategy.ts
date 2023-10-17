@@ -1,10 +1,11 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsersService } from './users.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-	constructor() {
+	constructor(private userService: UsersService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: false,
@@ -14,8 +15,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	async validate(payload: any) {
-		console.log(`JwtStrategy  validate  payload:`, payload);
-		// return more user info via db call later???
-		return { userId: payload.sub, email: payload.username };
+		// set req user object, used in ever route
+		const user = this.userService.getUser(payload.sub);
+
+		if (!user) {
+			throw new UnauthorizedException();
+		}
+
+		return user;
 	}
 }
