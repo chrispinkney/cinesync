@@ -1,22 +1,50 @@
 'use client';
+import { Box } from '@mui/material';
 import { useState, useEffect } from 'react';
+import AuthMain from '../components/Login/AuthMain';
+import { useRouter } from 'next/navigation';
+import { useGlobalContext } from '../Context/store';
 
 const Home = () => {
-	const [hello, setHello] = useState<{ hello: string } | undefined>();
+	const router = useRouter();
+	const { token } = useGlobalContext();
+	const [authenticated, setAuthenticated] = useState(false);
+
+	const authenticationCall = async () => {
+		const headers = { Authorization: `${token}` };
+		const whoami = await fetch('http://localhost:3000/auth/whoami', {
+			method: 'get',
+			headers: { ...headers },
+		});
+
+		if (whoami.status != 401) {
+			setAuthenticated(true);
+			router.push('/dashboard');
+			return;
+		}
+		setAuthenticated(false);
+	};
 
 	useEffect(() => {
-		(async () => {
-			const res = await fetch(
-				process.env.NEXT_PUBLIC_URL || 'http://localhost:3000',
-			);
-			const hello = await res.json();
-			setHello(hello);
-		})();
-	}, []);
+		authenticationCall();
+	}, [router, token]);
+
+	if (authenticated) {
+		return <p>...loading</p>;
+	}
 
 	return (
 		<main>
-			<h1>hello {hello?.hello}</h1>
+			<Box
+				component="main"
+				sx={{
+					flexGrow: 1,
+					height: '100%',
+					width: '100%',
+				}}
+			>
+				<AuthMain authentication={false} />
+			</Box>
 		</main>
 	);
 };
