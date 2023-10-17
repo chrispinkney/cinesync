@@ -30,13 +30,17 @@ const LoginCard = () => {
 		if (validationResult.success) {
 			try {
 				// Send the form data to the backend API for authentication
-				const response = await fetch('http://localhost:3000/auth/signin', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
+				const response = await fetch(
+					`${process.env.NEXT_PUBLIC_URL}/auth/signin` ||
+						'http://localhost:3000/auth/signin',
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(validationResult.data),
 					},
-					body: JSON.stringify(validationResult.data),
-				});
+				);
 				const login_token = await response.json();
 				const headers = { Authorization: `Bearer ${login_token.access_token}` };
 				setToken(headers.Authorization);

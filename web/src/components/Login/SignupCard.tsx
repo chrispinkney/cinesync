@@ -27,13 +27,17 @@ const SignupCard = () => {
 		if (validationResult.success) {
 			try {
 				// Send the form data to the backend API
-				const response = await fetch('http://localhost:3000/auth/signup', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
+				const response = await fetch(
+					`${process.env.NEXT_PUBLIC_URL}/auth/signup` ||
+						'http://localhost:3000/auth/signup',
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(validationResult.data),
 					},
-					body: JSON.stringify(validationResult.data),
-				});
+				);
 
 				if (response.ok) {
 					// need to add alert that account has been created

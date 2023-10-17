@@ -14,10 +14,14 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
 	const authenticationCall = async () => {
 		const headers = { Authorization: `${token}` };
-		const whoami = await fetch('http://localhost:3000/auth/whoami', {
-			method: 'get',
-			headers: { ...headers },
-		});
+		const whoami = await fetch(
+			`${process.env.NEXT_PUBLIC_URL}/auth/whoami` ||
+				'http://localhost:3000/auth/whoami',
+			{
+				method: 'get',
+				headers: { ...headers },
+			},
+		);
 		const whoamiJSON = await whoami.json();
 
 		if (whoamiJSON.statusCode == 401) {
