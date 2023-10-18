@@ -1,6 +1,6 @@
 'use client';
 
-import { useGlobalContext } from '@/context/store';
+import { useGlobalContext } from './store';
 import {
 	Fragment,
 	ReactNode,

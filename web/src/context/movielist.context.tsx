@@ -11,7 +11,7 @@ import {
 	useState,
 } from 'react';
 import { GridRowsProp } from '@mui/x-data-grid';
-import { useGlobalContext } from '@/context/store';
+import { useGlobalContext } from './store';
 
 // Create context as undefined until fetch is completed
 const MovieListContext = createContext<

@@ -1,4 +1,3 @@
-import { useGlobalContext } from '@/context/store';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
@@ -10,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
+import { useGlobalContext } from '../../context/store';
 
 const ListShareModal = ({
 	open,

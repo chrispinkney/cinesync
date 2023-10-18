@@ -13,7 +13,7 @@ import React from 'react';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useTheme } from '@mui/material/styles';
-import { useGlobalContext } from '@/context/store';
+import { useGlobalContext } from '../../context/store';
 
 interface IPlaceHolderUserInfo {
 	username: string;

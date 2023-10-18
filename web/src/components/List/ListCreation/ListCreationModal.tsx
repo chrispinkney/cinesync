@@ -11,7 +11,7 @@ import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { useRouter } from 'next/navigation';
-import { useGlobalContext } from '@/context/store';
+import { useGlobalContext } from '../../../context/store';
 
 const ListCreationModal = ({
 	open,
