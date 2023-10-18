@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 			default: 'Cinesync - Synchronized Film Watchlists',
 		},
 		description: 'Create and share movie lists with friends.',
-		url: 'https://cinemasync.me/',
+		url: 'https://cinesync.me/',
 		type: 'website',
 		images: [
 			{
