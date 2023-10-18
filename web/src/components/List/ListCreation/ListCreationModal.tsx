@@ -55,13 +55,11 @@ const ListCreationModal = ({
 					`Unable to create list: ${response.status} - ${response.statusText}`,
 				);
 			} else {
+				let newListId: number = (await response.json()).list.id;
 				setListName('');
 				setErrorText('');
 				handleClose();
-				// New list not returned - will be corrected in future
-				// let newListId: number = (await response.json()).List[0].id;
-				// push(`/dashboard/lists/${newListId}`);
-				alert('Cannot redirect without new list id, refresh manually');
+				push(`/dashboard/list/${newListId}`);
 			}
 		}
 	};
