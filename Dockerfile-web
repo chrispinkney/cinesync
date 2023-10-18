@@ -39,7 +39,7 @@ FROM build AS release
 
 # GET deployment code from previous containers
 COPY --from=dependencies /cinesync/node_modules /cinesync/node_modules
-COPY --from=builder /cinesync/out /cinesync/out
+COPY --from=builder /cinesync/.next /cinesync/.next
 
 # Running cinesync when the image gets built
 CMD ["sh", "-c", "npm run start"]

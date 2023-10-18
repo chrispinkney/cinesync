@@ -9,7 +9,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { useGlobalContext } from '../../context/store';
+import { useGlobalContext } from '@/context/store';
 
 const ListDeleteConfirmationModal = ({
 	open,

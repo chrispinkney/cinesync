@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Header from '@/components/Header/Header';
 import Sidebar from '@/components/Sidebar/Sidebar';
 import Loading from '@/app/loading';
-import { useGlobalContext } from '../../context/store';
+import { useGlobalContext } from '@/context/store';
 import { useRouter } from 'next/navigation';
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {

@@ -3,7 +3,7 @@ import { Box } from '@mui/material';
 import { useState, useEffect } from 'react';
 import AuthMain from '../components/Login/AuthMain';
 import { useRouter } from 'next/navigation';
-import { useGlobalContext } from '../context/store';
+import { useGlobalContext } from '@/context/store';
 
 const Home = () => {
 	const router = useRouter();

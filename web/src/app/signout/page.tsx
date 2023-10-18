@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import Loading from '../loading';
 import { useRouter } from 'next/navigation';
-import { useGlobalContext } from '../../context/store';
+import { useGlobalContext } from '@/context/store';
 
 const Signout = () => {
 	const router = useRouter();

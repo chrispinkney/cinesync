@@ -16,7 +16,7 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { Fragment, useState } from 'react';
 import MovieListTableEditToolbar from './MovieListTableEditToolbar';
 import { useMovieList } from '@/context/movielist.context';
-import { useGlobalContext } from '../../../context/store';
+import { useGlobalContext } from '@/context/store';
 
 const MovieListTable = () => {
 	const {
