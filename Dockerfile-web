@@ -28,6 +28,7 @@ FROM dependencies as builder
 # Copy necessary files to build cinesync
 COPY web/ .
 COPY web/next.config.js .
+COPY web/tsconfig.json .
 
 # run build
 RUN npm run build
