@@ -10,6 +10,7 @@ WORKDIR "/cinesync"
 # Copy package files
 COPY web/package.json .
 COPY web/next.config.js .
+COPY web/public public
 
 # Context: Dependencies
 FROM build AS dependencies
@@ -27,6 +28,7 @@ FROM dependencies as builder
 # Copy necessary files to build cinesync
 COPY web/ .
 COPY web/next.config.js .
+COPY web/tsconfig.json .
 
 # run build
 RUN npm run build
@@ -37,7 +39,7 @@ FROM build AS release
 
 # GET deployment code from previous containers
 COPY --from=dependencies /cinesync/node_modules /cinesync/node_modules
-COPY --from=builder /cinesync/out /cinesync/out
+COPY --from=builder /cinesync/.next /cinesync/.next
 
 # Running cinesync when the image gets built
 CMD ["sh", "-c", "npm run start"]

@@ -10,7 +10,7 @@ import { LoginFormData, validateLoginForm } from './loginValidation';
 import styles from './authMain.module.css';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useGlobalContext } from '../../Context/store';
+import { useGlobalContext } from '@/context/store';
 
 const LoginCard = () => {
 	const { token, setToken } = useGlobalContext();

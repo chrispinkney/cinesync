@@ -1,6 +1,4 @@
 'use client';
-import { useGlobalContext } from '@/Context/store';
-import { useLists } from '@/context/lists.context';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
@@ -11,6 +9,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useGlobalContext } from '@/context/store';
 
 const ListDeleteConfirmationModal = ({
 	open,
