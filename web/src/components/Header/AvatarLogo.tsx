@@ -1,0 +1,108 @@
+'use client';
+import { MouseEvent, useState, useEffect } from 'react';
+import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Link from 'next/link';
+import React from 'react';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { useTheme } from '@mui/material/styles';
+import { useGlobalContext } from '@/Context/store';
+
+interface IPlaceHolderUserInfo {
+	username: string;
+	initials: string;
+}
+
+const HeaderNavigationLinks: NavigationLink[] = [
+	{ text: 'Settings', href: '/settings', icon: SettingsIcon },
+	{ text: 'Logout', href: '/signout', icon: LogoutIcon },
+];
+
+const AvatarLogo = () => {
+	const { token } = useGlobalContext();
+	const theme = useTheme();
+	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+	const [userInfo, setUserInfo] = useState({ username: '', initials: '' });
+
+	const getUser = async () => {
+		const headers = { Authorization: `${token}` };
+		const whoami = await fetch(
+			`${process.env.NEXT_PUBLIC_URL}/auth/whoami` ||
+				'http://localhost:3000/auth/whoami',
+			{
+				method: 'get',
+				headers: { ...headers },
+			},
+		);
+		const whoamiJSON = await whoami.json();
+
+		const placeHolderUserInfo: IPlaceHolderUserInfo = {
+			username: whoamiJSON.username,
+			initials: whoamiJSON.username[0].toUpperCase(),
+		};
+		setUserInfo(placeHolderUserInfo);
+	};
+
+	useEffect(() => {
+		getUser();
+	}, []);
+
+	const handleOpenUserMenu = (event: MouseEvent<HTMLElement>) => {
+		setAnchorElUser(event.currentTarget);
+	};
+
+	const handleCloseUserMenu = () => {
+		setAnchorElUser(null);
+	};
+	return (
+		<Box sx={{ flexGrow: 0 }}>
+			<Tooltip title="Open settings">
+				<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+					<Avatar
+						sx={{
+							bgcolor: theme.palette.primary.main,
+							color: theme.palette.text.primary,
+						}}
+						alt={userInfo.username}
+					>
+						{userInfo.initials}
+					</Avatar>
+				</IconButton>
+			</Tooltip>
+			<Menu
+				sx={{ mt: '45px' }}
+				id="menu-appbar"
+				anchorEl={anchorElUser}
+				anchorOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+				}}
+				keepMounted
+				transformOrigin={{
+					vertical: 'top',
+					horizontal: 'right',
+				}}
+				open={Boolean(anchorElUser)}
+				onClose={handleCloseUserMenu}
+			>
+				{HeaderNavigationLinks.map(({ text, href, icon: Icon }) => (
+					<MenuItem key={text} component={Link} href={href}>
+						<ListItemIcon>
+							<Icon />
+						</ListItemIcon>
+						<ListItemText primary={text} />
+					</MenuItem>
+				))}
+			</Menu>
+		</Box>
+	);
+};
+
+export default AvatarLogo;
