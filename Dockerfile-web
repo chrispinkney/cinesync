@@ -10,6 +10,7 @@ WORKDIR "/cinesync"
 # Copy package files
 COPY web/package.json .
 COPY web/next.config.js .
+COPY web/public public
 
 # Context: Dependencies
 FROM build AS dependencies

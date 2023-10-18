@@ -1,6 +1,5 @@
 'use client';
-import { useGlobalContext } from '@/Context/store';
-import { useLists } from '@/context/lists.context';
+import { useGlobalContext } from '@/context/store';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import Box from '@mui/material/Box';
