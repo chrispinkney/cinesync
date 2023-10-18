@@ -1,7 +1,7 @@
 'use client';
 import { ReactNode } from 'react';
 import ThemeRegistry from '../../theme/ThemeRegistry';
-import { GlobalContextProvider } from '../context/store';
+import { GlobalContextProvider } from '@/context/store';
 
 const RootLayout = ({ children }: { children: ReactNode }) => {
 	return (
