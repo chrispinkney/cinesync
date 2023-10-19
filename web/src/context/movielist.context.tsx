@@ -29,7 +29,7 @@ export const MovieListContextProvider = ({
 	listId,
 }: {
 	children: ReactNode;
-	listId: number;
+	listId: string;
 }) => {
 	const [movieList, setMovieList] = useState<MovieList | null>(null);
 	const [movieListTableRows, setMovieListTableRows] = useState<GridRowsProp>(

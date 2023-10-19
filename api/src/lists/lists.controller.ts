@@ -36,7 +36,7 @@ export class ListsController {
 	@UseGuards(ListAuthorizationGuard)
 	@Get('/:listId')
 	getList(@Param('listId') listId: string) {
-		return this.listsService.getList(parseInt(listId));
+		return this.listsService.getList(listId);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
@@ -63,10 +63,7 @@ export class ListsController {
 	) {
 		if (!req.user) throw new BadRequestException('req contains no user');
 
-		const list = await this.listsService.toggleShareList(
-			parseInt(listId),
-			email,
-		);
+		const list = await this.listsService.toggleShareList(listId, email);
 
 		await this.emailService.sendListSharingEmail(
 			[email, req.user.email],
@@ -82,14 +79,14 @@ export class ListsController {
 	@Patch('/updatePrivacy/:listId')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	updateListPrivacy(@Param('listId') listId: string) {
-		return this.listsService.updateListPrivacy(parseInt(listId));
+		return this.listsService.updateListPrivacy(listId);
 	}
 
 	@UseInterceptors(RemoveListCreateFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
 	@Patch('/update/:listId')
 	updateList(@Param('listId') listId: string, @Body() body: UpdateListDto) {
-		return this.listsService.updateList(parseInt(listId), body);
+		return this.listsService.updateList(listId, body);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
@@ -98,7 +95,7 @@ export class ListsController {
 	@HttpCode(HttpStatus.NO_CONTENT)
 	deleteList(@Param('listId') listId: string, @Req() req: Request) {
 		if (!req.user) throw new BadRequestException('req contains no user');
-		return this.listsService.deleteList(parseInt(listId), req.user.id);
+		return this.listsService.deleteList(listId, req.user.id);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
@@ -109,9 +106,6 @@ export class ListsController {
 		@Query('listId') listId: string,
 		@Query('movieId') movieId: string,
 	) {
-		return this.listsService.deleteListItem(
-			parseInt(listId),
-			parseInt(movieId),
-		);
+		return this.listsService.deleteListItem(listId, movieId);
 	}
 }

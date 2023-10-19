@@ -7,7 +7,7 @@ import { ListDao } from '../dao/list.dao';
 export class ListsService {
 	constructor(private listDao: ListDao) {}
 
-	async getList(listId: number) {
+	async getList(listId: string) {
 		return await this.listDao.getList(listId);
 	}
 
@@ -19,23 +19,23 @@ export class ListsService {
 		return await this.listDao.createList(createList, userId);
 	}
 
-	async updateListPrivacy(listId: number) {
+	async updateListPrivacy(listId: string) {
 		return await this.listDao.updateListPrivacy(listId);
 	}
 
-	async updateList(listId: number, updateListDto: UpdateListDto) {
+	async updateList(listId: string, updateListDto: UpdateListDto) {
 		return await this.listDao.updateList(listId, updateListDto);
 	}
 
-	async deleteList(listId: number, userId: string) {
+	async deleteList(listId: string, userId: string) {
 		return await this.listDao.deleteList(listId, userId);
 	}
 
-	async deleteListItem(listId: number, movieId: number) {
+	async deleteListItem(listId: string, movieId: string) {
 		return await this.listDao.deleteListItem(listId, movieId);
 	}
 
-	async toggleShareList(listId: number, email: string) {
+	async toggleShareList(listId: string, email: string) {
 		return await this.listDao.toggleShareList(listId, email);
 	}
 }

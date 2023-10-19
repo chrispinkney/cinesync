@@ -9,8 +9,7 @@ export class ListAuthorizationGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest();
 		const { user } = request;
 
-		const listId =
-			parseInt(request.params.listId) || parseInt(request.query.listId);
+		const listId = request.params.listId || request.query.listId;
 
 		const list = await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },

@@ -55,7 +55,7 @@ const ListCreationModal = ({
 					`Unable to create list: ${response.status} - ${response.statusText}`,
 				);
 			} else {
-				let newListId: number = (await response.json()).list.id;
+				let newListId: string = (await response.json()).list.id;
 				setListName('');
 				setErrorText('');
 				handleClose();
