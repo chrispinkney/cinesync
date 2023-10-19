@@ -35,6 +35,7 @@ model User {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   role       Role
+	avatar     Bytes?
   List       List[]
 }
 

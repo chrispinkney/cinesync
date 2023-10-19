@@ -1,6 +1,5 @@
 import {
 	Controller,
-	Param,
 	Query,
 	Body,
 	Get,
@@ -14,7 +13,13 @@ import {
 	BadRequestException,
 	UseInterceptors,
 	Patch,
+	UploadedFile,
+	ParseFilePipe,
+	MaxFileSizeValidator,
+	FileTypeValidator,
 } from '@nestjs/common';
+import { Role } from '@prisma/client';
+import { Express } from 'express';
 import { EmailService } from '../email/email.service';
 import { UsersService } from './users.service';
 import { AuthService } from './auth.service';
@@ -26,7 +31,7 @@ import { Response, Request } from 'express';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
-import { Role } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
@@ -57,15 +62,22 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Get('/:id')
-	fetchUserById(@Param('id') id: string) {
-		return this.usersService.getUser(id);
+	@Get('/')
+	fetchUserById(@Query('userId') userId: string) {
+		return this.usersService.getUser(userId);
 	}
 
 	@UseGuards(JwtAuthGuard)
 	@Get()
 	fetchUserByEmail(@Query('email') email: string) {
 		return this.usersService.getUserByEmail(email);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get('/download')
+	async downloadAvatar(@Req() req: Request, @Res() res: Response) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.usersService.getAvatar(req.user.id, res);
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -95,6 +107,26 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@HttpCode(HttpStatus.CREATED)
+	@Post('/upload')
+	@UseInterceptors(FileInterceptor('image'))
+	async uploadAvatar(
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB
+					new FileTypeValidator({ fileType: '.(png|jpeg|jpg|gif)' }),
+				],
+			}),
+		)
+		file: Express.Multer.File,
+		@Req() req: Request,
+	) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.usersService.updateAvatar(req.user.id, file);
+	}
+
+	@UseGuards(JwtAuthGuard)
 	@Patch('/update')
 	updateUser(@Req() req: Request, @Body() body: UpdateUserDto) {
 		if (!req.user) throw new BadRequestException('req contains no user');
@@ -119,5 +151,13 @@ export class UsersController {
 		// delete user
 		await this.usersService.deleteUser(req.user.id);
 		await this.emailService.sendAccountDeletionEmail(req.user.email);
+	}
+
+	@UseGuards(JwtAuthGuard, AdminGuard)
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@Delete('/deleteAvatar')
+	async deleteUserAvatar(@Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.usersService.deleteUserAvatar(req.user.id);
 	}
 }

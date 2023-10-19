@@ -6,15 +6,15 @@ import { CreateUserDto } from '../users/dtos/create-user.dto';
 export class UserDao {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async getUser(id: string) {
+	async getUser(userId: string) {
 		return await this.prisma.user.findUniqueOrThrow({
-			where: { id },
+			where: { id: userId },
 		});
 	}
 
-	async getUserByEmail(email: string) {
+	async getUserByEmail(userEmail: string) {
 		return await this.prisma.user.findUniqueOrThrow({
-			where: { email },
+			where: { email: userEmail },
 		});
 	}
 
@@ -27,16 +27,30 @@ export class UserDao {
 		});
 	}
 
-	async updateUser(id: string, attrs: Partial<CreateUserDto>) {
+	async updateUser(userId: string, attrs: Partial<CreateUserDto>) {
 		return await this.prisma.user.update({
-			where: { id },
+			where: { id: userId },
 			data: attrs,
 		});
 	}
 
-	async deleteUser(id: string) {
+	async updateAvatar(userId: string, avatar: Buffer) {
+		await this.prisma.user.update({
+			where: { id: userId },
+			data: { avatar },
+		});
+	}
+
+	async deleteUser(userId: string) {
 		return await this.prisma.user.delete({
-			where: { id },
+			where: { id: userId },
+		});
+	}
+
+	async deleteUserAvatar(userId: string) {
+		return await this.prisma.user.update({
+			where: { id: userId },
+			data: { avatar: null },
 		});
 	}
 }
