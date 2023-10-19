@@ -31,7 +31,7 @@ const ListDeleteConfirmationModal = ({
 	const handleSubmit = async () => {
 		// Send delete request to api
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/lists/delete/${listId}`,
+			`${process.env.NEXT_PUBLIC_URL}/lists/delete`,
 			{
 				method: 'DELETE',
 				headers: {
@@ -39,6 +39,9 @@ const ListDeleteConfirmationModal = ({
 					'Content-Type': 'application/json',
 					Authorization: `${token}`,
 				},
+				body: JSON.stringify({
+					listId: listId,
+				}),
 			},
 		);
 		if (!response.ok) {

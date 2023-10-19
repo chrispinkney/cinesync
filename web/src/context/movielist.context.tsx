@@ -40,7 +40,10 @@ export const MovieListContextProvider = ({
 	// refreshMovieListContext will be provided so that child components can easily re-fetch data so page will be re-rendered
 	const refreshMovieListContext = async () => {
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/lists/${listId}`,
+			`${process.env.NEXT_PUBLIC_URL}/lists/list?` +
+				new URLSearchParams({
+					listId: listId,
+				}),
 			{
 				method: 'GET',
 				headers: {

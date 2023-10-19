@@ -7,9 +7,11 @@ import Fab from '@mui/material/Fab';
 import useTheme from '@mui/material/styles/useTheme';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useState } from 'react';
+import MovieAddModal from './MovieAddModal';
 
 type EditToolbarProps = {
-	addMovie: () => void;
+	addMovie: (movie: TmdbMovie) => void;
 	saveList: () => void;
 	loading: boolean;
 	success: boolean;
@@ -21,10 +23,14 @@ const MovieListTableEditToolbar = ({
 	loading,
 	success,
 }: EditToolbarProps) => {
-	const theme = useTheme();
+	const [addModalOpen, setAddModalOpen] = useState(false);
+
+	const closeAddModal = () => {
+		setAddModalOpen(false);
+	};
 
 	const handleAddClick = () => {
-		addMovie();
+		setAddModalOpen(true);
 	};
 
 	const handleSaveClick = () => {
@@ -41,10 +47,7 @@ const MovieListTableEditToolbar = ({
 			<Tooltip title="Save list">
 				<Box sx={{ ml: 'auto', position: 'relative' }}>
 					{success ? (
-						<Fab
-							size="small"
-							sx={{ ml: 'auto', bgcolor: theme.palette.success.main }}
-						>
+						<Fab size="small" sx={{ ml: 'auto', bgcolor: 'success.main' }}>
 							<Check />
 						</Fab>
 					) : (
@@ -65,6 +68,11 @@ const MovieListTableEditToolbar = ({
 					)}
 				</Box>
 			</Tooltip>
+			<MovieAddModal
+				open={addModalOpen}
+				closeModal={closeAddModal}
+				addMovie={addMovie}
+			/>
 		</GridToolbarContainer>
 	);
 };
