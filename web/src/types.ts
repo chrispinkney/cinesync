@@ -7,7 +7,7 @@ type NavigationLink = {
 };
 
 type MovieItem = {
-	id?: number;
+	id?: string;
 	title: string;
 	description?: string;
 	genre: string[];
@@ -15,7 +15,7 @@ type MovieItem = {
 };
 
 type MovieList = {
-	id: number;
+	id: string;
 	name: string;
 	is_private?: boolean;
 	creator_id?: number;
@@ -25,7 +25,7 @@ type MovieList = {
 };
 
 type User = {
-	id: number;
+	id: string;
 	username: string;
 	email: string;
 	password?: string;

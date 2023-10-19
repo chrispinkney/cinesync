@@ -94,7 +94,7 @@ export class EmailService {
 			</style>
 			<p>Hi there ${users},</p>
 			<p>${listOwner} has shared the movie list "${listId}" with you on CineSync! 🎬</p>
-			<p>Click <a href="https://cinesync.me/dashboard/lists/${listId}">here</a> to view the list.
+			<p>Click <a href="https://cinesync.me/dashboard/list/${listId}">here</a> to view the list.
 			<br/>If you have any questions or need assistance, please don't hesitate to reach out to our team at <a href="mailto:cinesync@proton.me">cinesync@proton.me</a>.</p>
 			<p>Enjoy exploring the movies!</p>
 			<p>With love,</p>

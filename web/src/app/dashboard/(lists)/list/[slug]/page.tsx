@@ -3,7 +3,7 @@ import MovieListTableContainer from '@/components/List/MovieListTable/MovieListT
 import { MovieListContextProvider } from '@/context/movielist.context';
 
 const Page = ({ params }: { params: { slug: string } }) => {
-	const movieListId: number = parseInt(params.slug);
+	const movieListId: string = params.slug;
 
 	return (
 		<main>

@@ -7,7 +7,7 @@ import { CreateListDto } from '../lists/dtos/create-list.dto';
 export class ListDao {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async getList(listId: number) {
+	async getList(listId: string) {
 		return await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
 			select: {
@@ -104,7 +104,7 @@ export class ListDao {
 		return createdList;
 	}
 
-	async updateListPrivacy(listId: number) {
+	async updateListPrivacy(listId: string) {
 		const list = await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
 			include: { User: true, Movie: true },
@@ -118,7 +118,7 @@ export class ListDao {
 		});
 	}
 
-	async updateList(listId: number, updateListDto: UpdateListDto) {
+	async updateList(listId: string, updateListDto: UpdateListDto) {
 		let newMovies = [];
 		// add new movies to list
 		if (updateListDto?.Movie?.length) {
@@ -166,7 +166,7 @@ export class ListDao {
 		});
 	}
 
-	async deleteList(listId: number, userId: string) {
+	async deleteList(listId: string, userId: string) {
 		return await this.prisma.user.update({
 			where: { id: userId },
 			data: {
@@ -180,7 +180,7 @@ export class ListDao {
 		});
 	}
 
-	async deleteListItem(listId: number, movieId: number) {
+	async deleteListItem(listId: string, movieId: string) {
 		await this.prisma.list.update({
 			where: { id: listId },
 			data: {
@@ -191,7 +191,7 @@ export class ListDao {
 		});
 	}
 
-	async toggleShareList(listId: number, email: string) {
+	async toggleShareList(listId: string, email: string) {
 		const user = await this.prisma.user.findUniqueOrThrow({
 			where: { email },
 			include: {

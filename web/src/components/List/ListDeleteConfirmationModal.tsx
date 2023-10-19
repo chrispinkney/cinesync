@@ -19,7 +19,7 @@ const ListDeleteConfirmationModal = ({
 }: {
 	open: boolean;
 	handleClose: () => void;
-	listId: number;
+	listId: string;
 	refreshContext: () => Promise<void>;
 }) => {
 	const { replace } = useRouter();

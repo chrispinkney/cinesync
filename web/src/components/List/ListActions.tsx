@@ -11,7 +11,7 @@ const ListActions = ({
 	listId,
 	refreshContext,
 }: {
-	listId: number;
+	listId: string;
 	refreshContext: () => Promise<void>;
 }) => {
 	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);

@@ -18,7 +18,7 @@ const ListShareModal = ({
 }: {
 	open: boolean;
 	handleClose: () => void;
-	listId: number;
+	listId: string;
 }) => {
 	const { token } = useGlobalContext();
 	const [recipientEmail, setRecipientEmail] = useState('');
