@@ -11,7 +11,7 @@ import {
 } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
-import GenreDropDown from './GenreDropdown';
+import GenreDisplay from './GenreDisplay';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import { Fragment, useState } from 'react';
 import MovieListTableEditToolbar from './MovieListTableEditToolbar';
@@ -34,15 +34,18 @@ const MovieListTable = () => {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 
-	const addMovie = () => {
+	const addMovie = (movie: TmdbMovie) => {
 		setMovieListTableRows((oldRows) => [
 			...oldRows,
 			{
-				id: newMovieId,
-				title: '',
-				description: '',
-				genre: [],
-				release_year: '',
+				id: movie.id,
+				title: movie.title,
+				description: movie.overview,
+				genre: movie.genres.map((genre) => genre.name),
+				release_date: movie.release_date,
+				poster_url: movie.poster_path,
+				rating: movie.vote_average,
+				imdb_id: movie.imdb_id,
 				isNew: true,
 			},
 		]);
@@ -54,11 +57,6 @@ const MovieListTable = () => {
 			movieListTableRows.map((row) => (row.id === newRow.id ? newRow : row)),
 		);
 		return newRow;
-	};
-
-	// Callback for rendered GenreDropDown cells
-	const updateGenres = (row: GridRowModel) => {
-		processRowUpdate(row);
 	};
 
 	const handleRowEditStop: GridEventListener<'rowEditStop'> = (
@@ -73,7 +71,7 @@ const MovieListTable = () => {
 	const saveList = async () => {
 		setLoading(true);
 		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/lists/update/${movieList.id}`,
+			`${process.env.NEXT_PUBLIC_URL}/lists/update`,
 			{
 				method: 'PATCH',
 				headers: {
@@ -82,12 +80,16 @@ const MovieListTable = () => {
 					Authorization: `${token}`,
 				},
 				body: JSON.stringify({
+					listId: movieList.id,
 					Movie: movieListTableRows.map((row) => {
 						return {
 							title: row.title,
 							description: row.description,
 							genre: row.genre,
-							release_year: parseInt(row.release_year),
+							release_date: row.release_date,
+							poster_url: row.poster_url,
+							rating: row.rating,
+							imdb_id: row.imdb_id,
 						};
 					}),
 				}),
@@ -115,11 +117,7 @@ const MovieListTable = () => {
 			);
 		} else {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/lists/deleteMovie?` +
-					new URLSearchParams({
-						listId: movieList.id.toString(),
-						movieId: rowId.toString(),
-					}),
+				`${process.env.NEXT_PUBLIC_URL}/lists/deleteMovie`,
 				{
 					method: 'DELETE',
 					headers: {
@@ -127,6 +125,10 @@ const MovieListTable = () => {
 						'Content-Type': 'application/json',
 						Authorization: `${token}`,
 					},
+					body: JSON.stringify({
+						listId: movieList.id,
+						movieId: rowId,
+					}),
 				},
 			);
 			if (response.ok) {
@@ -151,7 +153,7 @@ const MovieListTable = () => {
 			field: 'title',
 			headerName: 'Title',
 			flex: 0.6,
-			editable: true,
+			editable: false,
 			headerAlign: 'center',
 			preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
 				const hasError = params.props.value.length < 1;
@@ -162,7 +164,7 @@ const MovieListTable = () => {
 			field: 'description',
 			headerName: 'Description',
 			flex: 1,
-			editable: true,
+			editable: false,
 			headerAlign: 'center',
 			preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
 				const hasError = params.props.value.length < 1;
@@ -174,22 +176,18 @@ const MovieListTable = () => {
 			headerName: 'Genres',
 			flex: 1,
 			editable: false,
-			renderCell: (params) => <GenreDropDown {...{ params, updateGenres }} />,
+			renderCell: (params) => <GenreDisplay {...{ params }} />,
 			headerAlign: 'center',
 			sortable: false,
 			filterable: false,
 		},
 		{
-			field: 'release_year',
-			headerName: 'Release Year',
+			field: 'release_date',
+			headerName: 'Release Date',
 			flex: 0.2,
-			editable: true,
+			editable: false,
 			headerAlign: 'center',
 			align: 'center',
-			preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-				const hasError = params.props.value.length != 4;
-				return { ...params.props, error: hasError };
-			},
 		},
 		{
 			field: 'actions',

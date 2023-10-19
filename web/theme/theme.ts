@@ -1,4 +1,4 @@
-import { createTheme, ThemeOptions } from '@mui/material/styles';
+import { alpha, createTheme, ThemeOptions } from '@mui/material/styles';
 import { Lato } from 'next/font/google';
 
 const darkMode = true;
@@ -37,6 +37,15 @@ const themeOptions: ThemeOptions = {
 				info: { main: '#37c3d4' },
 				success: { main: '#62af3e' },
 		  },
+	components: {
+		MuiTooltip: {
+			styleOverrides: {
+				tooltip: {
+					backgroundColor: alpha('#000', 0.7),
+				},
+			},
+		},
+	},
 };
 
 const theme = createTheme(themeOptions);

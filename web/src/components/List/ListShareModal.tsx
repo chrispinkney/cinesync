@@ -35,11 +35,7 @@ const ListShareModal = ({
 		} else {
 			setIsRecipientEmailInvalid(false);
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/lists/toggleShare?` +
-					new URLSearchParams({
-						listId: listId.toString(),
-						email: recipientEmail,
-					}),
+				`${process.env.NEXT_PUBLIC_URL}/lists/toggleShare?`,
 				{
 					method: 'POST',
 					headers: {
@@ -47,6 +43,10 @@ const ListShareModal = ({
 						'Content-Type': 'application/json',
 						Authorization: `${token}`,
 					},
+					body: JSON.stringify({
+						listId: listId,
+						email: recipientEmail,
+					}),
 				},
 			);
 			if (!response.ok || response.status >= 300) {

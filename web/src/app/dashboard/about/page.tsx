@@ -1,6 +1,8 @@
 'use client';
 import { Grid, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const About = () => {
 	const theme = useTheme();
@@ -93,8 +95,21 @@ const About = () => {
 							smooth.
 						</li>
 					</ul>
+					<h2>Attribution</h2>
+					<Link href="https://www.themoviedb.org/">
+						<Image
+							src="/tmdb-primary-long.svg"
+							alt="TMDB logo"
+							height={12}
+							width={165}
+						/>
+					</Link>
+					<p>
+						This product uses the TMDB API but is not endorsed or certified by
+						TMDB.
+					</p>
 				</Grid>
-				<Grid item>
+				<Grid item pt={10}>
 					<Typography align="center">
 						&copy; {new Date().getFullYear()} Cinesync
 					</Typography>
