@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { logLevels } from './utils/logLevels';
 import { PrismaClientExceptionFilter } from './prisma/filter/prisma-client-exception.filter';
 
-const address = '0.0.0.0';
 const port = 3000;
 
 async function bootstrap() {
@@ -15,6 +14,6 @@ async function bootstrap() {
 	const { httpAdapter } = app.get(HttpAdapterHost);
 	app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
-	await app.listen(port, address);
+	await app.listen(port);
 }
 bootstrap();
