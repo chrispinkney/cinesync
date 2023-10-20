@@ -13,12 +13,16 @@ export class AuthService {
 		private configService: ConfigService,
 	) {}
 
+	async encrypt(password: string) {
+		return await argon2.hash(password);
+	}
+
 	async signup(createUser: CreateUserDto) {
 		// See if email is in use
 		const { username, email, password } = createUser;
 
 		// Hash user's password with Argon2
-		const hashedPassword = await argon2.hash(password);
+		const hashedPassword = await this.encrypt(password);
 
 		// Create a new user with the hashed password
 		const user = await this.usersService.createUser({

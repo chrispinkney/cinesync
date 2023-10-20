@@ -128,8 +128,14 @@ export class UsersController {
 
 	@UseGuards(JwtAuthGuard)
 	@Patch('/update')
-	updateUser(@Req() req: Request, @Body() body: UpdateUserDto) {
+	async updateUser(@Req() req: Request, @Body() body: UpdateUserDto) {
 		if (!req.user) throw new BadRequestException('req contains no user');
+
+		// encrypt password before updating user
+		if (body?.password) {
+			body.password = await this.authService.encrypt(body.password);
+		}
+
 		return this.usersService.updateUser(req.user.id, body);
 	}
 
