@@ -22,7 +22,7 @@ export class UsersService {
 			const imageData = user.avatar;
 
 			res.writeHead(200, {
-				'Content-Type': 'image/jpeg',
+				'Content-Type': 'image/*',
 				'Content-Length': imageData.length,
 			});
 

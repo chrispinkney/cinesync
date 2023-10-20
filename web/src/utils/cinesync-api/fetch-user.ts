@@ -141,6 +141,6 @@ export const deleteUserAvatar = async ({
 	return await cinesyncFetch({
 		token,
 		method: 'DELETE',
-		endpoint: '/auth/delete',
+		endpoint: '/auth/deleteAvatar',
 	});
 };

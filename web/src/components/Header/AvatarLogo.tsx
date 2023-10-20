@@ -14,7 +14,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useTheme } from '@mui/material/styles';
 import { useGlobalContext } from '@/context/store';
-import { getWhoAmI } from '@/utils/cinesync-api/fetch-user';
+import { getUserAvatar, getWhoAmI } from '@/utils/cinesync-api/fetch-user';
+import { useUser } from '@/context/user.context';
 
 interface IPlaceHolderUserInfo {
 	username: string;
@@ -22,11 +23,13 @@ interface IPlaceHolderUserInfo {
 }
 
 const HeaderNavigationLinks: NavigationLink[] = [
-	{ text: 'Settings', href: '/settings', icon: SettingsIcon },
+	{ text: 'Settings', href: '/dashboard/userprofile', icon: SettingsIcon },
 	{ text: 'Logout', href: '/signout', icon: LogoutIcon },
 ];
 
 const AvatarLogo = () => {
+	const userContext = useUser();
+	const { avatar } = useUser();
 	const { token } = useGlobalContext();
 	const theme = useTheme();
 	const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -59,15 +62,19 @@ const AvatarLogo = () => {
 		<Box sx={{ flexGrow: 0 }}>
 			<Tooltip title="Open settings">
 				<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-					<Avatar
-						sx={{
-							bgcolor: theme.palette.primary.main,
-							color: theme.palette.text.primary,
-						}}
-						alt={userInfo.username}
-					>
-						{userInfo.initials}
-					</Avatar>
+					{avatar == '' ? (
+						<Avatar
+							sx={{
+								bgcolor: theme.palette.primary.main,
+								color: theme.palette.primary.contrastText,
+							}}
+							alt={userInfo.username}
+						>
+							{userInfo.initials}
+						</Avatar>
+					) : (
+						<Avatar alt="PlaceHolder Avatar" src={avatar} />
+					)}
 				</IconButton>
 			</Tooltip>
 			<Menu

@@ -6,6 +6,7 @@ import Sidebar from '@/components/Sidebar/Sidebar';
 import Loading from '@/app/loading';
 import { useGlobalContext } from '@/context/store';
 import { useRouter } from 'next/navigation';
+import { UserProvider } from '@/context/user.context';
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
 	const router = useRouter();
@@ -41,21 +42,23 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 	}
 	return (
 		<>
-			<Header />
-			<Sidebar />
+			<UserProvider>
+				<Header />
+				<Sidebar />
 
-			<Box
-				component="main"
-				sx={{
-					flexGrow: 1,
-					bgcolor: 'background.default',
-					ml: '240px',
-					mt: ['48px', '56px', '64px'],
-					p: 3,
-				}}
-			>
-				<Suspense fallback={<Loading />}>{children}</Suspense>
-			</Box>
+				<Box
+					component="main"
+					sx={{
+						flexGrow: 1,
+						bgcolor: 'background.default',
+						ml: '240px',
+						mt: ['48px', '56px', '64px'],
+						p: 3,
+					}}
+				>
+					<Suspense fallback={<Loading />}>{children}</Suspense>
+				</Box>
+			</UserProvider>
 		</>
 	);
 };
