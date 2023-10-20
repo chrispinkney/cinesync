@@ -1,6 +1,5 @@
 import {
 	Controller,
-	Param,
 	Body,
 	Get,
 	Post,
@@ -34,8 +33,8 @@ export class ListsController {
 
 	@UseInterceptors(RemoveListCreateFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
-	@Get('/:listId')
-	getList(@Param('listId') listId: string) {
+	@Get('/list')
+	getList(@Query('listId') listId: string) {
 		return this.listsService.getList(listId);
 	}
 
@@ -44,6 +43,13 @@ export class ListsController {
 	getLists(@Req() req: Request) {
 		if (!req.user) throw new BadRequestException('req contains no user');
 		return this.listsService.getLists(req.user.id);
+	}
+
+	@UseGuards(ListAuthorizationGuard)
+	@Get('/sharees')
+	getSharees(@Query('listId') listId: string, @Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.listsService.getSharees(listId, req.user.id);
 	}
 
 	@UseInterceptors(RemoveListCreateFieldsInterceptor)
@@ -57,8 +63,7 @@ export class ListsController {
 	@UseGuards(ListAuthorizationGuard)
 	@Post('/toggleShare')
 	async toggleShareList(
-		@Query('listId') listId: string,
-		@Query('email') email: string,
+		@Body() { listId, email }: { listId: string; email: string },
 		@Req() req: Request,
 	) {
 		if (!req.user) throw new BadRequestException('req contains no user');
@@ -76,24 +81,24 @@ export class ListsController {
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
-	@Patch('/updatePrivacy/:listId')
+	@Patch('/updatePrivacy')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	updateListPrivacy(@Param('listId') listId: string) {
+	updateListPrivacy(@Body() { listId }: { listId: string }) {
 		return this.listsService.updateListPrivacy(listId);
 	}
 
 	@UseInterceptors(RemoveListCreateFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
-	@Patch('/update/:listId')
-	updateList(@Param('listId') listId: string, @Body() body: UpdateListDto) {
-		return this.listsService.updateList(listId, body);
+	@Patch('/update')
+	updateList(@Body() body: UpdateListDto) {
+		return this.listsService.updateList(body);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
-	@Delete('/delete/:listId')
+	@Delete('/delete')
 	@HttpCode(HttpStatus.NO_CONTENT)
-	deleteList(@Param('listId') listId: string, @Req() req: Request) {
+	deleteList(@Body() { listId }: { listId: string }, @Req() req: Request) {
 		if (!req.user) throw new BadRequestException('req contains no user');
 		return this.listsService.deleteList(listId, req.user.id);
 	}
@@ -103,8 +108,7 @@ export class ListsController {
 	@Delete('/deleteMovie')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	deleteMovie(
-		@Query('listId') listId: string,
-		@Query('movieId') movieId: string,
+		@Body() { listId, movieId }: { listId: string; movieId: string },
 	) {
 		return this.listsService.deleteListItem(listId, movieId);
 	}

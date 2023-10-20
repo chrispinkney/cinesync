@@ -49,6 +49,27 @@ export class ListDao {
 		});
 	}
 
+	async getSharees(listId: string) {
+		const list = await this.prisma.list.findUniqueOrThrow({
+			where: { id: listId },
+			include: {
+				User: {
+					orderBy: {
+						username: 'asc',
+					},
+					select: {
+						id: true,
+						username: true,
+						email: true,
+						// avatar: true,
+					},
+				},
+			},
+		});
+
+		return list;
+	}
+
 	async createList(createList: CreateListDto, userId: string) {
 		const list = await this.prisma.list.create({
 			data: {
@@ -122,7 +143,7 @@ export class ListDao {
 		});
 	}
 
-	async updateList(listId: string, updateListDto: UpdateListDto) {
+	async updateList(updateListDto: UpdateListDto) {
 		let newMovies = [];
 		// add new movies to list
 		if (updateListDto?.Movie?.length) {
@@ -151,7 +172,7 @@ export class ListDao {
 						data: {
 							List: {
 								connect: {
-									id: listId,
+									id: updateListDto.listId,
 								},
 							},
 						},
@@ -161,10 +182,9 @@ export class ListDao {
 		}
 
 		return await this.prisma.list.update({
-			where: { id: listId },
+			where: { id: updateListDto.listId },
 			data: {
 				name: updateListDto.name,
-				is_private: updateListDto.is_private,
 			},
 			include: { Movie: true },
 		});

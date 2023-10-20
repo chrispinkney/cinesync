@@ -15,6 +15,22 @@ export class ListsService {
 		return await this.listDao.getLists(userId);
 	}
 
+	async getSharees(listId: string, userId: string) {
+		const list = await this.listDao.getSharees(listId);
+
+		const creator = list.User.find((user) => user.id === list.creator_id);
+
+		const filteredList = list.User.filter((user) => userId !== user.id).map(
+			({ username, email }) => ({
+				username,
+				email,
+				creator: username === creator?.username,
+			}),
+		);
+
+		return filteredList;
+	}
+
 	async createList(createList: CreateListDto, userId: string) {
 		return await this.listDao.createList(createList, userId);
 	}
@@ -23,8 +39,8 @@ export class ListsService {
 		return await this.listDao.updateListPrivacy(listId);
 	}
 
-	async updateList(listId: string, updateListDto: UpdateListDto) {
-		return await this.listDao.updateList(listId, updateListDto);
+	async updateList(updateListDto: UpdateListDto) {
+		return await this.listDao.updateList(updateListDto);
 	}
 
 	async deleteList(listId: string, userId: string) {
