@@ -21,9 +21,12 @@ model List {
 model Movie {
   id           String   @id @default(uuid())
   title        String		@unique
-  description  String?
+  description  String
   genre        String[]
-  release_year Int?
+  release_date String
+	poster_url	 String
+	rating			 Float
+	imdb_id			 String
   List         List[]
 }
 
