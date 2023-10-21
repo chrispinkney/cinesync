@@ -1,10 +1,4 @@
-import {
-	IsString,
-	IsArray,
-	IsDate,
-	IsNumber,
-	IsOptional,
-} from 'class-validator';
+import { IsString, IsArray, IsNumber, IsOptional } from 'class-validator';
 
 export class MovieDto {
 	@IsString()
@@ -19,7 +13,7 @@ export class MovieDto {
 	@IsOptional()
 	genre: string[];
 
-	@IsDate()
+	@IsString()
 	@IsOptional()
 	release_date: string;
 
