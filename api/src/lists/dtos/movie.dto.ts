@@ -1,18 +1,37 @@
-import { IsString, IsArray, IsInt, IsOptional } from 'class-validator';
+import {
+	IsString,
+	IsArray,
+	IsDate,
+	IsNumber,
+	IsOptional,
+} from 'class-validator';
 
 export class MovieDto {
 	@IsString()
 	title: string;
 
-	@IsOptional()
 	@IsString()
-	description?: string;
+	@IsOptional()
+	description: string;
 
 	@IsArray()
 	@IsString({ each: true })
+	@IsOptional()
 	genre: string[];
 
+	@IsDate()
 	@IsOptional()
-	@IsInt()
-	release_year?: number;
+	release_date: string;
+
+	@IsString()
+	@IsOptional()
+	poster_url: string;
+
+	@IsNumber()
+	@IsOptional()
+	rating: number;
+
+	@IsString()
+	@IsOptional()
+	imdb_id: string;
 }
