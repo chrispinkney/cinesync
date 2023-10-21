@@ -17,6 +17,7 @@ import { Fragment, useState } from 'react';
 import MovieListTableEditToolbar from './MovieListTableEditToolbar';
 import { useMovieList } from '@/context/movielist.context';
 import { useGlobalContext } from '@/context/store';
+import { deleteListMovie, updateList } from '@/utils/cinesync-api/fetch-list';
 
 const MovieListTable = () => {
 	const {
@@ -32,7 +33,7 @@ const MovieListTable = () => {
 
 	// States for save list action
 	const [loading, setLoading] = useState(false);
-	const [success, setSuccess] = useState(false);
+	const [tableUpdateSuccess, setTableUpdateSuccess] = useState(false);
 
 	const addMovie = (movie: TmdbMovie) => {
 		setMovieListTableRows((oldRows) => [
@@ -70,40 +71,33 @@ const MovieListTable = () => {
 
 	const saveList = async () => {
 		setLoading(true);
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/lists/update`,
-			{
-				method: 'PATCH',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-					Authorization: `${token}`,
-				},
-				body: JSON.stringify({
-					listId: movieList.id,
-					Movie: movieListTableRows.map((row) => {
-						return {
-							title: row.title,
-							description: row.description,
-							genre: row.genre,
-							release_date: row.release_date,
-							poster_url: row.poster_url,
-							rating: row.rating,
-							imdb_id: row.imdb_id,
-						};
-					}),
+		const { success } = await updateList({
+			token: token,
+			body: {
+				listId: movieList.id,
+				name: movieList.name,
+				Movie: movieListTableRows.map((row) => {
+					return {
+						title: row.title,
+						description: row.description,
+						genre: row.genre,
+						release_date: row.release_date,
+						poster_url: row.poster_url,
+						rating: row.rating,
+						imdb_id: row.imdb_id,
+					};
 				}),
 			},
-		);
+		});
 
-		if (response.ok) {
-			setSuccess(true);
+		if (success) {
+			setTableUpdateSuccess(true);
 			setTimeout(() => {
-				setSuccess(false);
+				setTableUpdateSuccess(false);
 				refreshMovieListContext();
 			}, 1000);
 		} else {
-			setSuccess(false);
+			setTableUpdateSuccess(false);
 		}
 		setLoading(false);
 	};
@@ -116,22 +110,12 @@ const MovieListTable = () => {
 				movieListTableRows.filter((row) => row.id !== rowId),
 			);
 		} else {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/lists/deleteMovie`,
-				{
-					method: 'DELETE',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-						Authorization: `${token}`,
-					},
-					body: JSON.stringify({
-						listId: movieList.id,
-						movieId: rowId,
-					}),
-				},
-			);
-			if (response.ok) {
+			const { success } = await deleteListMovie({
+				token: token,
+				listId: movieList.id,
+				movieId: rowId.toString(),
+			});
+			if (success) {
 				refreshMovieListContext();
 				setMovieListTableRows(
 					movieListTableRows.filter((row) => row.id !== rowId),
@@ -234,7 +218,12 @@ const MovieListTable = () => {
 						toolbar: MovieListTableEditToolbar,
 					}}
 					slotProps={{
-						toolbar: { addMovie, saveList, loading, success },
+						toolbar: {
+							addMovie,
+							saveList,
+							loading,
+							tableUpdateSuccess: tableUpdateSuccess,
+						},
 					}}
 				/>
 			</Box>

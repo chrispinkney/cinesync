@@ -14,6 +14,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useTheme } from '@mui/material/styles';
 import { useGlobalContext } from '@/context/store';
+import { getWhoAmI } from '@/utils/cinesync-api/fetch-user';
 
 interface IPlaceHolderUserInfo {
 	username: string;
@@ -32,22 +33,15 @@ const AvatarLogo = () => {
 	const [userInfo, setUserInfo] = useState({ username: '', initials: '' });
 
 	const getUser = async () => {
-		const headers = { Authorization: `${token}` };
-		const whoami = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/auth/whoami` ||
-				'http://localhost:3000/auth/whoami',
-			{
-				method: 'get',
-				headers: { ...headers },
-			},
-		);
-		const whoamiJSON = await whoami.json();
-
-		const placeHolderUserInfo: IPlaceHolderUserInfo = {
-			username: whoamiJSON.username,
-			initials: whoamiJSON.username[0].toUpperCase(),
-		};
-		setUserInfo(placeHolderUserInfo);
+		const { fetchResponseJson } = await getWhoAmI({ token });
+		const whoamiJSON = fetchResponseJson;
+		if ('username' in whoamiJSON) {
+			const placeHolderUserInfo: IPlaceHolderUserInfo = {
+				username: whoamiJSON.username,
+				initials: whoamiJSON.username[0].toUpperCase(),
+			};
+			setUserInfo(placeHolderUserInfo);
+		}
 	};
 
 	useEffect(() => {

@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useGlobalContext } from '@/context/store';
+import { toggleListSharee } from '@/utils/cinesync-api/fetch-list';
 
 const ListShareModal = ({
 	open,
@@ -34,24 +35,18 @@ const ListShareModal = ({
 			setIsRecipientEmailInvalid(true);
 		} else {
 			setIsRecipientEmailInvalid(false);
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/lists/toggleShare?`,
-				{
-					method: 'POST',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-						Authorization: `${token}`,
-					},
-					body: JSON.stringify({
-						listId: listId,
-						email: recipientEmail,
-					}),
-				},
-			);
-			if (!response.ok || response.status >= 300) {
+			const { success, fetchResponseJson } = await toggleListSharee({
+				token: token,
+				listId: listId,
+				email: recipientEmail,
+			});
+			if (!success) {
 				setErrorText(
-					`Unable to share list: ${response.status} - ${response.statusText}`,
+					`Unable to share list: ${
+						'message' in fetchResponseJson
+							? fetchResponseJson.message
+							: 'unknown'
+					}`,
 				);
 			} else {
 				setRecipientEmail('');

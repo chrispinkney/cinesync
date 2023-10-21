@@ -31,11 +31,6 @@ type User = {
 	id: string;
 	username: string;
 	email: string;
-	password?: string;
-	created_at?: Date;
-	updated_at?: Date;
-	role: Role;
-	lists: MovieList[];
 };
 
 enum Role {
@@ -113,3 +108,107 @@ type TmdbSpokenLanguages = {
 	iso_639_1: string;
 	name: string;
 };
+
+// DTO - Cinesync API
+// Fetch Data Types
+type MovieDto = {
+	title: string;
+	description?: string;
+	genre: string[];
+	release_year?: number;
+};
+
+type CreateListDto = {
+	name: string;
+	Movie?: MovieDto[];
+};
+
+type UpdateListDto = {
+	listId: string;
+	name?: string;
+	Movie: MovieDto[];
+};
+
+type CreateUserDto = {
+	username: string;
+	email: string;
+	password: string;
+};
+
+type SigninUserDto = {
+	email: string;
+	password: string;
+};
+
+type UpdateUserDto = {
+	username?: string;
+	email?: string;
+	password?: string;
+};
+
+// Fetch Return Data Types
+type CinesyncFetchReturnDto =
+	| ListsReturnDto
+	| ListReturnDto
+	| ShareeReturnDto
+	| UserReturnDto
+	| TokenReturnDto
+	| AvatarReturnDto
+	| EmptyReturnDto;
+
+type ErrorReturnDto = {
+	success: boolean;
+	fetchResponseJson: {
+		statusCode?: number;
+		message?: string;
+	};
+};
+
+type ListsReturnDto =
+	| {
+			success: boolean;
+			fetchResponseJson: { List: MovieList[] };
+	  }
+	| ErrorReturnDto;
+
+type ListReturnDto =
+	| {
+			success: boolean;
+			fetchResponseJson: { list: MovieList };
+	  }
+	| ErrorReturnDto;
+
+type ShareeReturnDto =
+	| {
+			success: boolean;
+			fetchResponseJson: UserReturnDto[];
+	  }
+	| ErrorReturnDto;
+
+type UserReturnDto =
+	| {
+			success: boolean;
+			fetchResponseJson: User;
+	  }
+	| ErrorReturnDto;
+
+type TokenReturnDto =
+	| {
+			success: boolean;
+			fetchResponseJson: { access_token: string };
+	  }
+	| ErrorReturnDto;
+
+type AvatarReturnDto =
+	| {
+			success: boolean;
+			fetchResponseJson: { imageUrl: string };
+	  }
+	| ErrorReturnDto;
+
+type EmptyReturnDto =
+	| {
+			success: boolean;
+			fetchResponseJson: {};
+	  }
+	| ErrorReturnDto;

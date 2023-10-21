@@ -1,5 +1,6 @@
 'use client';
 
+import { getLists } from '@/utils/cinesync-api/fetch-list';
 import { useGlobalContext } from './store';
 import {
 	Fragment,
@@ -22,15 +23,9 @@ export const ListsContextProvider = ({ children }: { children: ReactNode }) => {
 
 	// refreshListsContext will be provided so that child components can easily re-fetch data so page will be re-rendered
 	const refreshListsContext = useCallback(async () => {
-		const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/lists`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `${token}`,
-			},
-		});
-		const fetchedLists = (await response.json()).List;
-		setLists(fetchedLists);
+		const { success, fetchResponseJson } = await getLists({ token: token });
+		if (success && 'List' in fetchResponseJson)
+			setLists(fetchResponseJson.List);
 	}, [token]);
 
 	// Fetch once upon initial context load

@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useGlobalContext } from '@/context/store';
+import { deleteList } from '@/utils/cinesync-api/fetch-list';
 
 const ListDeleteConfirmationModal = ({
 	open,
@@ -30,23 +31,15 @@ const ListDeleteConfirmationModal = ({
 
 	const handleSubmit = async () => {
 		// Send delete request to api
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/lists/delete`,
-			{
-				method: 'DELETE',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-					Authorization: `${token}`,
-				},
-				body: JSON.stringify({
-					listId: listId,
-				}),
-			},
-		);
-		if (!response.ok) {
+		const { success, fetchResponseJson } = await deleteList({
+			token: token,
+			listId: listId,
+		});
+		if (!success) {
 			setErrorText(
-				`Unable to delete list: ${response.status} - ${response.statusText}`,
+				`Unable to delete list: ${
+					'message' in fetchResponseJson ? fetchResponseJson.message : 'unknown'
+				}`,
 			);
 		} else {
 			setErrorText('');

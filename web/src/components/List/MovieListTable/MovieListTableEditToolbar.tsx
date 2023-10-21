@@ -4,7 +4,6 @@ import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
 import Check from '@mui/icons-material/Check';
 import Fab from '@mui/material/Fab';
-import useTheme from '@mui/material/styles/useTheme';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useState } from 'react';
@@ -14,14 +13,14 @@ type EditToolbarProps = {
 	addMovie: (movie: TmdbMovie) => void;
 	saveList: () => void;
 	loading: boolean;
-	success: boolean;
+	tableUpdateSuccess: boolean;
 };
 
 const MovieListTableEditToolbar = ({
 	addMovie,
 	saveList,
 	loading,
-	success,
+	tableUpdateSuccess,
 }: EditToolbarProps) => {
 	const [addModalOpen, setAddModalOpen] = useState(false);
 
@@ -46,7 +45,7 @@ const MovieListTableEditToolbar = ({
 			</Tooltip>
 			<Tooltip title="Save list">
 				<Box sx={{ ml: 'auto', position: 'relative' }}>
-					{success ? (
+					{tableUpdateSuccess ? (
 						<Fab size="small" sx={{ ml: 'auto', bgcolor: 'success.main' }}>
 							<Check />
 						</Fab>

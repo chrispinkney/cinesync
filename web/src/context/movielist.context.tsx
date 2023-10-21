@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { GridRowsProp } from '@mui/x-data-grid';
 import { useGlobalContext } from './store';
+import { getListById } from '@/utils/cinesync-api/fetch-list';
 
 // Create context as undefined until fetch is completed
 const MovieListContext = createContext<
@@ -40,22 +41,14 @@ export const MovieListContextProvider = ({
 
 	// refreshMovieListContext will be provided so that child components can easily re-fetch data so page will be re-rendered
 	const refreshMovieListContext = useCallback(async () => {
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/lists/list?` +
-				new URLSearchParams({
-					listId: listId,
-				}),
-			{
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `${token}`,
-				},
-			},
-		);
-		const fetchedMovieList = (await response.json()).list;
-		setMovieList(fetchedMovieList);
-		setMovieListTableRows(fetchedMovieList.Movie);
+		const { success, fetchResponseJson } = await getListById({
+			token: token,
+			listId: listId,
+		});
+		if (success && 'list' in fetchResponseJson) {
+			setMovieList(fetchResponseJson.list);
+			setMovieListTableRows(fetchResponseJson.list.Movie);
+		}
 	}, [listId, token]);
 
 	// Fetch once upon initial context load

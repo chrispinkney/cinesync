@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 import styles from './authMain.module.css';
 import Image from 'next/image';
+import { signUserUp } from '@/utils/cinesync-api/fetch-user';
 
 interface SignUpProps {
 	settabValue: Dispatch<SetStateAction<number>>;
@@ -29,27 +30,21 @@ const SignupCard: NextPage<SignUpProps> = ({ settabValue }) => {
 
 		const validationResult = validateSignupForm(formData);
 
-		if (validationResult.success) {
+		if (validationResult.success && validationResult.data) {
 			try {
 				// Send the form data to the backend API
-				const response = await fetch(
-					`${process.env.NEXT_PUBLIC_URL}/auth/signup` ||
-						'http://localhost:3000/auth/signup',
-					{
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify(validationResult.data),
-					},
-				);
+				const { success, fetchResponseJson } = await signUserUp({
+					body: validationResult.data,
+				});
 
-				if (response.ok) {
+				if (success) {
 					settabValue(0);
 					// need to add alert that account has been created
 				} else {
-					const errorData = await response.json();
-					setError(errorData.message || 'An error occurred during signup.');
+					if ('message' in fetchResponseJson)
+						setError(
+							fetchResponseJson.message || 'An error occurred during signup.',
+						);
 				}
 			} catch (error: any) {
 				setError('An error occurred during signup.');

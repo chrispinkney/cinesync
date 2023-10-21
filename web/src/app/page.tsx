@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import AuthMain from '../components/Login/AuthMain';
 import { useRouter } from 'next/navigation';
 import { useGlobalContext } from '@/context/store';
+import { getWhoAmI } from '@/utils/cinesync-api/fetch-user';
 
 const Home = () => {
 	const router = useRouter();
@@ -11,17 +12,8 @@ const Home = () => {
 	const [authenticated, setAuthenticated] = useState(false);
 
 	const authenticationCall = async () => {
-		const headers = { Authorization: `${token}` };
-		const whoami = await fetch(
-			`${process.env.NEXT_PUBLIC_URL}/auth/whoami` ||
-				'http://localhost:3000/auth/whoami',
-			{
-				method: 'get',
-				headers: { ...headers },
-			},
-		);
-
-		if (whoami.status != 401) {
+		const { success } = await getWhoAmI({ token });
+		if (success) {
 			setAuthenticated(true);
 			router.push('/dashboard');
 			return;

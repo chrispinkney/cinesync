@@ -12,6 +12,7 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { useRouter } from 'next/navigation';
 import { useGlobalContext } from '@/context/store';
+import { createList } from '@/utils/cinesync-api/fetch-list';
 
 const ListCreationModal = ({
 	open,
@@ -36,30 +37,24 @@ const ListCreationModal = ({
 			setIsListNameInvalid(true);
 		} else {
 			setIsListNameInvalid(false);
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/lists/create`,
-				{
-					method: 'POST',
-					headers: {
-						Accept: 'application/json',
-						'Content-Type': 'application/json',
-						Authorization: `${token}`,
-					},
-					body: JSON.stringify({
-						name: listName,
-					}),
-				},
-			);
-			if (!response.ok) {
-				setErrorText(
-					`Unable to create list: ${response.status} - ${response.statusText}`,
-				);
-			} else {
-				let newListId: string = (await response.json()).list.id;
+			const { success, fetchResponseJson } = await createList({
+				token: token,
+				body: { name: listName },
+			});
+			if (success && 'list' in fetchResponseJson) {
+				let newListId: string = fetchResponseJson.list.id;
 				setListName('');
 				setErrorText('');
 				handleClose();
 				push(`/dashboard/list/${newListId}`);
+			} else {
+				setErrorText(
+					`Unable to create list: ${
+						'message' in fetchResponseJson
+							? fetchResponseJson.message
+							: 'unknown'
+					}`,
+				);
 			}
 		}
 	};
