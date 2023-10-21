@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import { Fragment, useMemo, useState } from 'react';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
-import { fetchTmdbMovie, searchTmdbMovies } from '@/utils/tmdb-api';
+import { fetchTmdbMovie, searchTmdbMovies } from '@/utils/tmdb-api/fetch';
 import debounce from 'lodash.debounce';
 import { Collapse, Paper, Skeleton } from '@mui/material';
 import MovieCard from '../MovieCard/MovieCard';
