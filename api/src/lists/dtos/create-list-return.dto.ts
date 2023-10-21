@@ -16,7 +16,16 @@ class Movie {
 	genre: string[];
 
 	@Expose()
-	release_year?: number;
+	release_date: string;
+
+	@Expose()
+	poster_url: string;
+
+	@Expose()
+	rating: string;
+
+	@Expose()
+	imdb_id: string;
 }
 
 class List {
