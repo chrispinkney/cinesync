@@ -104,7 +104,7 @@ const AuthMain: NextPage<AuthMainProps> = ({ authentication }) => {
 							<LoginCard />
 						</CustomTabPanel>
 						<CustomTabPanel value={tabValue} index={1}>
-							<SignupCard />
+							<SignupCard settabValue={settabValue} />
 						</CustomTabPanel>
 					</Box>
 				</Card>

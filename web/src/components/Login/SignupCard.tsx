@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { NextPage } from 'next';
 import { validateSignupForm, SignupFormData } from './signupValidation';
 import {
 	CardContent,
@@ -10,7 +11,11 @@ import {
 import styles from './authMain.module.css';
 import Image from 'next/image';
 
-const SignupCard = () => {
+interface SignUpProps {
+	settabValue: Dispatch<SetStateAction<number>>;
+}
+
+const SignupCard: NextPage<SignUpProps> = ({ settabValue }) => {
 	const [formData, setFormData] = useState<SignupFormData>({
 		username: '',
 		email: '',
@@ -40,6 +45,7 @@ const SignupCard = () => {
 				);
 
 				if (response.ok) {
+					settabValue(0);
 					// need to add alert that account has been created
 				} else {
 					const errorData = await response.json();
