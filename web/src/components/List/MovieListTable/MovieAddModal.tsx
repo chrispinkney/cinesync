@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { fetchTmdbMovie, searchTmdbMovies } from '@/utils/tmdb-api';
@@ -98,23 +98,20 @@ const MovieAddModal = ({
 						style={{ height: 476, overflow: 'auto' }}
 					>
 						{searchResults?.map((tmdbMovie: TmdbMovieLite, index: number) => (
-							<>
+							<Fragment key={tmdbMovie.id}>
 								<MovieCard
-									key={tmdbMovie.id}
 									tmdbMovie={tmdbMovie}
 									handleAddMovie={handleAddMovie}
 								/>
-								{index < searchResults.length - 1 && (
-									<Divider key={`divider${tmdbMovie.id}`} />
-								)}
-							</>
+								{index < searchResults.length - 1 && <Divider />}
+							</Fragment>
 						))}
 						{loadingResults &&
-							[...Array(5)].map((i) => (
-								<>
-									<Skeleton variant="rectangular" height={92} key={i} />
-									{i < 5 && <Divider key={`divider${i}`} />}
-								</>
+							[...Array(5)].map((_val, i) => (
+								<Fragment key={i}>
+									<Skeleton variant="rectangular" height={92} />
+									{i < 5 && <Divider />}
+								</Fragment>
 							))}
 					</Stack>
 				</Collapse>
