@@ -36,7 +36,6 @@ const MovieListTable = () => {
 
 	const addMovie = (movie: TmdbMovie) => {
 		setMovieListTableRows((oldRows) => [
-			...oldRows,
 			{
 				id: movie.id,
 				title: movie.title,
@@ -48,6 +47,7 @@ const MovieListTable = () => {
 				imdb_id: movie.imdb_id,
 				isNew: true,
 			},
+			...oldRows,
 		]);
 		setNewMovieId(newMovieId + 1);
 	};
