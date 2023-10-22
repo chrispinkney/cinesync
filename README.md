@@ -1,5 +1,5 @@
 <h1 align="center">
-	<img width="430" height="130" src="web\public\logo.png">
+	<img width="430" height="130" src="web\public\cinesync-logo-dark.png">
 </h1>
 
 ![Node.js CI](https://github.com/chrispinkney/cinesync/actions/workflows/docker.yml/badge.svg)
