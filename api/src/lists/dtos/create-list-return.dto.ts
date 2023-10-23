@@ -1,6 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import { UserDto } from '../../users/dtos/user.dto';
+import { CommentDto } from './comments.dto';
 
 class Movie {
 	@Expose()
@@ -56,6 +57,11 @@ class List {
 	@Type(() => UserDto)
 	@ValidateNested()
 	User: UserDto[];
+
+	@Expose()
+	@Type(() => CommentDto)
+	@ValidateNested()
+	comments: CommentDto[];
 }
 
 export class CreateListReturn {

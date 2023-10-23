@@ -37,6 +37,14 @@ export class UserDao {
 		return { user1: friends[0].friendsWith, user2: friends[0].friendsRequest };
 	}
 
+	async getUsernameById(userId: string) {
+		const user = await this.prisma.user.findUniqueOrThrow({
+			where: { id: userId },
+		});
+
+		return user.username;
+	}
+
 	async createUser(createUser: CreateUserDto) {
 		return await this.prisma.user.create({
 			data: {
