@@ -25,6 +25,10 @@ export class UsersService {
 		return await this.userDao.getUserByEmail(userEmail);
 	}
 
+	async getUsernameById(userId: string) {
+		return await this.userDao.getUsernameById(userId);
+	}
+
 	async getAvatar(userId: string, res: Response) {
 		const user = await this.userDao.getUser(userId);
 

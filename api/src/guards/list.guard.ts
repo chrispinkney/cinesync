@@ -31,7 +31,7 @@ export class ListAuthorizationGuard implements CanActivate {
 		// check if list belongs to the user or has been shared with the user
 		const isCreator = list.creator_id === user.id;
 		const isSharedWithUser =
-			list.User.find((user) => user.id === user.id) !== undefined;
+			list.User.find((sharedUser) => sharedUser.id === user.id) !== undefined;
 
 		return isCreator || isSharedWithUser;
 	}

@@ -12,6 +12,7 @@ import { ListsService } from '../lists/lists.service';
 import { ListDao } from '../dao/list.dao';
 import { LocalStrategy } from './local.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { CommentDao } from '../lists/daos/comment.dao';
 
 @Module({
 	imports: [PrismaModule, EmailModule, PassportModule, ConfigModule],
@@ -19,10 +20,11 @@ import { JwtStrategy } from './jwt.strategy';
 	providers: [
 		UsersService,
 		AuthService,
-		UserDao,
-		ListDao,
 		ListsService,
 		JwtService,
+		UserDao,
+		ListDao,
+		CommentDao,
 		LocalStrategy,
 		JwtStrategy,
 	],

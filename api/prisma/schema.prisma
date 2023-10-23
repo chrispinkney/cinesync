@@ -8,14 +8,15 @@ datasource db {
 }
 
 model List {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   name       String
   is_private Boolean
   creator_id String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   Movie      Movie[]
   User       User[]
+  comments   Comment[]
 }
 
 model Movie {
@@ -42,6 +43,7 @@ model User {
   List           List[]
   friendsWith    Friends[] @relation("user_1")
   friendsRequest Friends[] @relation("user_2")
+  comments       Comment[]
 }
 
 model Friends {
@@ -54,6 +56,17 @@ model Friends {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@id([userId1, userId2])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  text      String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String   @map("author_id")
+  list      List     @relation(fields: [listId], references: [id])
+  listId    String   @map("list_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 }
 
 enum Role {

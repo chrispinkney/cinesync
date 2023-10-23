@@ -21,7 +21,10 @@ import { RemoveListFieldsInterceptor } from './interceptors/remove-list-fields.i
 import { RemoveListCreateFieldsInterceptor } from './interceptors/remove-list-create-fields.interceptor';
 import { CreateListDto } from './dtos/create-list.dto';
 import { UpdateListDto } from './dtos/update-list.dto';
+import { CreateCommentDto } from './dtos/create-comment.dto';
+import { UpdateCommentDto } from './dtos/update-comment.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CommentAuthorizationGuard } from '../guards/comment-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('lists')
@@ -93,6 +96,17 @@ export class ListsController {
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
+	@Post('/comments')
+	async createComment(
+		@Body() createCommentDto: CreateCommentDto,
+		@Req() req: Request,
+	) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.listsService.createComment(createCommentDto, req.user.id);
+	}
+
+	@UseInterceptors(RemoveListFieldsInterceptor)
+	@UseGuards(ListAuthorizationGuard)
 	@Patch('/updatePrivacy')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	updateListPrivacy(@Body() { listId }: { listId: string }) {
@@ -104,6 +118,12 @@ export class ListsController {
 	@Patch('/update')
 	updateList(@Body() body: UpdateListDto) {
 		return this.listsService.updateList(body);
+	}
+
+	@UseGuards(ListAuthorizationGuard, CommentAuthorizationGuard)
+	@Patch('/comments/update')
+	async updateComment(@Body() updateCommentDto: UpdateCommentDto) {
+		return this.listsService.updateComment(updateCommentDto);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
@@ -123,5 +143,12 @@ export class ListsController {
 		@Body() { listId, movieId }: { listId: string; movieId: string },
 	) {
 		return this.listsService.deleteListItem(listId, movieId);
+	}
+
+	@UseGuards(ListAuthorizationGuard, CommentAuthorizationGuard)
+	@Delete('/comments/delete')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	deleteComment(@Body() { commentId }: { commentId: string }) {
+		return this.listsService.deleteComment(commentId);
 	}
 }
