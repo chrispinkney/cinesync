@@ -6,6 +6,7 @@ import {
 	ReactNode,
 	SetStateAction,
 	createContext,
+	useCallback,
 	useContext,
 	useEffect,
 	useState,
@@ -38,7 +39,7 @@ export const MovieListContextProvider = ({
 	const { token } = useGlobalContext();
 
 	// refreshMovieListContext will be provided so that child components can easily re-fetch data so page will be re-rendered
-	const refreshMovieListContext = async () => {
+	const refreshMovieListContext = useCallback(async () => {
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_URL}/lists/list?` +
 				new URLSearchParams({
@@ -55,12 +56,12 @@ export const MovieListContextProvider = ({
 		const fetchedMovieList = (await response.json()).list;
 		setMovieList(fetchedMovieList);
 		setMovieListTableRows(fetchedMovieList.Movie);
-	};
+	}, [listId, token]);
 
 	// Fetch once upon initial context load
 	useEffect(() => {
 		refreshMovieListContext();
-	}, []);
+	}, [refreshMovieListContext]);
 
 	// Automatically provide context to child components
 	return (

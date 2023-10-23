@@ -5,6 +5,7 @@ import {
 	Fragment,
 	ReactNode,
 	createContext,
+	useCallback,
 	useContext,
 	useEffect,
 	useState,
@@ -20,7 +21,7 @@ export const ListsContextProvider = ({ children }: { children: ReactNode }) => {
 	const { token } = useGlobalContext();
 
 	// refreshListsContext will be provided so that child components can easily re-fetch data so page will be re-rendered
-	const refreshListsContext = async () => {
+	const refreshListsContext = useCallback(async () => {
 		const response = await fetch(`${process.env.NEXT_PUBLIC_URL}/lists`, {
 			method: 'GET',
 			headers: {
@@ -30,12 +31,12 @@ export const ListsContextProvider = ({ children }: { children: ReactNode }) => {
 		});
 		const fetchedLists = (await response.json()).List;
 		setLists(fetchedLists);
-	};
+	}, [token]);
 
 	// Fetch once upon initial context load
 	useEffect(() => {
 		refreshListsContext();
-	}, []);
+	}, [refreshListsContext]);
 
 	// Automatically provide context to child components
 	return (
