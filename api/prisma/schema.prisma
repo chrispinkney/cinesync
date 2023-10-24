@@ -11,7 +11,7 @@ model List {
   id         String   @id @default(uuid())
   name       String
   is_private Boolean
-	creator_id String
+  creator_id String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   Movie      Movie[]
@@ -20,26 +20,40 @@ model List {
 
 model Movie {
   id           String   @id @default(uuid())
-  title        String		@unique
+  title        String   @unique
   description  String
   genre        String[]
   release_date String
-	poster_url	 String
-	rating			 Float
-	imdb_id			 String
+  poster_url   String
+  rating       Float
+  imdb_id      String
   List         List[]
 }
 
 model User {
-  id         String   @id @default(uuid())
-  username   String   @unique
-  email      String   @unique
-  password   String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  role       Role
-	avatar     Bytes?
-  List       List[]
+  id             String    @id @default(uuid())
+  username       String    @unique
+  email          String    @unique
+  password       String
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  role           Role
+  avatar         Bytes?
+  List           List[]
+  friendsWith    Friends[] @relation("user_1")
+  friendsRequest Friends[] @relation("user_2")
+}
+
+model Friends {
+  user_1    User     @relation("user_1", fields: [userId1], references: [id], onDelete: Cascade)
+  userId1   String   @map("id_1")
+  user_2    User     @relation("user_2", fields: [userId2], references: [id], onDelete: Cascade)
+  userId2   String   @map("id_2")
+  isFriend  Boolean  @map("is_friend")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([userId1, userId2])
 }
 
 enum Role {

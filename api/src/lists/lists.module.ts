@@ -4,10 +4,11 @@ import { ListsService } from './lists.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { EmailModule } from '../email/email.module';
 import { ListDao } from '../dao/list.dao';
+import { UserDao } from '../dao/user.dao';
 
 @Module({
 	imports: [PrismaModule, EmailModule],
 	controllers: [ListsController],
-	providers: [ListsService, ListDao],
+	providers: [ListsService, ListDao, UserDao],
 })
 export class ListsModule {}

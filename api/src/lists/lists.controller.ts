@@ -61,6 +61,18 @@ export class ListsController {
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
+	@Post('/toggleShareByUsername')
+	async toggleShareListByUsername(
+		@Body() { listId, username }: { listId: string; username: string },
+		@Req() req: Request,
+	) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+
+		return this.listsService.toggleShareByUsername(listId, username);
+	}
+
+	@UseInterceptors(RemoveListFieldsInterceptor)
+	@UseGuards(ListAuthorizationGuard)
 	@Post('/toggleShare')
 	async toggleShareList(
 		@Body() { listId, email }: { listId: string; email: string },

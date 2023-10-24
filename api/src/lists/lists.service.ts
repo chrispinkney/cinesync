@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CreateListDto } from './dtos/create-list.dto';
 import { UpdateListDto } from './dtos/update-list.dto';
 import { ListDao } from '../dao/list.dao';
+import { UserDao } from '../dao/user.dao';
 
 @Injectable()
 export class ListsService {
-	constructor(private listDao: ListDao) {}
+	constructor(private listDao: ListDao, private userDao: UserDao) {}
 
 	async getList(listId: string) {
 		return await this.listDao.getList(listId);
@@ -53,5 +54,11 @@ export class ListsService {
 
 	async toggleShareList(listId: string, email: string) {
 		return await this.listDao.toggleShareList(listId, email);
+	}
+
+	async toggleShareByUsername(listId: string, username: string) {
+		const { email } = await this.userDao.getUserByUsername(username);
+
+		return this.listDao.toggleShareList(listId, email);
 	}
 }
