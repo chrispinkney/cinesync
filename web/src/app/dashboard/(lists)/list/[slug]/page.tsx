@@ -1,5 +1,5 @@
 'use client';
-import MovieListTableContainer from '@/components/List/MovieListTable/MovieListTableContainer';
+import MovieListContainer from '@/components/List/MovieListGrid/MovieListContainer';
 import { MovieListContextProvider } from '@/context/movielist.context';
 
 const Page = ({ params }: { params: { slug: string } }) => {
@@ -8,7 +8,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
 	return (
 		<main>
 			<MovieListContextProvider listId={movieListId}>
-				<MovieListTableContainer />
+				<MovieListContainer />
 			</MovieListContextProvider>
 		</main>
 	);

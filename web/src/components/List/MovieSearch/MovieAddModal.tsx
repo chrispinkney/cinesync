@@ -8,8 +8,10 @@ import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import { fetchTmdbMovie, searchTmdbMovies } from '@/utils/tmdb-api/fetch';
 import debounce from 'lodash.debounce';
-import { Collapse, Paper, Skeleton } from '@mui/material';
-import MovieCard from '../MovieCard/MovieCard';
+import MovieCard from './MovieCard';
+import Collapse from '@mui/material/Collapse';
+import Skeleton from '@mui/material/Skeleton';
+import Paper from '@mui/material/Paper';
 
 const MovieAddModal = ({
 	open,
@@ -88,6 +90,7 @@ const MovieAddModal = ({
 					label="Movie Name"
 					variant="outlined"
 					value={searchQuery}
+					autoFocus
 					onChange={handleSearchTextChange}
 				/>
 				<Collapse in={loadingResults || !!searchResults}>

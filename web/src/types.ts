@@ -7,14 +7,15 @@ type NavigationLink = {
 };
 
 type MovieItem = {
-	id?: string;
+	id: string;
 	title: string;
-	description?: string;
+	description: string;
 	genre: string[];
 	release_date: string;
 	poster_url: string;
 	rating: number;
 	imdb_id: string;
+	isNew?: boolean;
 };
 
 type MovieList = {
@@ -75,7 +76,7 @@ type TmdbMovieLite = {
 	release_date: string;
 	title: string;
 	video?: boolean;
-	vote_average?: number;
+	vote_average: number;
 	vote_count?: number;
 };
 

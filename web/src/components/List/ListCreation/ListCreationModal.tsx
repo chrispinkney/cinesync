@@ -93,6 +93,7 @@ const ListCreationModal = ({
 						label="List Name"
 						variant="outlined"
 						value={listName}
+						autoFocus
 						onChange={handleTextChange}
 						onKeyDown={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
 						error={isListNameInvalid}

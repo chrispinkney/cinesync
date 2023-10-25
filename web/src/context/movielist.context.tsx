@@ -11,7 +11,6 @@ import {
 	useEffect,
 	useState,
 } from 'react';
-import { GridRowsProp } from '@mui/x-data-grid';
 import { useGlobalContext } from './store';
 import { getListById } from '@/utils/cinesync-api/fetch-list';
 
@@ -19,9 +18,10 @@ import { getListById } from '@/utils/cinesync-api/fetch-list';
 const MovieListContext = createContext<
 	| {
 			movieList: MovieList;
+			setMovieList: Dispatch<SetStateAction<MovieList | null>>;
 			refreshMovieListContext: () => Promise<void>;
-			movieListTableRows: GridRowsProp;
-			setMovieListTableRows: Dispatch<SetStateAction<GridRowsProp>>;
+			listEdited: boolean;
+			setListEdited: (arg0: boolean) => void;
 	  }
 	| undefined
 >(undefined);
@@ -33,11 +33,10 @@ export const MovieListContextProvider = ({
 	children: ReactNode;
 	listId: string;
 }) => {
-	const [movieList, setMovieList] = useState<MovieList | null>(null);
-	const [movieListTableRows, setMovieListTableRows] = useState<GridRowsProp>(
-		[],
-	);
 	const { token } = useGlobalContext();
+	const [movieList, setMovieList] = useState<MovieList | null>(null);
+	// Track if movie has been added or list title changed to allow list saving
+	const [listEdited, setListEdited] = useState<boolean>(false);
 
 	// refreshMovieListContext will be provided so that child components can easily re-fetch data so page will be re-rendered
 	const refreshMovieListContext = useCallback(async () => {
@@ -47,7 +46,6 @@ export const MovieListContextProvider = ({
 		});
 		if (success && 'list' in fetchResponseJson) {
 			setMovieList(fetchResponseJson.list);
-			setMovieListTableRows(fetchResponseJson.list.Movie);
 		}
 	}, [listId, token]);
 
@@ -63,9 +61,10 @@ export const MovieListContextProvider = ({
 				<MovieListContext.Provider
 					value={{
 						movieList,
+						setMovieList,
 						refreshMovieListContext,
-						movieListTableRows,
-						setMovieListTableRows,
+						listEdited,
+						setListEdited,
 					}}
 				>
 					{children}

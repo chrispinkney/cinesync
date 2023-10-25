@@ -10,9 +10,11 @@ import Tooltip from '@mui/material/Tooltip';
 const ListActions = ({
 	listId,
 	refreshContext,
+	name,
 }: {
 	listId: string;
 	refreshContext: () => Promise<void>;
+	name: string;
 }) => {
 	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
@@ -33,6 +35,7 @@ const ListActions = ({
 				open={shareModalOpen}
 				handleClose={handleShareModalClose}
 				listId={listId}
+				name={name}
 			/>
 			<Tooltip title="Delete list">
 				<IconButton
@@ -48,6 +51,7 @@ const ListActions = ({
 				handleClose={handleDeleteConfirmationClose}
 				listId={listId}
 				refreshContext={refreshContext}
+				name={name}
 			/>
 		</Fragment>
 	);

@@ -17,11 +17,13 @@ const ListDeleteConfirmationModal = ({
 	handleClose,
 	listId,
 	refreshContext,
+	name,
 }: {
 	open: boolean;
 	handleClose: () => void;
 	listId: string;
 	refreshContext: () => Promise<void>;
+	name: string;
 }) => {
 	const { replace } = useRouter();
 	const pathname = usePathname();
@@ -75,7 +77,7 @@ const ListDeleteConfirmationModal = ({
 				</Typography>
 				<Divider />
 				<Typography variant="body1" gutterBottom sx={{ margin: 5 }}>
-					Are you sure you wish to delete list #{listId}?
+					Are you sure you wish to delete list {name}?
 				</Typography>
 				<Box display="flex" justifyContent="center" alignItems="center">
 					<ButtonGroup variant="contained">
