@@ -16,10 +16,12 @@ const ListShareModal = ({
 	open,
 	handleClose,
 	listId,
+	name,
 }: {
 	open: boolean;
 	handleClose: () => void;
 	listId: string;
+	name: string;
 }) => {
 	const { token } = useGlobalContext();
 	const [recipientEmail, setRecipientEmail] = useState('');
@@ -77,7 +79,7 @@ const ListShareModal = ({
 			>
 				<Stack spacing={2}>
 					<Typography variant="h5" gutterBottom align="center">
-						Share List #{listId}
+						Share List: {name}
 					</Typography>
 					<Divider />
 					<Typography variant="body1" gutterBottom sx={{ margin: 5 }}>
@@ -89,6 +91,7 @@ const ListShareModal = ({
 						label="Recipient Email"
 						variant="outlined"
 						value={recipientEmail}
+						autoFocus
 						onChange={handleTextChange}
 						onKeyDown={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
 						error={isRecipientEmailInvalid}

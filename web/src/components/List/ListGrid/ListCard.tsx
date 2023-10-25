@@ -49,7 +49,11 @@ const ListCard = ({ id, name, Movie }: MovieList) => {
 					</CardContent>
 				</CardActionArea>
 				<CardActions disableSpacing>
-					<ListActions listId={id} refreshContext={refreshListsContext} />
+					<ListActions
+						listId={id}
+						refreshContext={refreshListsContext}
+						name={name}
+					/>
 				</CardActions>
 			</Card>
 		</Grow>
