@@ -27,7 +27,16 @@ const ListActions = ({
 	return (
 		<Fragment>
 			<Tooltip title="Share list">
-				<IconButton aria-label="share list" onClick={handleShareModalOpen}>
+				<IconButton
+					sx={{
+						'&:hover': {
+							backgroundColor: 'info.main',
+							color: 'info.contrastText',
+						},
+					}}
+					aria-label="share list"
+					onClick={handleShareModalOpen}
+				>
 					<ShareIcon />
 				</IconButton>
 			</Tooltip>
@@ -39,7 +48,13 @@ const ListActions = ({
 			/>
 			<Tooltip title="Delete list">
 				<IconButton
-					sx={{ marginLeft: 'auto' }}
+					sx={{
+						marginLeft: 'auto',
+						'&:hover': {
+							backgroundColor: 'error.main',
+							color: 'error.contrastText',
+						},
+					}}
 					aria-label="delete list"
 					onClick={handleDeleteConfirmationOpen}
 				>

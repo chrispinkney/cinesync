@@ -1,3 +1,4 @@
+'use client';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Link from 'next/link';
@@ -5,14 +6,24 @@ import Box from '@mui/material/Box';
 import Image from 'next/image';
 import AvatarLogo from './AvatarLogo';
 import { UserProvider } from '@/context/user.context';
+import useTheme from '@mui/material/styles/useTheme';
+import ColorModeSwitch from './ColorModeSwitch';
 
 const Header = () => {
+	const theme = useTheme();
+
 	return (
 		<AppBar position="fixed" sx={{ zIndex: 2000 }}>
-			<UserProvider>
-				<Toolbar sx={{ backgroundColor: 'background.paper' }}>
-					<Box sx={{ flexGrow: 1 }}>
-						<Link href="/">
+			<Toolbar
+				sx={{
+					height: '64px',
+					backgroundColor:
+						theme.palette.mode == 'dark' ? 'background.paper' : '#2D3641',
+				}}
+			>
+				<UserProvider>
+					<Link href="/">
+						<Box sx={{ '&:hover': { filter: 'drop-shadow(0 0 2px white)' } }}>
 							<Image
 								src="/cinesync-logo-dark.svg"
 								height={54}
@@ -21,11 +32,12 @@ const Header = () => {
 								style={{ margin: '1px' }}
 								priority={true}
 							/>
-						</Link>
-					</Box>
+						</Box>
+					</Link>
+					<ColorModeSwitch />
 					<AvatarLogo />
-				</Toolbar>
-			</UserProvider>
+				</UserProvider>
+			</Toolbar>
 		</AppBar>
 	);
 };

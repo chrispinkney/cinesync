@@ -28,7 +28,6 @@ const HeaderNavigationLinks: NavigationLink[] = [
 ];
 
 const AvatarLogo = () => {
-	const userContext = useUser();
 	const { avatar } = useUser();
 	const { token } = useGlobalContext();
 	const theme = useTheme();
@@ -59,7 +58,7 @@ const AvatarLogo = () => {
 		setAnchorElUser(null);
 	};
 	return (
-		<Box sx={{ flexGrow: 0 }}>
+		<Box ml={2}>
 			<Tooltip title="Open settings">
 				<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
 					{avatar == '' ? (

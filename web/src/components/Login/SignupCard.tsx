@@ -7,8 +7,9 @@ import {
 	Typography,
 	TextField,
 	Button,
+	Box,
+	useTheme,
 } from '@mui/material';
-import styles from './authMain.module.css';
 import Image from 'next/image';
 import { signUserUp } from '@/utils/cinesync-api/fetch-user';
 
@@ -17,6 +18,7 @@ interface SignUpProps {
 }
 
 const SignupCard: NextPage<SignUpProps> = ({ settabValue }) => {
+	const theme = useTheme();
 	const [formData, setFormData] = useState<SignupFormData>({
 		username: '',
 		email: '',
@@ -61,9 +63,18 @@ const SignupCard: NextPage<SignUpProps> = ({ settabValue }) => {
 	return (
 		<>
 			<CardContent>
-				<div className={styles.cardContainer}>
+				<Box
+					display="flex"
+					flexDirection="column"
+					justifyContent="center"
+					alignItems="center"
+				>
 					<Image
-						src="/cinesync-logo-dark.svg"
+						src={
+							theme.palette.mode == 'dark'
+								? '/cinesync-logo-dark.svg'
+								: '/cinesync-logo-light.svg'
+						}
 						height={54}
 						width={150}
 						alt="CineSync Logo"
@@ -117,7 +128,7 @@ const SignupCard: NextPage<SignUpProps> = ({ settabValue }) => {
 							</Button>
 						</form>
 					</Container>
-				</div>
+				</Box>
 			</CardContent>
 		</>
 	);

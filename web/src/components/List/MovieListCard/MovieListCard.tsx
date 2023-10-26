@@ -100,7 +100,6 @@ const MovieListCard = ({ movie }: { movie: MovieItem }) => {
 										label={value}
 										size="small"
 										color="primary"
-										variant="outlined"
 									/>
 								))}
 							</Box>
