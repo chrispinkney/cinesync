@@ -49,11 +49,12 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 				<Box
 					component="main"
 					sx={{
-						flexGrow: 1,
 						bgcolor: 'background.default',
 						ml: '240px',
-						mt: ['48px', '56px', '64px'],
+						mt: '64px',
 						p: 3,
+						height: 'calc(100vh - 64px)',
+						overflow: 'auto',
 					}}
 				>
 					<Suspense fallback={<Loading />}>{children}</Suspense>

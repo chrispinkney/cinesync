@@ -5,7 +5,6 @@ import Card from '@mui/material/Card';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import styles from './authMain.module.css';
 import LoginCard from './LoginCard';
 import SignupCard from './SignupCard';
 
@@ -88,15 +87,11 @@ const AuthMain: NextPage<AuthMainProps> = ({ authentication }) => {
 								aria-label="basic tabs example"
 								centered
 							>
-								<Tab
-									label="Login"
-									{...tabProps(0)}
-									className={styles.tabPanelLogin}
-								/>
+								<Tab label="Login" {...tabProps(0)} sx={{ fontSize: 18 }} />
 								<Tab
 									label="Signup"
 									{...tabProps(1)}
-									className={styles.tabPanelSignup}
+									sx={{ fontSize: 18, ml: 10 }}
 								/>
 							</Tabs>
 						</Box>

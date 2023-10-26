@@ -4,10 +4,11 @@ import {
 	Typography,
 	TextField,
 	Button,
+	Box,
+	useTheme,
 } from '@mui/material';
 import { useState } from 'react';
 import { LoginFormData, validateLoginForm } from './loginValidation';
-import styles from './authMain.module.css';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useGlobalContext } from '@/context/store';
@@ -15,6 +16,7 @@ import { useGlobalContext } from '@/context/store';
 const LoginCard = () => {
 	const { token, setToken } = useGlobalContext();
 	const router = useRouter();
+	const theme = useTheme();
 	const [formData, setFormData] = useState<LoginFormData>({
 		email: '',
 		password: '',
@@ -72,9 +74,18 @@ const LoginCard = () => {
 	return (
 		<>
 			<CardContent>
-				<div className={styles.cardContainer}>
+				<Box
+					display="flex"
+					flexDirection="column"
+					justifyContent="center"
+					alignItems="center"
+				>
 					<Image
-						src="/cinesync-logo-dark.svg"
+						src={
+							theme.palette.mode == 'dark'
+								? '/cinesync-logo-dark.svg'
+								: '/cinesync-logo-light.svg'
+						}
 						height={54}
 						width={150}
 						alt="CineSync Logo"
@@ -117,7 +128,7 @@ const LoginCard = () => {
 							</Button>
 						</form>
 					</Container>
-				</div>
+				</Box>
 			</CardContent>
 		</>
 	);
