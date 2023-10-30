@@ -5,8 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthService } from './auth.service';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dtos/create-user.dto';
+import { UsersService } from '../users.service';
+import { CreateUserDto } from '../dtos/create-user.dto';
 
 describe('AuthService', () => {
 	let service: AuthService;

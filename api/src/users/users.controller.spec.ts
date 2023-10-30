@@ -4,7 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { User } from '@prisma/client';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth/auth.service';
 import { EmailService } from '../email/email.service';
 import { EmailModule } from '../email/email.module';
 import { CreateUserDto } from './dtos/create-user.dto';

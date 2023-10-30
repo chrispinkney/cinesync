@@ -22,7 +22,7 @@ import { Role } from '@prisma/client';
 import { Express } from 'express';
 import { EmailService } from '../email/email.service';
 import { UsersService } from './users.service';
-import { AuthService } from './auth.service';
+import { AuthService } from './auth/auth.service';
 import { AdminGuard } from './guards/admin.guard';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
