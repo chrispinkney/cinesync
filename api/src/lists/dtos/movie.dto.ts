@@ -15,11 +15,11 @@ export class MovieDto {
 
 	@IsString()
 	@IsOptional()
-	release_date: string;
+	releaseDate: string;
 
 	@IsString()
 	@IsOptional()
-	poster_url: string;
+	posterUrl: string;
 
 	@IsNumber()
 	@IsOptional()
@@ -27,5 +27,5 @@ export class MovieDto {
 
 	@IsString()
 	@IsOptional()
-	imdb_id: string;
+	imdbId: string;
 }

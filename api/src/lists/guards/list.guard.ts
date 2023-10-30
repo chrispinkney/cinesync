@@ -14,12 +14,12 @@ export class ListAuthorizationGuard implements CanActivate {
 		const list = await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
 			include: {
-				User: true,
+				user: true,
 			},
 		});
 
 		// allow access if list is public and user is logged in
-		if (!list.is_private && user) {
+		if (!list.isPrivate && user) {
 			return true;
 		}
 
@@ -29,9 +29,9 @@ export class ListAuthorizationGuard implements CanActivate {
 		}
 
 		// check if list belongs to the user or has been shared with the user
-		const isCreator = list.creator_id === user.id;
+		const isCreator = list.creatorId === user.id;
 		const isSharedWithUser =
-			list.User.find((sharedUser) => sharedUser.id === user.id) !== undefined;
+			list.user.find((sharedUser) => sharedUser.id === user.id) !== undefined;
 
 		return isCreator || isSharedWithUser;
 	}

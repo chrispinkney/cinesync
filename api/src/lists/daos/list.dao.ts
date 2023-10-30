@@ -13,12 +13,12 @@ export class ListDao {
 			select: {
 				id: true,
 				name: true,
-				is_private: true,
-				creator_id: true,
-				created_at: true,
-				updated_at: true,
-				Movie: true,
-				User: true,
+				isPrivate: true,
+				creatorId: true,
+				createdAt: true,
+				updatedAt: true,
+				movie: true,
+				user: true,
 				comments: {
 					select: {
 						id: true,
@@ -34,7 +34,7 @@ export class ListDao {
 			},
 		});
 
-		list.User = list.User.filter((user) => user.id === list.creator_id);
+		list.user = list.user.filter((user) => user.id === list.creatorId);
 
 		return list;
 	}
@@ -43,18 +43,18 @@ export class ListDao {
 		return this.prisma.user.findUniqueOrThrow({
 			where: { id: userId },
 			include: {
-				List: {
+				list: {
 					orderBy: {
-						created_at: 'desc',
+						createdAt: 'desc',
 					},
 					select: {
 						id: true,
 						name: true,
-						is_private: true,
-						creator_id: true,
-						created_at: true,
-						updated_at: true,
-						Movie: true,
+						isPrivate: true,
+						creatorId: true,
+						createdAt: true,
+						updatedAt: true,
+						movie: true,
 					},
 				},
 			},
@@ -65,7 +65,7 @@ export class ListDao {
 		const list = await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
 			include: {
-				User: {
+				user: {
 					orderBy: {
 						username: 'asc',
 					},
@@ -73,7 +73,7 @@ export class ListDao {
 						id: true,
 						username: true,
 						email: true,
-						// avatar: true,
+						avatar: true,
 					},
 				},
 			},
@@ -86,31 +86,31 @@ export class ListDao {
 		const list = await this.prisma.list.create({
 			data: {
 				name: createList.name,
-				is_private: true,
-				creator_id: userId,
-				User: {
+				isPrivate: true,
+				creatorId: userId,
+				user: {
 					connect: { id: userId },
 				},
 			},
 			include: {
-				Movie: true,
+				movie: true,
 			},
 		});
 
-		if (createList?.Movie?.length) {
+		if (createList?.movie?.length) {
 			// iterate over new movies, get new ids
 			const newMovies = await Promise.all(
-				createList.Movie.map((movie) =>
+				createList.movie.map((movie) =>
 					this.prisma.movie.upsert({
 						where: { title: movie.title },
 						create: {
 							title: movie.title,
 							description: movie.description,
 							genre: movie.genre,
-							release_date: movie.release_date,
-							poster_url: movie.poster_url,
+							releaseDate: movie.releaseDate,
+							posterUrl: movie.posterUrl,
 							rating: movie.rating,
-							imdb_id: movie.imdb_id,
+							imdbId: movie.imdbId,
 						},
 						update: {},
 					}),
@@ -123,7 +123,7 @@ export class ListDao {
 					this.prisma.movie.update({
 						where: { id: movie.id },
 						data: {
-							List: {
+							list: {
 								connect: {
 									id: list.id,
 								},
@@ -137,7 +137,7 @@ export class ListDao {
 		const createdList = await this.prisma.list.findUniqueOrThrow({
 			where: { id: list.id },
 			include: {
-				Movie: true,
+				movie: true,
 			},
 		});
 
@@ -147,13 +147,13 @@ export class ListDao {
 	async updateListPrivacy(listId: string) {
 		const list = await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
-			include: { User: true, Movie: true },
+			include: { user: true, movie: true },
 		});
 
 		return await this.prisma.list.update({
 			where: { id: listId },
 			data: {
-				is_private: !list.is_private,
+				isPrivate: !list.isPrivate,
 			},
 		});
 	}
@@ -161,20 +161,20 @@ export class ListDao {
 	async updateList(updateListDto: UpdateListDto) {
 		let newMovies = [];
 		// add new movies to list
-		if (updateListDto?.Movie?.length) {
+		if (updateListDto?.movie?.length) {
 			// iterate over new movies, get new ids
 			newMovies = await Promise.all(
-				updateListDto.Movie.map((movie) =>
+				updateListDto.movie.map((movie) =>
 					this.prisma.movie.upsert({
 						where: { title: movie.title },
 						create: {
 							title: movie.title,
 							description: movie.description,
 							genre: movie.genre,
-							release_date: movie.release_date,
-							poster_url: movie.poster_url,
+							releaseDate: movie.releaseDate,
+							posterUrl: movie.posterUrl,
 							rating: movie.rating,
-							imdb_id: movie.imdb_id,
+							imdbId: movie.imdbId,
 						},
 						// do not update the movie table
 						update: {},
@@ -188,7 +188,7 @@ export class ListDao {
 					this.prisma.movie.update({
 						where: { id: movie.id },
 						data: {
-							List: {
+							list: {
 								connect: {
 									id: updateListDto.listId,
 								},
@@ -204,7 +204,7 @@ export class ListDao {
 			data: {
 				name: updateListDto.name,
 			},
-			include: { Movie: true },
+			include: { movie: true },
 		});
 	}
 
@@ -212,10 +212,10 @@ export class ListDao {
 		return await this.prisma.user.update({
 			where: { id: userId },
 			data: {
-				List: {
+				list: {
 					delete: {
 						id: listId,
-						creator_id: userId,
+						creatorId: userId,
 					},
 				},
 			},
@@ -226,7 +226,7 @@ export class ListDao {
 		await this.prisma.list.update({
 			where: { id: listId },
 			data: {
-				Movie: {
+				movie: {
 					disconnect: { id: movieId },
 				},
 			},
@@ -237,7 +237,7 @@ export class ListDao {
 		const user = await this.prisma.user.findUniqueOrThrow({
 			where: { email },
 			include: {
-				List: {
+				list: {
 					where: {
 						id: listId,
 					},
@@ -245,12 +245,12 @@ export class ListDao {
 			},
 		});
 
-		const isConnected = user.List.some((list) => list.id === listId);
+		const isConnected = user.list.some((list) => list.id === listId);
 
 		return await this.prisma.list.update({
 			where: { id: listId },
 			data: {
-				User: {
+				user: {
 					...(isConnected
 						? {
 								disconnect: { email },

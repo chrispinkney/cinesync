@@ -198,7 +198,7 @@ export class UsersController {
 
 		const userLists = await this.listsService.getLists(req.user.id);
 		await Promise.all(
-			userLists.List.map((list) =>
+			userLists.list.map((list) =>
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				this.listsService.deleteList(list.id, req.user!.id),
 			),

@@ -15,16 +15,16 @@ class MovieItem {
 	genre: string[];
 
 	@Expose()
-	release_date: string;
+	releaseDate: string;
 
 	@Expose()
-	poster_url: string;
+	posterUrl: string;
 
 	@Expose()
 	rating: string;
 
 	@Expose()
-	imdb_id: string;
+	imdbId: string;
 }
 
 class ListItem {
@@ -35,29 +35,29 @@ class ListItem {
 	name: string;
 
 	@Expose()
-	is_private: boolean;
+	isPrivate: boolean;
 
 	@Expose()
-	creator_id: number;
+	creatorId: number;
 
 	@Expose()
-	created_at: Date;
+	createdAt: Date;
 
 	@Expose()
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Expose()
-	Movie: MovieItem[];
+	movie: MovieItem[];
 }
 
 export class ListDto {
 	@Expose()
 	@Type(() => ListItem)
 	@ValidateNested()
-	List: ListItem[];
+	list: ListItem[];
 
 	@Expose()
 	@Type(() => MovieItem)
 	@ValidateNested()
-	Movie: MovieItem[];
+	movie: MovieItem[];
 }

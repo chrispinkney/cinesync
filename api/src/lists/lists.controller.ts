@@ -122,6 +122,7 @@ export class ListsController {
 
 	@UseGuards(ListAuthorizationGuard, CommentAuthorizationGuard)
 	@Patch('/comments/update')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	async updateComment(@Body() updateCommentDto: UpdateCommentDto) {
 		return this.listsService.updateComment(updateCommentDto);
 	}

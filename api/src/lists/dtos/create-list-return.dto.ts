@@ -17,16 +17,16 @@ class Movie {
 	genre: string[];
 
 	@Expose()
-	release_date: string;
+	releaseDate: string;
 
 	@Expose()
-	poster_url: string;
+	posterUrl: string;
 
 	@Expose()
 	rating: string;
 
 	@Expose()
-	imdb_id: string;
+	imdbId: string;
 }
 
 class List {
@@ -37,26 +37,26 @@ class List {
 	name: string;
 
 	@Expose()
-	is_private: boolean;
+	isPrivate: boolean;
 
 	@Expose()
-	creator_id: number;
+	creatorId: number;
 
 	@Expose()
-	created_at: Date;
+	createdAt: Date;
 
 	@Expose()
-	updated_at: Date;
+	updatedAt: Date;
 
 	@Expose()
 	@Type(() => Movie)
 	@ValidateNested()
-	Movie: Movie[];
+	movie: Movie[];
 
 	@Expose()
 	@Type(() => UserDto)
 	@ValidateNested()
-	User: UserDto[];
+	user: UserDto[];
 
 	@Expose()
 	@Type(() => CommentDto)

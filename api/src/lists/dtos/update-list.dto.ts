@@ -13,5 +13,5 @@ export class UpdateListDto {
 	@IsArray()
 	@ValidateNested({ each: true })
 	@Type(() => MovieDto)
-	Movie: MovieDto[];
+	movie: MovieDto[];
 }

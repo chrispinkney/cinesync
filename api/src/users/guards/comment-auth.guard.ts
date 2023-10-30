@@ -16,12 +16,12 @@ export class CommentAuthorizationGuard implements CanActivate {
 			select: {
 				id: true,
 				name: true,
-				is_private: true,
-				creator_id: true,
-				created_at: true,
-				updated_at: true,
-				Movie: true,
-				User: true,
+				isPrivate: true,
+				creatorId: true,
+				createdAt: true,
+				updatedAt: true,
+				movie: true,
+				user: true,
 				comments: {
 					select: {
 						id: true,
@@ -50,7 +50,7 @@ export class CommentAuthorizationGuard implements CanActivate {
 		}
 
 		// allow access if the user is the list's creator allow all actions
-		if (list.creator_id === user.id) {
+		if (list.creatorId === user.id) {
 			return true;
 		}
 

@@ -26,8 +26,8 @@ describe('UsersController', () => {
 					username: 'testuser',
 					email: 'test@test.test',
 					password: 'test',
-					created_at: new Date(),
-					updated_at: new Date(),
+					createdAt: new Date(),
+					updatedAt: new Date(),
 				} as User);
 			},
 			getUserByEmail: (email: string) => {
@@ -36,8 +36,8 @@ describe('UsersController', () => {
 					username: 'testuser',
 					email,
 					password: 'test',
-					created_at: new Date(),
-					updated_at: new Date(),
+					createdAt: new Date(),
+					updatedAt: new Date(),
 				} as User);
 			},
 			deleteUser: (id: string) => {
@@ -47,8 +47,8 @@ describe('UsersController', () => {
 						username: 'testuser',
 						email: 'test@test.test',
 						password: 'test',
-						created_at: new Date(),
-						updated_at: new Date(),
+						createdAt: new Date(),
+						updatedAt: new Date(),
 					} as User;
 					return Promise.resolve(removedUser);
 				} else {
@@ -82,28 +82,28 @@ describe('UsersController', () => {
 					username: 'asdf',
 					email: 'asdf@asdf.asdf',
 					password: '123',
-					created_at: new Date(),
-					updated_at: new Date(),
+					createdAt: new Date(),
+					updatedAt: new Date(),
 					role: 'USER',
 					avatar: null,
-					List: [
+					list: [
 						{
 							id: '25',
 							name: 'My Watchlist_chrischris',
-							is_private: true,
-							creator_id: '123',
-							created_at: new Date(),
-							updated_at: new Date(),
-							Movie: [
+							isPrivate: true,
+							creatorId: '123',
+							createdAt: new Date(),
+							updatedAt: new Date(),
+							movie: [
 								{
 									id: '1',
 									title: 'Movie2',
 									description: 'Description for Movie 2',
 									genre: ['Horror', 'Family'],
-									release_date: '666',
-									poster_url: '123',
+									releaseDate: '666',
+									posterUrl: '123',
 									rating: 4.5,
-									imdb_id: '123',
+									imdbId: '123',
 								},
 							],
 						},
@@ -116,8 +116,8 @@ describe('UsersController', () => {
 					username: 'asdf',
 					email: 'asdf@asdf.asdf',
 					password: userId,
-					created_at: new Date(),
-					updated_at: new Date(),
+					createdAt: new Date(),
+					updatedAt: new Date(),
 					role: 'USER',
 					avatar: null,
 				});
@@ -157,7 +157,6 @@ describe('UsersController', () => {
 
 	it.skip('fetchUserByEmail returns a user with the given email', async () => {
 		const user = await controller.fetchUserByEmail('test@test.test');
-		console.log(`it  user:`, user);
 
 		expect(user).toBeDefined();
 		expect(user?.id).toEqual('-1');
@@ -192,7 +191,7 @@ describe('UsersController', () => {
 		const user = await controller.signin(req);
 
 		expect(user).toBeDefined();
-		expect(user.access_token).toBeDefined();
+		expect(user.accessToken).toBeDefined();
 	});
 
 	it.skip('signin throws an error if invalid credentials are provided', async () => {

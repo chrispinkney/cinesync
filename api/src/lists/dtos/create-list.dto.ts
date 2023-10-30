@@ -7,5 +7,5 @@ export class CreateListDto {
 
 	@IsOptional()
 	@IsArray()
-	Movie: MovieDto[];
+	movie: MovieDto[];
 }

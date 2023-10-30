@@ -24,8 +24,8 @@ describe('AuthService', () => {
 				const user: User = {
 					id: uuidv4(),
 					...createUserDto,
-					created_at: new Date(),
-					updated_at: new Date(),
+					createdAt: new Date(),
+					updatedAt: new Date(),
 					role: Role.USER,
 					avatar: null,
 				};

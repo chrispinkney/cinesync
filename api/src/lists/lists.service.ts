@@ -59,15 +59,15 @@ export class ListsService {
 	async getSharees(listId: string, userId: string) {
 		const list = await this.listDao.getSharees(listId);
 
-		const creator = list.User.find((user) => user.id === list.creator_id);
+		const creator = list.user.find((user) => user.id === list.creatorId);
 
-		const filteredList = list.User.filter((user) => userId !== user.id).map(
-			({ username, email }) => ({
+		const filteredList = list.user
+			.filter((user) => userId !== user.id)
+			.map(({ username, email }) => ({
 				username,
 				email,
 				creator: username === creator?.username,
-			}),
-		);
+			}));
 
 		return filteredList;
 	}
