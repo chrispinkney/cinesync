@@ -144,3 +144,45 @@ export const deleteUserAvatar = async ({
 		endpoint: '/auth/avatar/delete',
 	});
 };
+
+export const getUserFriends = async ({
+	token,
+}: {
+	token: string;
+}): Promise<UserFriendsDto> => {
+	return await cinesyncFetch({
+		token,
+		method: 'GET',
+		endpoint: '/auth/friends',
+	});
+};
+
+export const sendFriendRequest = async ({
+	token,
+	body,
+}: {
+	token: string;
+	body: sendUserFriendRequestDto;
+}): Promise<EmptyReturnDto> => {
+	return await cinesyncFetch({
+		token,
+		method: 'POST',
+		endpoint: '/auth/friends/send',
+		body: JSON.stringify(body),
+	});
+};
+
+export const updateFriendRequest = async ({
+	token,
+	body,
+}: {
+	token: string;
+	body: updateUserFriendsDto;
+}): Promise<EmptyReturnDto> => {
+	return await cinesyncFetch({
+		token,
+		method: 'POST',
+		endpoint: '/auth/friends/update',
+		body: JSON.stringify(body),
+	});
+};
