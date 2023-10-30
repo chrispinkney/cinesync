@@ -8,27 +8,27 @@ datasource db {
 }
 
 model List {
-  id         String    @id @default(uuid())
-  name       String
-  is_private Boolean
-  creator_id String
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  Movie      Movie[]
-  User       User[]
-  comments   Comment[]
+  id        String    @id @default(uuid())
+  name      String
+  isPrivate Boolean   @map("is_private")
+  creatorId String    @map("creator_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  movie     Movie[]
+  user      User[]
+  comments  Comment[]
 }
 
 model Movie {
-  id           String   @id @default(uuid())
-  title        String   @unique
-  description  String
-  genre        String[]
-  release_date String
-  poster_url   String
-  rating       Float
-  imdb_id      String
-  List         List[]
+  id          String   @id @default(uuid())
+  title       String   @unique
+  description String
+  genre       String[]
+  releaseDate String   @map("release_date")
+  posterUrl   String   @map("poster_url")
+  rating      Float
+  imdbId      String   @map("imdb_id")
+  list        List[]
 }
 
 model User {
@@ -36,11 +36,11 @@ model User {
   username       String    @unique
   email          String    @unique
   password       String
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
   role           Role
   avatar         Bytes?
-  List           List[]
+  list           List[]
   friendsWith    Friends[] @relation("user_1")
   friendsRequest Friends[] @relation("user_2")
   comments       Comment[]

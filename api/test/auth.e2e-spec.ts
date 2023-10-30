@@ -43,7 +43,7 @@ describe('Authentication System (e2e)', () => {
 			.expect(200);
 
 		// delete
-		const token = `Bearer ${signin.body.access_token}`;
+		const token = `Bearer ${signin.body.accessToken}`;
 		await request(app.getHttpServer())
 			.delete('/auth/delete')
 			.set('Authorization', token)
@@ -74,7 +74,7 @@ describe('Authentication System (e2e)', () => {
 			.expect(200);
 
 		// whoami
-		const token = `Bearer ${signin.body.access_token}`;
+		const token = `Bearer ${signin.body.accessToken}`;
 		const whoami = await request(app.getHttpServer())
 			.get('/auth/whoami')
 			.set('Authorization', token)
