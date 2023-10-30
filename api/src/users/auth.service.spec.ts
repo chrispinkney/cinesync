@@ -1,6 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import { Role, User } from '@prisma/client';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthService } from './auth.service';
 import { UsersService } from './users.service';
@@ -25,6 +27,7 @@ describe('AuthService', () => {
 					created_at: new Date(),
 					updated_at: new Date(),
 					role: Role.USER,
+					avatar: null,
 				};
 
 				users.push(user);
@@ -41,6 +44,7 @@ describe('AuthService', () => {
 					useValue: fakeUsersService,
 				},
 			],
+			imports: [JwtModule, ConfigModule],
 		}).compile();
 
 		service = module.get(AuthService);
