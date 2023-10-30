@@ -3,8 +3,8 @@ import { CreateListDto } from './dtos/create-list.dto';
 import { UpdateListDto } from './dtos/update-list.dto';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
-import { ListDao } from '../dao/list.dao';
-import { UserDao } from '../dao/user.dao';
+import { ListDao } from './daos/list.dao';
+import { UserDao } from '../users/daos/user.dao';
 import { CommentDao } from './daos/comment.dao';
 import { UsersService } from '../users/users.service';
 

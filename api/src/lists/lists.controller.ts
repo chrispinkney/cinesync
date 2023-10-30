@@ -16,15 +16,15 @@ import {
 import { Request } from 'express';
 import { ListsService } from './lists.service';
 import { EmailService } from '../email/email.service';
-import { ListAuthorizationGuard } from '../guards/list.guard';
+import { ListAuthorizationGuard } from './guards/list.guard';
 import { RemoveListFieldsInterceptor } from './interceptors/remove-list-fields.interceptor';
 import { RemoveListCreateFieldsInterceptor } from './interceptors/remove-list-create-fields.interceptor';
 import { CreateListDto } from './dtos/create-list.dto';
 import { UpdateListDto } from './dtos/update-list.dto';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { CommentAuthorizationGuard } from '../guards/comment-auth.guard';
+import { JwtAuthGuard } from '../users/guards/jwt-auth.guard';
+import { CommentAuthorizationGuard } from '../users/guards/comment-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('lists')

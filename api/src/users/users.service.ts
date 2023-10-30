@@ -4,7 +4,7 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { UserDao } from '../dao/user.dao';
+import { UserDao } from './daos/user.dao';
 import { Response } from 'express';
 
 export type FriendStatus = 'ACCEPT' | 'REJECT' | 'SENT' | 'PENDING';
