@@ -147,6 +147,20 @@ type UpdateUserDto = {
 	password?: string;
 };
 
+type updateUserFriendsDto = {
+	username: string;
+	status: string;
+};
+
+type FriendsDto = {
+	username: string;
+	status: string;
+};
+
+type sendUserFriendRequestDto = {
+	username: string;
+};
+
 // Fetch Return Data Types
 type CinesyncFetchReturnDto =
 	| ListsReturnDto
@@ -155,7 +169,8 @@ type CinesyncFetchReturnDto =
 	| UserReturnDto
 	| TokenReturnDto
 	| AvatarReturnDto
-	| EmptyReturnDto;
+	| EmptyReturnDto
+	| UserFriendsDto;
 
 type ErrorReturnDto = {
 	success: boolean;
@@ -211,5 +226,12 @@ type EmptyReturnDto =
 	| {
 			success: boolean;
 			fetchResponseJson: {};
+	  }
+	| ErrorReturnDto;
+
+type UserFriendsDto =
+	| {
+			success: boolean;
+			fetchResponseJson: FriendsDto[];
 	  }
 	| ErrorReturnDto;
