@@ -22,7 +22,7 @@ const Header = () => {
 				}}
 			>
 				<UserProvider>
-					<Link href="/">
+					<Link href="/dashboard">
 						<Box sx={{ '&:hover': { filter: 'drop-shadow(0 0 2px white)' } }}>
 							<Image
 								src="/cinesync-logo-dark.svg"

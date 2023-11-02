@@ -110,7 +110,7 @@ const ProfileBottom = ({ refreshContext }: { refreshContext: () => void }) => {
 				<Grid xs={6} lg={4} xl={3}>
 					<div style={{ width: '30%' }}>
 						<Typography variant="h4" gutterBottom color="primary.main">
-							User Profile
+							User Info
 						</Typography>
 						<Divider />
 					</div>

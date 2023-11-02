@@ -46,11 +46,11 @@ const ListDeleteConfirmationModal = ({
 		} else {
 			setErrorText('');
 			handleClose();
-			// Redirect to /lists
-			if (pathname == '/dashboard/lists') {
+			// Redirect to /dashboard
+			if (pathname == '/dashboard') {
 				refreshContext();
 			} else {
-				replace('/dashboard/lists');
+				replace('/dashboard');
 			}
 		}
 	};

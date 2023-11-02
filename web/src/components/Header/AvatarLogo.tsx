@@ -12,6 +12,8 @@ import Link from 'next/link';
 import React from 'react';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import InfoIcon from '@mui/icons-material/Info';
+import GroupIcon from '@mui/icons-material/Group';
 import { useTheme } from '@mui/material/styles';
 import { useGlobalContext } from '@/context/store';
 import { getUserAvatar, getWhoAmI } from '@/utils/cinesync-api/fetch-user';
@@ -23,6 +25,8 @@ interface IPlaceHolderUserInfo {
 }
 
 const HeaderNavigationLinks: NavigationLink[] = [
+	{ text: 'About', href: '/dashboard/about', icon: InfoIcon },
+	{ text: 'Friends', href: '/dashboard/friends', icon: GroupIcon },
 	{ text: 'Settings', href: '/dashboard/userprofile', icon: SettingsIcon },
 	{ text: 'Logout', href: '/signout', icon: LogoutIcon },
 ];

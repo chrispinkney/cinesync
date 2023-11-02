@@ -1,6 +1,7 @@
 'use client';
 import { NextPage } from 'next';
 import { useState } from 'react';
+import Grid from '@mui/material/Unstable_Grid2';
 import Card from '@mui/material/Card';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -61,7 +62,7 @@ const AuthMain: NextPage<AuthMainProps> = ({ authentication }) => {
 			<Box
 				component="div"
 				sx={{
-					backgroundImage: "url('./login-bgd.jpeg')",
+					backgroundImage: { xs: '', md: "url('./login-bgd.jpeg')" },
 					backgroundRepeat: 'no-repeat',
 					backgroundSize: 'cover',
 					minHeight: '100vh',
@@ -71,8 +72,8 @@ const AuthMain: NextPage<AuthMainProps> = ({ authentication }) => {
 			>
 				<Card
 					sx={{
-						minWidth: 475,
-						minHeight: 475,
+						minWidth: 300,
+						width: { xs: '80%', md: '475px' },
 						position: 'absolute',
 						left: '10%',
 						top: '20%',
