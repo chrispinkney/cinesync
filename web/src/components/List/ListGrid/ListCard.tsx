@@ -33,7 +33,7 @@ const ListCard = ({ id, name, movie }: MovieList) => {
 								<ListItem dense={true} key={title}>
 									<ListItemText
 										primary={title}
-										secondary={releaseDate.slice(0, 5)}
+										secondary={releaseDate.slice(0, 4)}
 									/>
 								</ListItem>
 							))}

@@ -2,7 +2,6 @@
 import { ReactNode, Suspense, useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Header from '@/components/Header/Header';
-import Sidebar from '@/components/Sidebar/Sidebar';
 import Loading from '@/app/loading';
 import { useGlobalContext } from '@/context/store';
 import { useRouter } from 'next/navigation';
@@ -41,26 +40,22 @@ const DashboardLayout = ({ children }: { children: ReactNode }) => {
 		return <Loading />;
 	}
 	return (
-		<>
-			<UserProvider>
-				<Header />
-				<Sidebar />
+		<UserProvider>
+			<Header />
 
-				<Box
-					component="main"
-					sx={{
-						bgcolor: 'background.default',
-						ml: '240px',
-						mt: '64px',
-						p: 3,
-						height: 'calc(100vh - 64px)',
-						overflow: 'auto',
-					}}
-				>
-					<Suspense fallback={<Loading />}>{children}</Suspense>
-				</Box>
-			</UserProvider>
-		</>
+			<Box
+				component="main"
+				sx={{
+					bgcolor: 'background.default',
+					mt: '64px',
+					p: 3,
+					height: 'calc(100vh - 64px)',
+					overflow: 'auto',
+				}}
+			>
+				<Suspense fallback={<Loading />}>{children}</Suspense>
+			</Box>
+		</UserProvider>
 	);
 };
 
