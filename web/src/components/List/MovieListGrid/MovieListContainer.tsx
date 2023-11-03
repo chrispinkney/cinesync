@@ -77,11 +77,12 @@ const MovieListContainer = () => {
 						alignItems="center"
 					>
 						<MovieListTitle name={movieList.name} />
-						<Box>
+						<Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
 							<ListActions
 								listId={movieList.id}
 								refreshContext={refreshMovieListContext}
 								name={movieList.name}
+								isPrivate={movieList.isPrivate}
 							/>
 						</Box>
 					</Grid>

@@ -2,20 +2,27 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import IconButton from '@mui/material/IconButton';
-import { Fragment, useState } from 'react';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { useState } from 'react';
 import ListShareModal from '@/components/List/ListShareModal';
 import ListDeleteConfirmationModal from '@/components/List/ListDeleteConfirmationModal';
 import Tooltip from '@mui/material/Tooltip';
+import { toggleListPrivacy } from '@/utils/cinesync-api/fetch-list';
+import { useGlobalContext } from '@/context/store';
 
 const ListActions = ({
 	listId,
-	refreshContext,
 	name,
+	isPrivate,
+	refreshContext,
 }: {
 	listId: string;
-	refreshContext: () => Promise<void>;
 	name: string;
+	isPrivate: boolean;
+	refreshContext: () => Promise<void>;
 }) => {
+	const { token } = useGlobalContext();
 	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
 
@@ -24,8 +31,15 @@ const ListActions = ({
 	const handleShareModalOpen = () => setShareModalOpen(true);
 	const handleShareModalClose = () => setShareModalOpen(false);
 
+	const handlePrivacyClick = async () => {
+		const { success } = await toggleListPrivacy({ token, listId });
+		if (success) {
+			refreshContext();
+		}
+	};
+
 	return (
-		<Fragment>
+		<>
 			<Tooltip title="Share list">
 				<IconButton
 					sx={{
@@ -46,6 +60,20 @@ const ListActions = ({
 				listId={listId}
 				name={name}
 			/>
+			<Tooltip title={isPrivate ? 'Private' : 'Public'}>
+				<IconButton
+					sx={{
+						'&:hover': {
+							backgroundColor: 'info.main',
+							color: 'info.contrastText',
+						},
+					}}
+					aria-label="toggle privacy"
+					onClick={handlePrivacyClick}
+				>
+					{isPrivate ? <VisibilityOffIcon /> : <VisibilityIcon />}
+				</IconButton>
+			</Tooltip>
 			<Tooltip title="Delete list">
 				<IconButton
 					sx={{
@@ -68,7 +96,7 @@ const ListActions = ({
 				refreshContext={refreshContext}
 				name={name}
 			/>
-		</Fragment>
+		</>
 	);
 };
 
