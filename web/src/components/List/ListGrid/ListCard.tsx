@@ -11,10 +11,10 @@ import CardActions from '@mui/material/CardActions';
 import ListActions from '../ListActions';
 import { useLists } from '@/context/lists.context';
 
-const ListCard = ({ id, name, Movie }: MovieList) => {
+const ListCard = ({ id, name, movie }: MovieList) => {
 	const { refreshListsContext } = useLists();
-	const movieCount = Movie.length;
-	const firstFiveMovies: MovieItem[] = Movie.slice(0, 5);
+	const movieCount = movie.length;
+	const firstFiveMovies: MovieItem[] = movie.slice(0, 5);
 	const remainingMovies: number = Math.max(movieCount - 5, 0);
 
 	return (
@@ -29,11 +29,11 @@ const ListCard = ({ id, name, Movie }: MovieList) => {
 							movieCount == 1 ? '' : 's'
 						}`}</Typography>
 						<List>
-							{firstFiveMovies.map(({ title, release_date }: MovieItem) => (
+							{firstFiveMovies.map(({ title, releaseDate }: MovieItem) => (
 								<ListItem dense={true} key={title}>
 									<ListItemText
 										primary={title}
-										secondary={release_date.slice(0, 5)}
+										secondary={releaseDate.slice(0, 5)}
 									/>
 								</ListItem>
 							))}

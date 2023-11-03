@@ -24,8 +24,8 @@ export const ListsContextProvider = ({ children }: { children: ReactNode }) => {
 	// refreshListsContext will be provided so that child components can easily re-fetch data so page will be re-rendered
 	const refreshListsContext = useCallback(async () => {
 		const { success, fetchResponseJson } = await getLists({ token: token });
-		if (success && 'List' in fetchResponseJson)
-			setLists(fetchResponseJson.List);
+		if (success && 'list' in fetchResponseJson)
+			setLists(fetchResponseJson.list);
 	}, [token]);
 
 	// Fetch once upon initial context load

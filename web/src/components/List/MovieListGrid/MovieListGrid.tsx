@@ -9,11 +9,11 @@ const MovieListGrid = () => {
 	const { movieList } = useMovieList();
 	const [page, setPage] = useState<number>(1);
 	const [visibleMovies, setVisibleMovies] = useState<MovieItem[]>(
-		movieList.Movie.slice(0, 12),
+		movieList.movie.slice(0, 12),
 	);
 
 	useEffect(() => {
-		setVisibleMovies(movieList.Movie.slice((page - 1) * 12, page * 12));
+		setVisibleMovies(movieList.movie.slice((page - 1) * 12, page * 12));
 	}, [movieList, page]);
 
 	return (
@@ -26,7 +26,7 @@ const MovieListGrid = () => {
 			<Stack alignItems="center" mt={3}>
 				<Pagination
 					page={page}
-					count={Math.ceil(movieList.Movie.length / 12)}
+					count={Math.ceil(movieList.movie.length / 12)}
 					variant="outlined"
 					color="primary"
 					onChange={(_e, v) => setPage(v)}

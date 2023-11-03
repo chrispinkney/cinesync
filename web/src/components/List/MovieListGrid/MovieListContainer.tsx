@@ -24,19 +24,19 @@ const MovieListContainer = () => {
 			}
 			return {
 				...oldMovieList,
-				Movie: [
+				movie: [
 					{
 						id: movie.id.toString(),
 						title: movie.title,
 						description: movie.overview,
 						genre: movie.genres.map((genre) => genre.name),
-						release_date: movie.release_date,
-						poster_url: movie.poster_path ?? '',
+						releaseDate: movie.release_date,
+						posterUrl: movie.poster_path ?? '',
 						rating: movie.vote_average,
-						imdb_id: movie.imdb_id ?? '',
+						imdbId: movie.imdb_id ?? '',
 						isNew: true,
 					},
-					...oldMovieList.Movie,
+					...oldMovieList.movie,
 				],
 			};
 		});
@@ -50,7 +50,7 @@ const MovieListContainer = () => {
 			body: {
 				listId: movieList.id,
 				name: movieList.name,
-				Movie: movieList.Movie,
+				movie: movieList.movie,
 			},
 		});
 		if (success) {
