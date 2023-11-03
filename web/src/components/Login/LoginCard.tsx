@@ -42,7 +42,7 @@ const LoginCard = () => {
 					},
 				);
 				const login_token = await response.json();
-				const headers = { Authorization: `Bearer ${login_token.access_token}` };
+				const headers = { Authorization: `Bearer ${login_token.accessToken}` };
 				setToken(headers.Authorization);
 				localStorage.setItem('token', headers.Authorization);
 

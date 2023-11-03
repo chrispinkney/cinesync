@@ -32,12 +32,12 @@ const MovieListCard = ({ movie }: { movie: MovieItem }) => {
 					minHeight={{ xs: '50vw', sm: '39vw', md: '27vw', xl: '18vw' }}
 				>
 					<Grid xs={4} sm={3} md={4} lg={4} xl={4}>
-						{movie.poster_url && (
+						{movie.posterUrl && (
 							<Box display="flex" alignItems="center" height="100%">
 								{/* eslint-disable-next-line @next/next/no-img-element*/}
 								<img
 									width="100%"
-									src={`https://image.tmdb.org/t/p/w185${movie.poster_url}`}
+									src={`https://image.tmdb.org/t/p/w185${movie.posterUrl}`}
 									alt=""
 								/>
 							</Box>
@@ -71,9 +71,9 @@ const MovieListCard = ({ movie }: { movie: MovieItem }) => {
 									alignSelf="center"
 								>
 									(
-									{movie.release_date.length == 0
+									{movie.releaseDate.length == 0
 										? 'unknown'
-										: movie.release_date.slice(0, 4)}
+										: movie.releaseDate.slice(0, 4)}
 									)
 								</Typography>
 								<Box display={{ xs: 'flex', sm: 'none' }} ml="auto">

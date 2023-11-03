@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Image from 'next/image';
 
 const MovieActions = ({ movie }: { movie: MovieItem }) => {
-	const { id: movieId, imdb_id, isNew } = movie;
+	const { id: movieId, imdbId, isNew } = movie;
 	const { token } = useGlobalContext();
 	const { movieList, setMovieList, refreshMovieListContext, setListEdited } =
 		useMovieList();
@@ -21,7 +21,7 @@ const MovieActions = ({ movie }: { movie: MovieItem }) => {
 				return oldMovieList
 					? {
 							...oldMovieList,
-							Movie: oldMovieList.Movie.filter((m) => m.id != movieId),
+							movie: oldMovieList.movie.filter((m) => m.id != movieId),
 					  }
 					: null;
 			});
@@ -36,7 +36,7 @@ const MovieActions = ({ movie }: { movie: MovieItem }) => {
 		}
 	};
 
-	const noImdbLink = imdb_id.length == 0;
+	const noImdbLink = imdbId.length == 0;
 
 	return (
 		<>
@@ -51,7 +51,7 @@ const MovieActions = ({ movie }: { movie: MovieItem }) => {
 					<IconButton
 						aria-label="imdb link"
 						rel="noopener noreferrer"
-						href={`https://www.imdb.com/title/${imdb_id}`}
+						href={`https://www.imdb.com/title/${imdbId}`}
 						target="_blank"
 						disabled={noImdbLink}
 					>

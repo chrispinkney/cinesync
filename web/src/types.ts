@@ -11,21 +11,21 @@ type MovieItem = {
 	title: string;
 	description: string;
 	genre: string[];
-	release_date: string;
-	poster_url: string;
+	releaseDate: string;
+	posterUrl: string;
 	rating: number;
-	imdb_id: string;
+	imdbId: string;
 	isNew?: boolean;
 };
 
 type MovieList = {
 	id: string;
 	name: string;
-	is_private?: boolean;
-	creator_id?: number;
-	created_at?: Date;
-	updated_at?: Date;
-	Movie: MovieItem[];
+	isPrivate?: boolean;
+	creatorId?: number;
+	createdAt?: Date;
+	updatedAt?: Date;
+	movie: MovieItem[];
 };
 
 type User = {
@@ -116,18 +116,18 @@ type MovieDto = {
 	title: string;
 	description?: string;
 	genre: string[];
-	release_year?: number;
+	releaseDate?: string;
 };
 
 type CreateListDto = {
 	name: string;
-	Movie?: MovieDto[];
+	movie?: MovieDto[];
 };
 
 type UpdateListDto = {
 	listId: string;
 	name?: string;
-	Movie: MovieDto[];
+	movie: MovieDto[];
 };
 
 type CreateUserDto = {
@@ -168,7 +168,7 @@ type ErrorReturnDto = {
 type ListsReturnDto =
 	| {
 			success: boolean;
-			fetchResponseJson: { List: MovieList[] };
+			fetchResponseJson: { list: MovieList[] };
 	  }
 	| ErrorReturnDto;
 
@@ -196,7 +196,7 @@ type UserReturnDto =
 type TokenReturnDto =
 	| {
 			success: boolean;
-			fetchResponseJson: { access_token: string };
+			fetchResponseJson: { accessToken: string };
 	  }
 	| ErrorReturnDto;
 
