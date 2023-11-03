@@ -112,14 +112,12 @@ describe('UsersController', () => {
 			},
 			deleteList: (listId: string, userId: string) => {
 				return Promise.resolve({
-					id: userId,
-					username: 'asdf',
-					email: 'asdf@asdf.asdf',
-					password: userId,
+					id: listId,
+					name: 'test list name',
+					isPrivate: true,
+					creatorId: userId,
 					createdAt: new Date(),
 					updatedAt: new Date(),
-					role: 'USER',
-					avatar: null,
 				});
 			},
 		};

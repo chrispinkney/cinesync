@@ -82,7 +82,23 @@ export class ListDao {
 		return list;
 	}
 
+	async getWatchedMovies(userId: string) {
+		return await this.prisma.user.findUniqueOrThrow({
+			where: {
+				id: userId,
+			},
+			select: {
+				movie: {
+					select: {
+						id: true,
+					},
+				},
+			},
+		});
+	}
+
 	async createList(createList: CreateListDto, userId: string) {
+		let newMovies;
 		const list = await this.prisma.list.create({
 			data: {
 				name: createList.name,
@@ -99,7 +115,7 @@ export class ListDao {
 
 		if (createList?.movie?.length) {
 			// iterate over new movies, get new ids
-			const newMovies = await Promise.all(
+			newMovies = await Promise.all(
 				createList.movie.map((movie) =>
 					this.prisma.movie.upsert({
 						where: { title: movie.title },
@@ -117,7 +133,7 @@ export class ListDao {
 				),
 			);
 
-			// associate ids
+			// associate ids to movie table
 			await Promise.all(
 				newMovies.map((movie) =>
 					this.prisma.movie.update({
@@ -208,18 +224,50 @@ export class ListDao {
 		});
 	}
 
-	async deleteList(listId: string, userId: string) {
+	async updateWatchedStatus(movieId: string, userId: string) {
+		const user = await this.getWatchedMovies(userId);
+
+		const hasWatched = user.movie.find(
+			(watchedMovie) => watchedMovie.id === movieId,
+		);
+
 		return await this.prisma.user.update({
 			where: { id: userId },
 			data: {
-				list: {
-					delete: {
-						id: listId,
-						creatorId: userId,
-					},
+				movie: {
+					...(hasWatched
+						? {
+								disconnect: { id: movieId },
+						  }
+						: {
+								connect: { id: movieId },
+						  }),
 				},
 			},
 		});
+	}
+
+	async deleteList(listId: string, userId: string) {
+		const list = await this.prisma.list.findUniqueOrThrow({
+			where: { id: listId },
+			select: { creatorId: true },
+		});
+
+		// if the list isnt owned by the user (i.e., shared) do not delete it
+		if (list.creatorId === userId) {
+			await this.prisma.user.update({
+				where: { id: userId },
+				data: {
+					list: {
+						disconnect: { id: listId },
+					},
+				},
+			});
+
+			return await this.prisma.list.delete({
+				where: { id: listId },
+			});
+		}
 	}
 
 	async deleteListItem(listId: string, movieId: string) {
@@ -241,11 +289,22 @@ export class ListDao {
 					where: {
 						id: listId,
 					},
+					include: {
+						movie: true,
+					},
 				},
 			},
 		});
 
 		const isConnected = user.list.some((list) => list.id === listId);
+
+		// if a list is being shared with a user
+		if (!isConnected) {
+			await this.prisma.list.findUniqueOrThrow({
+				where: { id: listId },
+				include: { movie: true },
+			});
+		}
 
 		return await this.prisma.list.update({
 			where: { id: listId },
@@ -255,7 +314,9 @@ export class ListDao {
 						? {
 								disconnect: { email },
 						  }
-						: { connect: { email } }),
+						: {
+								connect: { email },
+						  }),
 				},
 			},
 		});
