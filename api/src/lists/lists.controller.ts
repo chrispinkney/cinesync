@@ -48,6 +48,13 @@ export class ListsController {
 		return this.listsService.getLists(req.user.id);
 	}
 
+	@UseGuards(JwtAuthGuard)
+	@Get('/watched')
+	getWatchedMovies(@Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.listsService.getWatchedMovies(req.user.id);
+	}
+
 	@UseGuards(ListAuthorizationGuard)
 	@Get('/sharees')
 	getSharees(@Query('listId') listId: string, @Req() req: Request) {
@@ -65,6 +72,7 @@ export class ListsController {
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
 	@Post('/toggleShareByUsername')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	async toggleShareListByUsername(
 		@Body() { listId, username }: { listId: string; username: string },
 		@Req() req: Request,
@@ -77,6 +85,7 @@ export class ListsController {
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
 	@Post('/toggleShare')
+	@HttpCode(HttpStatus.OK)
 	async toggleShareList(
 		@Body() { listId, email }: { listId: string; email: string },
 		@Req() req: Request,
@@ -128,6 +137,18 @@ export class ListsController {
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
+	@UseGuards(JwtAuthGuard)
+	@Patch('/updateWatchedStatus')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	updateWatchedStatus(
+		@Body() { movieId }: { movieId: string },
+		@Req() req: Request,
+	) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.listsService.updateWatchedStatus(movieId, req.user.id);
+	}
+
+	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
 	@Delete('/delete')
 	@HttpCode(HttpStatus.NO_CONTENT)
@@ -142,7 +163,9 @@ export class ListsController {
 	@HttpCode(HttpStatus.NO_CONTENT)
 	deleteMovie(
 		@Body() { listId, movieId }: { listId: string; movieId: string },
+		@Req() req: Request,
 	) {
+		if (!req.user) throw new BadRequestException('req contains no user');
 		return this.listsService.deleteListItem(listId, movieId);
 	}
 

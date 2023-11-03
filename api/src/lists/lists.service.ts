@@ -56,20 +56,39 @@ export class ListsService {
 		return await this.listDao.getLists(userId);
 	}
 
+	async getWatchedMovies(userId: string) {
+		const watched = await this.listDao.getWatchedMovies(userId);
+
+		const movieIDs = watched.movie.map((movie) => movie.id);
+
+		return movieIDs;
+	}
+
 	async getSharees(listId: string, userId: string) {
-		const list = await this.listDao.getSharees(listId);
+		const list = await this.listDao.getList(listId);
+		const sharees = await this.listDao.getSharees(listId);
+		const creator = sharees.user.find((user) => user.id === sharees.creatorId);
+		const filteredList = sharees.user.filter((user) => userId !== user.id);
 
-		const creator = list.user.find((user) => user.id === list.creatorId);
+		// retrieve movies watched by each sharee
+		const userListDetails = await Promise.all(
+			filteredList.map(async (user) => {
+				const userMovies = await this.getWatchedMovies(user.id);
 
-		const filteredList = list.user
-			.filter((user) => userId !== user.id)
-			.map(({ username, email }) => ({
-				username,
-				email,
-				creator: username === creator?.username,
-			}));
+				const watchedMoviesOnList = list.movie
+					.filter((movie) => userMovies.includes(movie.id))
+					.map((movie) => movie.id);
 
-		return filteredList;
+				return {
+					username: user.username,
+					email: user.email,
+					creator: user.username === creator?.username,
+					watched: watchedMoviesOnList,
+				};
+			}),
+		);
+
+		return userListDetails;
 	}
 
 	async createList(createList: CreateListDto, userId: string) {
@@ -90,6 +109,10 @@ export class ListsService {
 
 	async updateList(updateListDto: UpdateListDto) {
 		return await this.listDao.updateList(updateListDto);
+	}
+
+	async updateWatchedStatus(movieId: string, userId: string) {
+		return await this.listDao.updateWatchedStatus(movieId, userId);
 	}
 
 	async updateComment(updateCommentDto: UpdateCommentDto) {

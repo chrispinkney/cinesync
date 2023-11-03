@@ -29,6 +29,7 @@ model Movie {
   rating      Float
   imdbId      String   @map("imdb_id")
   list        List[]
+  user        User[]
 }
 
 model User {
@@ -44,6 +45,7 @@ model User {
   friendsWith    Friends[] @relation("user_1")
   friendsRequest Friends[] @relation("user_2")
   comments       Comment[]
+  movie          Movie[]
 }
 
 model Friends {
