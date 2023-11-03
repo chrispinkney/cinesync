@@ -21,7 +21,7 @@ type MovieItem = {
 type MovieList = {
 	id: string;
 	name: string;
-	isPrivate?: boolean;
+	isPrivate: boolean;
 	creatorId?: number;
 	createdAt?: Date;
 	updatedAt?: Date;

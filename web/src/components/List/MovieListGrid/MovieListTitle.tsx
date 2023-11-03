@@ -45,16 +45,19 @@ const MovieListTitle = ({ name }: { name: string }) => {
 		<Box display="flex" flexDirection="row" alignItems="center">
 			{!editing ? (
 				<>
-					<Typography variant="h2" color="primary" mr={1}>
+					<Typography
+						variant="h2"
+						color="primary"
+						mr={1}
+						fontSize="calc(20px + 2vw)"
+					>
 						{title}
-					</Typography>
-					<Box alignItems="center">
 						<Tooltip title="Edit Title">
 							<IconButton aria-label="edit" onClick={handleEditClick}>
 								<EditIcon />
 							</IconButton>
 						</Tooltip>
-					</Box>
+					</Typography>
 				</>
 			) : (
 				<>
