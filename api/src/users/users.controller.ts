@@ -33,6 +33,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FriendStatus } from './users.service';
+import { AvatarService } from './avatar/avatar.service';
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
@@ -53,6 +54,7 @@ export class UsersController {
 		private authService: AuthService,
 		private emailService: EmailService,
 		private listsService: ListsService,
+		private avatarService: AvatarService,
 	) {}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
@@ -81,14 +83,6 @@ export class UsersController {
 	@Get('/email')
 	fetchUserByEmail(@Query('email') email: string) {
 		return this.usersService.getUserByEmail(email);
-	}
-
-	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
-	@Get('/download')
-	async downloadAvatar(@Req() req: Request, @Res() res: Response) {
-		if (!req.user) throw new BadRequestException('req contains no user');
-		return this.usersService.getAvatar(req.user.id, res);
 	}
 
 	@UseGuards(JwtAuthGuard)
@@ -125,27 +119,6 @@ export class UsersController {
 		const user = await this.authService.login(req.user);
 
 		return user;
-	}
-
-	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
-	@HttpCode(HttpStatus.CREATED)
-	@Post('/upload')
-	@UseInterceptors(FileInterceptor('image'))
-	async uploadAvatar(
-		@UploadedFile(
-			new ParseFilePipe({
-				validators: [
-					new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB
-					new FileTypeValidator({ fileType: '.(png|jpeg|gif)' }),
-				],
-			}),
-		)
-		file: Express.Multer.File,
-		@Req() req: Request,
-	) {
-		if (!req.user) throw new BadRequestException('req contains no user');
-		return this.usersService.updateAvatar(req.user.id, file);
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
@@ -210,11 +183,54 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
+	@UseGuards(JwtAuthGuard)
+	@Get('/avatar')
+	async downloadUsersAvatar(
+		@Query('username') username: string,
+		@Req() req: Request,
+		@Res() res: Response,
+	) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+
+		return await this.avatarService.getAvatarByUsername(username, res);
+	}
+
+	@UseInterceptors(RemoveFieldsInterceptor)
+	@UseGuards(JwtAuthGuard)
+	@Get('/avatar/download')
+	async downloadAvatar(@Req() req: Request, @Res() res: Response) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+
+		return await this.avatarService.getAvatar(req.user.id, res);
+	}
+
+	@UseInterceptors(RemoveFieldsInterceptor)
+	@UseGuards(JwtAuthGuard)
+	@HttpCode(HttpStatus.CREATED)
+	@Post('/avatar/upload')
+	@UseInterceptors(FileInterceptor('image'))
+	async uploadAvatar(
+		@UploadedFile(
+			new ParseFilePipe({
+				validators: [
+					new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB
+					new FileTypeValidator({ fileType: '.(png|jpeg|gif)' }),
+				],
+			}),
+		)
+		file: Express.Multer.File,
+		@Req() req: Request,
+	) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.avatarService.updateAvatar(req.user.id, file);
+	}
+
+	@UseInterceptors(RemoveFieldsInterceptor)
 	@UseGuards(JwtAuthGuard, AdminGuard)
 	@HttpCode(HttpStatus.NO_CONTENT)
-	@Delete('/deleteAvatar')
+	@Delete('/avatar/delete')
 	async deleteUserAvatar(@Req() req: Request) {
 		if (!req.user) throw new BadRequestException('req contains no user');
-		return this.usersService.deleteUserAvatar(req.user.id);
+		return this.avatarService.deleteUserAvatar(req.user.id);
 	}
 }

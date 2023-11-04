@@ -73,7 +73,6 @@ export class ListDao {
 						id: true,
 						username: true,
 						email: true,
-						avatar: true,
 					},
 				},
 			},
