@@ -41,8 +41,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 		const headers = { Authorization: `${token}` };
 		try {
 			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/auth/download` ||
-					'http://localhost:3000/auth/download',
+				`${process.env.NEXT_PUBLIC_URL}/auth/avatar/download` ||
+					'http://localhost:3000/auth/avatar/download',
 				{
 					method: 'GET',
 					headers: { ...headers },

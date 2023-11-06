@@ -37,8 +37,8 @@ const UploadAvatarImage = () => {
 
 		try {
 			await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/auth/upload` ||
-					'http://localhost:3000/auth/upload',
+				`${process.env.NEXT_PUBLIC_URL}/auth/avatar/upload` ||
+					'http://localhost:3000/auth/avatar/upload',
 				{
 					method: 'POST',
 					headers: { ...headers },

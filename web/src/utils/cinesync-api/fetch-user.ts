@@ -50,7 +50,7 @@ export const getUserAvatar = async ({
 	return await cinesyncFetch({
 		token,
 		method: 'GET',
-		endpoint: '/auth/download',
+		endpoint: '/auth/avatar/download',
 	});
 };
 
@@ -101,7 +101,7 @@ export const uploadUserAvatar = async ({
 	return await cinesyncFetch({
 		token,
 		method: 'POST',
-		endpoint: '/auth/upload',
+		endpoint: '/auth/avatar/upload',
 		body: body,
 	});
 };
@@ -141,6 +141,6 @@ export const deleteUserAvatar = async ({
 	return await cinesyncFetch({
 		token,
 		method: 'DELETE',
-		endpoint: '/auth/deleteAvatar',
+		endpoint: '/auth/avatar/delete',
 	});
 };
