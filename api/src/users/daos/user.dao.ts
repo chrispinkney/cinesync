@@ -80,13 +80,6 @@ export class UserDao {
 		});
 	}
 
-	async updateAvatar(userId: string, avatar: Buffer) {
-		await this.prisma.user.update({
-			where: { id: userId },
-			data: { avatar },
-		});
-	}
-
 	async updateFriendship(
 		userId: string,
 		friendId: string,
@@ -129,13 +122,6 @@ export class UserDao {
 	async deleteUser(userId: string) {
 		return await this.prisma.user.delete({
 			where: { id: userId },
-		});
-	}
-
-	async deleteUserAvatar(userId: string) {
-		return await this.prisma.user.update({
-			where: { id: userId },
-			data: { avatar: null },
 		});
 	}
 }

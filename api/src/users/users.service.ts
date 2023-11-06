@@ -1,11 +1,6 @@
-import {
-	BadRequestException,
-	Injectable,
-	NotFoundException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserDao } from './daos/user.dao';
-import { Response } from 'express';
 
 export type FriendStatus = 'ACCEPT' | 'REJECT' | 'SENT' | 'PENDING';
 
@@ -27,23 +22,6 @@ export class UsersService {
 
 	async getUsernameById(userId: string) {
 		return await this.userDao.getUsernameById(userId);
-	}
-
-	async getAvatar(userId: string, res: Response) {
-		const user = await this.userDao.getUser(userId);
-
-		if (user?.avatar) {
-			const imageData = user.avatar;
-
-			res.writeHead(200, {
-				'Content-Type': 'image/*',
-				'Content-Length': imageData.length,
-			});
-
-			res.end(imageData);
-		}
-
-		throw new NotFoundException('Avatar not found');
 	}
 
 	async getFriends(userId: string) {
@@ -106,20 +84,11 @@ export class UsersService {
 		await this.userDao.updateFriendship(userId, id, status);
 	}
 
-	async updateAvatar(userId: string, avatar: Express.Multer.File) {
-		const avatarData = avatar.buffer;
-		return await this.userDao.updateAvatar(userId, avatarData);
-	}
-
 	async updateUser(userId: string, attrs: Partial<CreateUserDto>) {
 		return await this.userDao.updateUser(userId, attrs);
 	}
 
 	async deleteUser(userId: string) {
 		return await this.userDao.deleteUser(userId);
-	}
-
-	async deleteUserAvatar(userId: string) {
-		return await this.userDao.deleteUserAvatar(userId);
 	}
 }

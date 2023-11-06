@@ -10,6 +10,9 @@ import { EmailModule } from '../email/email.module';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { ListsService } from '../lists/lists.service';
 import { ListsModule } from '../lists/lists.module';
+import { AvatarModule } from './avatar/avatar.module';
+import { AvatarService } from './avatar/avatar.service';
+import { Response } from 'express';
 
 describe('UsersController', () => {
 	let controller: UsersController;
@@ -17,6 +20,7 @@ describe('UsersController', () => {
 	let fakeAuthService: Partial<AuthService>;
 	let fakeEmailService: Partial<EmailService>;
 	let fakeListsService: Partial<ListsService>;
+	let fakeAvatarService: Partial<AvatarService>;
 
 	beforeEach(async () => {
 		fakeUsersService = {
@@ -121,6 +125,27 @@ describe('UsersController', () => {
 				});
 			},
 		};
+		fakeAvatarService = {
+			async getAvatarByUsername(
+				username: string,
+				res: Response<any, Record<string, any>>,
+			) {
+				return res.status(200).json({ username });
+			},
+			async getAvatar(userId: string, res: Response<any, Record<string, any>>) {
+				return res.status(200).json({ userId });
+			},
+			deleteUserAvatar: (userId: string) => {
+				return Promise.resolve({
+					id: userId,
+					userId: 'uuid',
+					avatar: null,
+				});
+			},
+			updateAvatar: () => {
+				return Promise.resolve();
+			},
+		};
 
 		const module: TestingModule = await Test.createTestingModule({
 			controllers: [UsersController],
@@ -142,8 +167,12 @@ describe('UsersController', () => {
 					provide: ListsService,
 					useValue: fakeListsService,
 				},
+				{
+					provide: AvatarService,
+					useValue: fakeAvatarService,
+				},
 			],
-			imports: [EmailModule, ListsModule],
+			imports: [EmailModule, ListsModule, AvatarModule],
 		}).compile();
 
 		controller = module.get<UsersController>(UsersController);

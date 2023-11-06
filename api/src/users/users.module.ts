@@ -14,6 +14,9 @@ import { JwtStrategy } from './auth/passport/jwt.strategy';
 import { CommentDao } from '../lists/daos/comment.dao';
 import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
+import { AvatarService } from './avatar/avatar.service';
+import { AvatarModule } from './avatar/avatar.module';
+import { AvatarDao } from './daos/avatar.dao';
 
 @Module({
 	imports: [
@@ -22,6 +25,7 @@ import { AuthModule } from './auth/auth.module';
 		PassportModule,
 		ConfigModule,
 		AuthModule,
+		AvatarModule,
 	],
 	controllers: [UsersController],
 	providers: [
@@ -29,6 +33,8 @@ import { AuthModule } from './auth/auth.module';
 		AuthService,
 		ListsService,
 		JwtService,
+		AvatarService,
+		AvatarDao,
 		UserDao,
 		ListDao,
 		CommentDao,

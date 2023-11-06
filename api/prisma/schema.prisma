@@ -40,7 +40,6 @@ model User {
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
   role           Role
-  avatar         Bytes?
   list           List[]
   friendsWith    Friends[] @relation("user_1")
   friendsRequest Friends[] @relation("user_2")
@@ -69,6 +68,12 @@ model Comment {
   listId    String   @map("list_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Avatar {
+  id     String @id @default(uuid())
+  userId String @unique @map("user_id")
+  avatar Bytes?
 }
 
 enum Role {
