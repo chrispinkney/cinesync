@@ -8,6 +8,7 @@ import { updateList } from '@/utils/cinesync-api/fetch-list';
 import { useGlobalContext } from '@/context/store';
 import MovieListGridHeader from './MovieListGridHeader';
 import MovieListTitle from './MovieListTitle';
+import MovieListComments from './MovieListComments/MovieListComments';
 
 const MovieListContainer = () => {
 	const { token } = useGlobalContext();
@@ -93,6 +94,7 @@ const MovieListContainer = () => {
 						saveMovieList={saveMovieList}
 					/>
 					<MovieListGrid />
+					<MovieListComments />
 				</Fragment>
 			)}
 		</Fragment>

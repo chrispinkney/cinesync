@@ -54,6 +54,21 @@ export const getUserAvatar = async ({
 	});
 };
 
+export const getAvatarByUsername = async ({
+	token,
+	username,
+}: {
+	token: string;
+	username: string;
+}): Promise<AvatarReturnDto> => {
+	return await cinesyncFetch({
+		token,
+		method: 'GET',
+		endpoint: '/auth/avatar',
+		queryParams: [{ key: 'username', value: username }],
+	});
+};
+
 export const signUserOut = async ({
 	token,
 }: {

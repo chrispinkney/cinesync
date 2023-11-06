@@ -11,7 +11,7 @@ import CardActions from '@mui/material/CardActions';
 import ListActions from '../ListActions';
 import { useLists } from '@/context/lists.context';
 
-const ListCard = ({ id, name, isPrivate, movie }: MovieList) => {
+const ListCard = ({ id, name, isPrivate, movie }: MovieListLite) => {
 	const { refreshListsContext } = useLists();
 	const movieCount = movie.length;
 	const firstFiveMovies: MovieItem[] = movie.slice(0, 5);

@@ -44,6 +44,10 @@ const cinesyncFetch = async ({
 	try {
 		let res = await fetch(fetchString, options);
 		try {
+			// Possible image (blob) returned instead of json
+			if (res.headers.get('content-type')?.includes('image/')) {
+				return { success: true, fetchResponseJson: await getImageUrl(res) };
+			}
 			// Status ok -> return response data
 			// Status not ok -> return error message from server
 			// Status 204: No Content -> return empty data
@@ -52,12 +56,7 @@ const cinesyncFetch = async ({
 				fetchResponseJson: res.status == 204 ? {} : await res.json(),
 			};
 		} catch {
-			// Possible image (blob) returned instead of json
-			if (res.headers.get('content-type')?.includes('image/')) {
-				return { success: true, fetchResponseJson: await getImageUrl(res) };
-			} else {
-				throw new Error('Fetch did not return json or image');
-			}
+			throw new Error('Fetch did not return json or image');
 		}
 	} catch (error) {
 		// Fetch error -> return empty data
