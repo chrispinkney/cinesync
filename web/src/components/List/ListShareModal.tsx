@@ -8,17 +8,19 @@ import Modal from '@mui/material/Modal';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useGlobalContext } from '@/context/store';
 import { toggleListSharee } from '@/utils/cinesync-api/fetch-list';
 
 const ListShareModal = ({
 	open,
+	setShareModalOpen,
 	handleClose,
 	listId,
 	name,
 }: {
 	open: boolean;
+	setShareModalOpen: Dispatch<SetStateAction<boolean>>;
 	handleClose: () => void;
 	listId: string;
 	name: string;
@@ -53,6 +55,7 @@ const ListShareModal = ({
 			} else {
 				setRecipientEmail('');
 				setErrorText('');
+				setShareModalOpen(false);
 			}
 		}
 	};
