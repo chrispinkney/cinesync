@@ -74,6 +74,21 @@ export const toggleListSharee = async ({
 	});
 };
 
+export const createComment = async ({
+	token,
+	body,
+}: {
+	token: string;
+	body: CreateCommentDto;
+}): Promise<EmptyReturnDto> => {
+	return await cinesyncFetch({
+		token,
+		method: 'POST',
+		endpoint: '/lists/comments',
+		body: JSON.stringify(body),
+	});
+};
+
 export const toggleListPrivacy = async ({
 	token,
 	listId,
@@ -100,6 +115,21 @@ export const updateList = async ({
 		token,
 		method: 'PATCH',
 		endpoint: `/lists/update`,
+		body: JSON.stringify(body),
+	});
+};
+
+export const updateComment = async ({
+	token,
+	body,
+}: {
+	token: string;
+	body: UpdateCommentDto;
+}): Promise<EmptyReturnDto> => {
+	return await cinesyncFetch({
+		token,
+		method: 'PATCH',
+		endpoint: `/lists/comments/update`,
 		body: JSON.stringify(body),
 	});
 };
@@ -133,5 +163,22 @@ export const deleteListMovie = async ({
 		method: 'DELETE',
 		endpoint: '/lists/deleteMovie',
 		body: JSON.stringify({ listId: listId, movieId: movieId }),
+	});
+};
+
+export const deleteComment = async ({
+	token,
+	listId,
+	commentId,
+}: {
+	token: string;
+	listId: string;
+	commentId: string;
+}): Promise<EmptyReturnDto> => {
+	return await cinesyncFetch({
+		token,
+		method: 'DELETE',
+		endpoint: '/lists/comments/delete',
+		body: JSON.stringify({ listId: listId, commentId: commentId }),
 	});
 };

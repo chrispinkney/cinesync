@@ -14,11 +14,12 @@ import {
 
 // Create context as undefined until fetch is completed
 const ListsContext = createContext<
-	{ lists: MovieList[]; refreshListsContext: () => Promise<void> } | undefined
+	| { lists: MovieListLite[]; refreshListsContext: () => Promise<void> }
+	| undefined
 >(undefined);
 
 export const ListsContextProvider = ({ children }: { children: ReactNode }) => {
-	const [lists, setLists] = useState<MovieList[] | null>(null);
+	const [lists, setLists] = useState<MovieListLite[] | null>(null);
 	const { token } = useGlobalContext();
 
 	// refreshListsContext will be provided so that child components can easily re-fetch data so page will be re-rendered

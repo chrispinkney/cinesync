@@ -39,7 +39,7 @@ export class ListsDao {
 						updatedAt: true,
 					},
 					orderBy: {
-						createdAt: 'asc',
+						createdAt: 'desc',
 					},
 				},
 			},

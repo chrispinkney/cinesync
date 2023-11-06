@@ -18,14 +18,27 @@ type MovieItem = {
 	isNew?: boolean;
 };
 
-type MovieList = {
+type MovieListLite = {
 	id: string;
 	name: string;
 	isPrivate: boolean;
 	creatorId?: number;
-	createdAt?: Date;
-	updatedAt?: Date;
+	createdAt?: string;
+	updatedAt?: string;
 	movie: MovieItem[];
+};
+
+type MovieList = MovieListLite & {
+	user: User[];
+	comments: MovieListComment[];
+};
+
+type MovieListComment = {
+	id: string;
+	username: string;
+	text: string;
+	createdAt: string;
+	updatedAt: string;
 };
 
 type User = {
@@ -124,10 +137,21 @@ type CreateListDto = {
 	movie?: MovieDto[];
 };
 
+type CreateCommentDto = {
+	listId: string;
+	text: string;
+};
+
 type UpdateListDto = {
 	listId: string;
 	name?: string;
 	movie: MovieDto[];
+};
+
+type UpdateCommentDto = {
+	listId: string;
+	commentId: string;
+	text: string;
 };
 
 type CreateUserDto = {
@@ -183,7 +207,7 @@ type ErrorReturnDto = {
 type ListsReturnDto =
 	| {
 			success: boolean;
-			fetchResponseJson: { list: MovieList[] };
+			fetchResponseJson: { list: MovieListLite[] };
 	  }
 	| ErrorReturnDto;
 
