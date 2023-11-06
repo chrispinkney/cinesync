@@ -56,6 +56,7 @@ const ListActions = ({
 			</Tooltip>
 			<ListShareModal
 				open={shareModalOpen}
+				setShareModalOpen={setShareModalOpen}
 				handleClose={handleShareModalClose}
 				listId={listId}
 				name={name}
