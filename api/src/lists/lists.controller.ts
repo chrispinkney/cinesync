@@ -25,6 +25,7 @@ import { CreateCommentDto } from './dtos/create-comment.dto';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
 import { JwtAuthGuard } from '../users/guards/jwt-auth.guard';
 import { CommentAuthorizationGuard } from '../users/guards/comment-auth.guard';
+import { CloneListDto } from './dtos/clone-list.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('lists')
@@ -67,6 +68,14 @@ export class ListsController {
 	createList(@Body() body: CreateListDto, @Req() req: Request) {
 		if (!req.user) throw new BadRequestException('req contains no user');
 		return this.listsService.createList(body, req.user.id);
+	}
+
+	@UseGuards(ListAuthorizationGuard)
+	@UseInterceptors(RemoveListCreateFieldsInterceptor)
+	@Post('/clone')
+	cloneList(@Body() body: CloneListDto, @Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.listsService.cloneList(body, req.user.id);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)

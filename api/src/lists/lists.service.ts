@@ -8,6 +8,7 @@ import { UserDao } from '../users/daos/user.dao';
 import { CommentDao } from './daos/comment.dao';
 import { UsersService } from '../users/users.service';
 import { EmailService } from '../email/email.service';
+import { CloneListDto } from './dtos/clone-list.dto';
 
 interface Comment {
 	id: string;
@@ -95,6 +96,27 @@ export class ListsService {
 
 	async createList(createList: CreateListDto, userId: string) {
 		return await this.listDao.createList(createList, userId);
+	}
+
+	async cloneList(cloneList: CloneListDto, userId: string) {
+		const originalList = await this.listDao.getList(cloneList.listId);
+
+		const clonedListData = {
+			name: cloneList.name,
+			movie: originalList.movie.map((movie) => ({
+				title: movie.title,
+				description: movie.description,
+				genre: [...movie.genre],
+				releaseDate: movie.releaseDate,
+				posterUrl: movie.posterUrl,
+				rating: movie.rating,
+				imdbId: movie.imdbId,
+			})),
+		};
+
+		const clonedList = await this.listDao.createList(clonedListData, userId);
+
+		return clonedList;
 	}
 
 	async createComment(createCommentDto: CreateCommentDto, userId: string) {
