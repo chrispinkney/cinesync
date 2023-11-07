@@ -7,6 +7,7 @@ import { ListDao } from './daos/list.dao';
 import { UserDao } from '../users/daos/user.dao';
 import { CommentDao } from './daos/comment.dao';
 import { UsersService } from '../users/users.service';
+import { EmailService } from '../email/email.service';
 
 interface Comment {
 	id: string;
@@ -24,6 +25,7 @@ export class ListsService {
 		private commentDao: CommentDao,
 		private userDao: UserDao,
 		private userService: UsersService,
+		private emailService: EmailService,
 	) {}
 
 	async getList(listId: string) {
@@ -96,11 +98,26 @@ export class ListsService {
 	}
 
 	async createComment(createCommentDto: CreateCommentDto, userId: string) {
-		return await this.commentDao.createComment(
+		const comment = await this.commentDao.createComment(
 			createCommentDto.listId,
 			userId,
 			createCommentDto.text,
 		);
+
+		const list = await this.listDao.getList(comment.listId);
+		const listOwner = await this.userDao.getUser(list.creatorId);
+		const commenter = await this.userDao.getUser(userId);
+
+		// don't fire email if the comment is made by the list creator
+		if (list.creatorId !== commenter.id) {
+			await this.emailService.sendListCommentEmail(
+				listOwner.email,
+				list,
+				commenter.username,
+			);
+		}
+
+		return comment;
 	}
 
 	async updateListPrivacy(listId: string) {
@@ -134,8 +151,14 @@ export class ListsService {
 		return await this.commentDao.deleteComment(commentId);
 	}
 
-	async toggleShareList(listId: string, email: string) {
-		return await this.listDao.toggleShareList(listId, email);
+	async toggleShareList(listId: string, shareeEmail: string, userId: string) {
+		const list = await this.listDao.getList(listId);
+		const user = await this.userDao.getUser(userId);
+		const sharee = await this.userDao.getUserByEmail(shareeEmail);
+
+		await this.emailService.sendListSharingEmail([user, sharee], list);
+
+		return await this.listDao.toggleShareList(listId, shareeEmail);
 	}
 
 	async toggleShareByUsername(listId: string, username: string) {

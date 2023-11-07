@@ -3,17 +3,19 @@ import { ConfigService } from '@nestjs/config';
 import Mailgun from 'mailgun.js';
 import { IMailgunClient } from 'mailgun.js/Interfaces';
 import * as FormData from 'form-data';
+import { List, User } from '@prisma/client';
 
 type EmailData = {
 	from: string;
-	to: string[] | string;
+	to: string;
+	cc?: string;
 	subject: string;
 	html: string;
 };
 
 let mailgunApiKey: string;
 let mailgunDomain: string;
-let isProduction: string;
+let isProduction: boolean;
 
 @Injectable()
 export class EmailService {
@@ -22,7 +24,7 @@ export class EmailService {
 	constructor(private readonly configService: ConfigService) {
 		mailgunApiKey = this.configService.get<string>('MAILGUN_KEY') as string;
 		mailgunDomain = this.configService.get<string>('MAILGUN_DOMAIN') as string;
-		isProduction = this.configService.get<string>('NODE_ENV') as string;
+		isProduction = this.configService.get<string>('NODE_ENV') === 'production';
 
 		if (!mailgunApiKey || !mailgunDomain) {
 			throw new Error('Mailgun API key or domain is not configured');
@@ -36,12 +38,14 @@ export class EmailService {
 	}
 
 	private async sendEmail(messageData: EmailData) {
-		if (isProduction === 'production') {
+		if (isProduction) {
 			try {
-				return await this.mailgunClient.messages.create(
+				const fire = await this.mailgunClient.messages.create(
 					mailgunDomain,
 					messageData,
 				);
+
+				return fire;
 			} catch (error) {
 				throw new InternalServerErrorException(
 					'Error attempting to send email',
@@ -76,14 +80,13 @@ export class EmailService {
 		await this.sendEmail(email);
 	}
 
-	async sendListSharingEmail(
-		users: string[],
-		listId: string,
-		listOwner: string,
-	) {
+	async sendListSharingEmail(users: User[], list: List) {
+		const [owner, sharee] = users;
+
 		const email = {
 			from: 'CineSync <mail@cinesync.me>',
-			to: users,
+			to: sharee.email,
+			cc: owner.email,
 			subject: 'A user has shared a list with you on CineSync!',
 			html: `
 			<style>
@@ -92,9 +95,34 @@ export class EmailService {
 				font-family: 'Courier Prime', sans-serif;
 			}
 			</style>
-			<p>Hi there ${users},</p>
-			<p>${listOwner} has shared the movie list "${listId}" with you on CineSync! 🎬</p>
-			<p>Click <a href="https://cinesync.me/dashboard/list/${listId}">here</a> to view the list.
+			<p>Hi there ${sharee.username},</p>
+			<p>${owner.username} has shared the movie list "${list.name}" with you on CineSync! 🎬</p>
+			<p>Click <a href="https://cinesync.me/dashboard/list/${list.id}">here</a> to view the list.
+			<br/>If you have any questions or need assistance, please don't hesitate to reach out to our team at <a href="mailto:cinesync@proton.me">cinesync@proton.me</a>.</p>
+			<p>Enjoy exploring the movies!</p>
+			<p>With love,</p>
+			<p>The CineSync Team</p>
+			`,
+		};
+
+		await this.sendEmail(email);
+	}
+
+	async sendListCommentEmail(creator: string, list: List, commenter: string) {
+		const email = {
+			from: 'CineSync <mail@cinesync.me>',
+			to: creator,
+			subject: 'A user has commented on one of your lists on CineSync!',
+			html: `
+			<style>
+			@import url('https://fonts.cdnfonts.com/css/courier-prime');
+			p {
+				font-family: 'Courier Prime', sans-serif;
+			}
+			</style>
+			<p>Hi there ${creator},</p>
+			<p>${commenter} has left a comment on the movie list "${list.name}" on CineSync! 💬</p>
+			<p>Click <a href="https://cinesync.me/dashboard/list/${list.id}">here</a> to view the list.
 			<br/>If you have any questions or need assistance, please don't hesitate to reach out to our team at <a href="mailto:cinesync@proton.me">cinesync@proton.me</a>.</p>
 			<p>Enjoy exploring the movies!</p>
 			<p>With love,</p>
