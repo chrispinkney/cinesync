@@ -45,6 +45,20 @@ export class UserDao {
 		return user.username;
 	}
 
+	async getUserData(userId: string) {
+		return await this.prisma.user.findUniqueOrThrow({
+			where: { id: userId },
+			include: {
+				list: {
+					include: {
+						movie: true,
+					},
+				},
+				movie: true,
+			},
+		});
+	}
+
 	async createUser(createUser: CreateUserDto) {
 		return await this.prisma.user.create({
 			data: {

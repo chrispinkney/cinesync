@@ -17,6 +17,7 @@ import { AuthModule } from './auth/auth.module';
 import { AvatarService } from './avatar/avatar.service';
 import { AvatarModule } from './avatar/avatar.module';
 import { AvatarDao } from './daos/avatar.dao';
+import { ExportModule } from './export/export.module';
 
 @Module({
 	imports: [
@@ -26,6 +27,7 @@ import { AvatarDao } from './daos/avatar.dao';
 		ConfigModule,
 		AuthModule,
 		AvatarModule,
+		ExportModule,
 	],
 	controllers: [UsersController],
 	providers: [
