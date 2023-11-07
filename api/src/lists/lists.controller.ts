@@ -87,25 +87,17 @@ export class ListsController {
 	@Post('/toggleShare')
 	@HttpCode(HttpStatus.OK)
 	async toggleShareList(
-		@Body() { listId, email }: { listId: string; email: string },
+		@Body() { listId, email: shareeEmail }: { listId: string; email: string },
 		@Req() req: Request,
 	) {
 		if (!req.user) throw new BadRequestException('req contains no user');
-
-		const list = await this.listsService.toggleShareList(listId, email);
-
-		await this.emailService.sendListSharingEmail(
-			[email, req.user.email],
-			listId,
-			req.user.username,
-		);
-
-		return list;
+		return this.listsService.toggleShareList(listId, shareeEmail, req.user.id);
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
 	@Post('/comments')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	async createComment(
 		@Body() createCommentDto: CreateCommentDto,
 		@Req() req: Request,
