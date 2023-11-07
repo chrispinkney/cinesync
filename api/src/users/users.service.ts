@@ -24,6 +24,10 @@ export class UsersService {
 		return await this.userDao.getUsernameById(userId);
 	}
 
+	async getUserData(userId: string) {
+		return await this.userDao.getUserData(userId);
+	}
+
 	async getFriends(userId: string) {
 		const { user1, user2 } = await this.userDao.getFriends(userId);
 
