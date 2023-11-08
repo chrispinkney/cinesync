@@ -85,13 +85,6 @@ export class UsersController {
 		return this.usersService.getUserByEmail(email);
 	}
 
-	@UseGuards(JwtAuthGuard)
-	@Get('/friends')
-	async getFriends(@Req() req: Request) {
-		if (!req.user) throw new BadRequestException('req contains no user');
-		return this.usersService.getFriends(req.user.id);
-	}
-
 	@UseInterceptors(RemoveFieldsInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@Post('/signout')
@@ -121,9 +114,17 @@ export class UsersController {
 		return user;
 	}
 
+	@UseGuards(JwtAuthGuard)
+	@Get('/friends')
+	async getFriends(@Req() req: Request) {
+		if (!req.user) throw new BadRequestException('req contains no user');
+		return this.usersService.getFriends(req.user.id);
+	}
+
 	@UseInterceptors(RemoveFieldsInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@Post('/friends/send')
+	@HttpCode(HttpStatus.NO_CONTENT)
 	async sendFriendRequest(
 		@Req() req: Request,
 		@Body() { username }: { username: string },
@@ -135,7 +136,7 @@ export class UsersController {
 	@UseInterceptors(RemoveFieldsInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@Post('/friends/update')
-	@HttpCode(HttpStatus.OK)
+	@HttpCode(HttpStatus.NO_CONTENT)
 	async updateFriendRequest(
 		@Req() req: Request,
 		@Body() { username, status }: { username: string; status: FriendStatus },
