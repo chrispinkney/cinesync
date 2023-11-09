@@ -18,11 +18,6 @@ export class ListAuthorizationGuard implements CanActivate {
 			},
 		});
 
-		// allow access if list is public and user is logged in
-		if (!list.isPrivate && user) {
-			return true;
-		}
-
 		// restrict access if no user is logged in
 		if (!user) {
 			return false;
