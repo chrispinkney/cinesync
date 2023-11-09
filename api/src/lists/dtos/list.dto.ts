@@ -52,6 +52,12 @@ class ListItem {
 
 export class ListDto {
 	@Expose()
+	username: string;
+
+	@Expose()
+	email: string;
+
+	@Expose()
 	@Type(() => ListItem)
 	@ValidateNested()
 	list: ListItem[];

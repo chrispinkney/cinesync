@@ -1,9 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { ListDao } from '../../lists/daos/list.dao';
 
 @Injectable()
 export class CommentAuthorizationGuard implements CanActivate {
-	constructor(private prisma: PrismaService) {}
+	constructor(private listDao: ListDao) {}
 
 	async canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest();
@@ -11,31 +11,7 @@ export class CommentAuthorizationGuard implements CanActivate {
 		const listId = request.body.listId;
 		const commentId = request.body.commentId;
 
-		const list = await this.prisma.list.findUniqueOrThrow({
-			where: { id: listId },
-			select: {
-				id: true,
-				name: true,
-				isPrivate: true,
-				creatorId: true,
-				createdAt: true,
-				updatedAt: true,
-				movie: true,
-				user: true,
-				comments: {
-					select: {
-						id: true,
-						text: true,
-						authorId: true,
-						createdAt: true,
-						updatedAt: true,
-					},
-					orderBy: {
-						createdAt: 'asc',
-					},
-				},
-			},
-		});
+		const list = await this.listDao.getList(listId);
 
 		const comment = list.comments.find((c) => c.id === commentId);
 

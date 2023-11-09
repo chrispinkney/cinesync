@@ -15,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ListsService } from './lists.service';
-import { EmailService } from '../email/email.service';
 import { ListAuthorizationGuard } from './guards/list.guard';
 import { RemoveListFieldsInterceptor } from './interceptors/remove-list-fields.interceptor';
 import { RemoveListCreateFieldsInterceptor } from './interceptors/remove-list-create-fields.interceptor';
@@ -30,10 +29,7 @@ import { CloneListDto } from './dtos/clone-list.dto';
 @UseGuards(JwtAuthGuard)
 @Controller('lists')
 export class ListsController {
-	constructor(
-		private listsService: ListsService,
-		private emailService: EmailService,
-	) {}
+	constructor(private listsService: ListsService) {}
 
 	@UseInterceptors(RemoveListCreateFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
@@ -94,7 +90,7 @@ export class ListsController {
 	@UseInterceptors(RemoveListFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
 	@Post('/toggleShare')
-	@HttpCode(HttpStatus.OK)
+	@HttpCode(HttpStatus.NO_CONTENT)
 	async toggleShareList(
 		@Body() { listId, email: shareeEmail }: { listId: string; email: string },
 		@Req() req: Request,

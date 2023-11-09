@@ -149,6 +149,7 @@ export class UsersController {
 		);
 	}
 
+	@UseInterceptors(RemoveFieldsInterceptor)
 	@UseGuards(JwtAuthGuard)
 	@Patch('/update')
 	async updateUser(@Req() req: Request, @Body() body: UpdateUserDto) {
@@ -207,7 +208,7 @@ export class UsersController {
 
 	@UseInterceptors(RemoveFieldsInterceptor)
 	@UseGuards(JwtAuthGuard)
-	@HttpCode(HttpStatus.CREATED)
+	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('/avatar/upload')
 	@UseInterceptors(FileInterceptor('image'))
 	async uploadAvatar(
