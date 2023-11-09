@@ -6,9 +6,9 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { PrismaModule } from '../prisma/prisma.module';
 import { EmailModule } from '../email/email.module';
-import { UserDao } from './daos/user.dao';
+import { UsersDao } from './daos/user.dao';
 import { ListsService } from '../lists/lists.service';
-import { ListDao } from '../lists/daos/list.dao';
+import { ListsDao } from '../lists/daos/list.dao';
 import { LocalStrategy } from './auth/passport/local.strategy';
 import { JwtStrategy } from './auth/passport/jwt.strategy';
 import { CommentDao } from '../lists/daos/comment.dao';
@@ -37,8 +37,8 @@ import { ExportModule } from './export/export.module';
 		JwtService,
 		AvatarService,
 		AvatarDao,
-		UserDao,
-		ListDao,
+		UsersDao,
+		ListsDao,
 		CommentDao,
 		LocalStrategy,
 		JwtStrategy,

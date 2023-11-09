@@ -86,9 +86,7 @@ export class UsersController {
 	@Post('/signup')
 	async signup(@Body() body: CreateUserDto) {
 		const user = await this.authService.signup(body);
-
 		await this.emailService.sendSignupEmail(body.email, body.username);
-
 		return user;
 	}
 
@@ -100,7 +98,6 @@ export class UsersController {
 	async signin(@Req() req: Request) {
 		if (!req.user) throw new BadRequestException('req contains no user');
 		const user = await this.authService.login(req.user);
-
 		return user;
 	}
 
@@ -186,7 +183,6 @@ export class UsersController {
 	@Get('/avatar/download')
 	async downloadAvatar(@Req() req: Request, @Res() res: Response) {
 		if (!req.user) throw new BadRequestException('req contains no user');
-
 		return await this.avatarService.getAvatar(req.user.id, res);
 	}
 

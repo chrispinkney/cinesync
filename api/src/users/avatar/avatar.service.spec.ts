@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AvatarService } from './avatar.service';
-import { UserDao } from '../daos/user.dao';
+import { UsersDao } from '../daos/user.dao';
 import { AvatarDao } from '../daos/avatar.dao';
 import { PrismaService } from '../../prisma/prisma.service';
 
@@ -9,7 +9,7 @@ describe('AvatarService', () => {
 
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [AvatarService, UserDao, AvatarDao, PrismaService],
+			providers: [AvatarService, UsersDao, AvatarDao, PrismaService],
 		}).compile();
 
 		service = module.get<AvatarService>(AvatarService);

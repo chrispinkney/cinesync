@@ -1,8 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
-export class ListAuthorizationGuard implements CanActivate {
+export class ListAuthGuard implements CanActivate {
 	constructor(private prisma: PrismaService) {}
 
 	async canActivate(context: ExecutionContext) {
@@ -17,6 +18,11 @@ export class ListAuthorizationGuard implements CanActivate {
 				user: true,
 			},
 		});
+
+		// allow access to list if the user is an admin
+		if (user.role === Role.ADMIN) {
+			return true;
+		}
 
 		// restrict access if no user is logged in
 		if (!user) {

@@ -3,8 +3,8 @@ import { CreateListDto } from './dtos/create-list.dto';
 import { UpdateListDto } from './dtos/update-list.dto';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
-import { ListDao } from './daos/list.dao';
-import { UserDao } from '../users/daos/user.dao';
+import { ListsDao } from './daos/list.dao';
+import { UsersDao } from '../users/daos/user.dao';
 import { CommentDao } from './daos/comment.dao';
 import { UsersService } from '../users/users.service';
 import { EmailService } from '../email/email.service';
@@ -22,25 +22,25 @@ interface Comment {
 @Injectable()
 export class ListsService {
 	constructor(
-		private listDao: ListDao,
+		private listsDao: ListsDao,
 		private commentDao: CommentDao,
-		private userDao: UserDao,
-		private userService: UsersService,
+		private usersDao: UsersDao,
+		private usersService: UsersService,
 		private emailService: EmailService,
 	) {}
 
 	async getPublicList(listId: string) {
-		return await this.listDao.getPublicList(listId);
+		return await this.listsDao.getPublicList(listId);
 	}
 
 	async getList(listId: string) {
-		const list = await this.listDao.getList(listId);
+		const list = await this.listsDao.getList(listId);
 
 		// if a list has comments add username to each comment
 		if (list?.comments.length > 0) {
 			const updatedComment = await Promise.all(
 				list.comments.map(async (comment) => {
-					const username = await this.userService.getUsernameById(
+					const username = await this.usersService.getUsernameById(
 						comment.authorId,
 					);
 
@@ -60,11 +60,11 @@ export class ListsService {
 	}
 
 	async getLists(userId: string) {
-		return await this.listDao.getLists(userId);
+		return await this.listsDao.getLists(userId);
 	}
 
 	async getWatchedMovies(userId: string) {
-		const watched = await this.listDao.getWatchedMovies(userId);
+		const watched = await this.listsDao.getWatchedMovies(userId);
 
 		const movieIDs = watched.movie.map((movie) => movie.id);
 
@@ -72,8 +72,8 @@ export class ListsService {
 	}
 
 	async getSharees(listId: string, userId: string) {
-		const list = await this.listDao.getList(listId);
-		const sharees = await this.listDao.getSharees(listId);
+		const list = await this.listsDao.getList(listId);
+		const sharees = await this.listsDao.getSharees(listId);
 		const creator = sharees.user.find((user) => user.id === sharees.creatorId);
 		const filteredList = sharees.user.filter((user) => userId !== user.id);
 
@@ -99,11 +99,11 @@ export class ListsService {
 	}
 
 	async createList(createList: CreateListDto, userId: string) {
-		return await this.listDao.createList(createList, userId);
+		return await this.listsDao.createList(createList, userId);
 	}
 
 	async cloneList(cloneList: CloneListDto, userId: string) {
-		const originalList = await this.listDao.getList(cloneList.listId);
+		const originalList = await this.listsDao.getList(cloneList.listId);
 
 		const clonedListData = {
 			name: cloneList.name,
@@ -118,7 +118,7 @@ export class ListsService {
 			})),
 		};
 
-		const clonedList = await this.listDao.createList(clonedListData, userId);
+		const clonedList = await this.listsDao.createList(clonedListData, userId);
 
 		return clonedList;
 	}
@@ -130,9 +130,9 @@ export class ListsService {
 			createCommentDto.text,
 		);
 
-		const list = await this.listDao.getList(comment.listId);
-		const listOwner = await this.userDao.getUser(list.creatorId);
-		const commenter = await this.userDao.getUser(userId);
+		const list = await this.listsDao.getList(comment.listId);
+		const listOwner = await this.usersDao.getUser(list.creatorId);
+		const commenter = await this.usersDao.getUser(userId);
 
 		// don't fire email if the comment is made by the list creator
 		if (list.creatorId !== commenter.id) {
@@ -147,15 +147,15 @@ export class ListsService {
 	}
 
 	async updateListPrivacy(listId: string) {
-		return await this.listDao.updateListPrivacy(listId);
+		return await this.listsDao.updateListPrivacy(listId);
 	}
 
 	async updateList(updateListDto: UpdateListDto) {
-		return await this.listDao.updateList(updateListDto);
+		return await this.listsDao.updateList(updateListDto);
 	}
 
 	async updateWatchedStatus(movieId: string, userId: string) {
-		return await this.listDao.updateWatchedStatus(movieId, userId);
+		return await this.listsDao.updateWatchedStatus(movieId, userId);
 	}
 
 	async updateComment(updateCommentDto: UpdateCommentDto) {
@@ -166,11 +166,12 @@ export class ListsService {
 	}
 
 	async deleteList(listId: string, userId: string) {
-		return await this.listDao.deleteList(listId, userId);
+		const user = await this.usersDao.getUser(userId);
+		return await this.listsDao.deleteList(listId, user);
 	}
 
 	async deleteListItem(listId: string, movieId: string) {
-		return await this.listDao.deleteListItem(listId, movieId);
+		return await this.listsDao.deleteListItem(listId, movieId);
 	}
 
 	async deleteComment(commentId: string) {
@@ -178,18 +179,18 @@ export class ListsService {
 	}
 
 	async toggleShareList(listId: string, shareeEmail: string, userId: string) {
-		const list = await this.listDao.getList(listId);
-		const user = await this.userDao.getUser(userId);
-		const sharee = await this.userDao.getUserByEmail(shareeEmail);
+		const list = await this.listsDao.getList(listId);
+		const user = await this.usersDao.getUser(userId);
+		const sharee = await this.usersDao.getUserByEmail(shareeEmail);
 
 		await this.emailService.sendListSharingEmail([user, sharee], list);
 
-		return await this.listDao.toggleShareList(listId, shareeEmail);
+		return await this.listsDao.toggleShareList(listId, shareeEmail);
 	}
 
 	async toggleShareByUsername(listId: string, username: string) {
-		const { email } = await this.userDao.getUserByUsername(username);
+		const { email } = await this.usersDao.getUserByUsername(username);
 
-		return this.listDao.toggleShareList(listId, email);
+		return this.listsDao.toggleShareList(listId, email);
 	}
 }

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserDao } from '../daos/user.dao';
+import { UsersDao } from '../daos/user.dao';
 import { AvatarDao } from '../daos/avatar.dao';
 import { Response } from 'express';
 
 @Injectable()
 export class AvatarService {
-	constructor(private userDao: UserDao, private avatarDao: AvatarDao) {}
+	constructor(private usersDao: UsersDao, private avatarDao: AvatarDao) {}
 
 	private async fetchAvatar(userId: string, res: Response) {
 		const { avatar } = await this.avatarDao.getAvatar(userId);
@@ -25,7 +25,7 @@ export class AvatarService {
 	}
 
 	async getAvatarByUsername(username: string, res: Response) {
-		const user = await this.userDao.getUserByUsername(username);
+		const user = await this.usersDao.getUserByUsername(username);
 		return this.fetchAvatar(user.id, res);
 	}
 

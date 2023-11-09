@@ -1,35 +1,35 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { UserDao } from './daos/user.dao';
+import { UsersDao } from './daos/user.dao';
 
 export type FriendStatus = 'ACCEPT' | 'REJECT' | 'SENT' | 'PENDING';
 
 @Injectable()
 export class UsersService {
-	constructor(private userDao: UserDao) {}
+	constructor(private usersDao: UsersDao) {}
 
 	async getUser(userId: string) {
-		return await this.userDao.getUser(userId);
+		return await this.usersDao.getUser(userId);
 	}
 
 	async getUserByUsername(username: string) {
-		return await this.userDao.getUserByUsername(username);
+		return await this.usersDao.getUserByUsername(username);
 	}
 
 	async getUserByEmail(userEmail: string) {
-		return await this.userDao.getUserByEmail(userEmail);
+		return await this.usersDao.getUserByEmail(userEmail);
 	}
 
 	async getUsernameById(userId: string) {
-		return await this.userDao.getUsernameById(userId);
+		return await this.usersDao.getUsernameById(userId);
 	}
 
 	async getUserData(userId: string) {
-		return await this.userDao.getUserData(userId);
+		return await this.usersDao.getUserData(userId);
 	}
 
 	async getFriends(userId: string) {
-		const { user1, user2 } = await this.userDao.getFriends(userId);
+		const { user1, user2 } = await this.usersDao.getFriends(userId);
 
 		// creating array of all friends
 		const friends = user1.map((user) => {
@@ -64,14 +64,14 @@ export class UsersService {
 	}
 
 	async createUser(createUser: CreateUserDto) {
-		return await this.userDao.createUser(createUser);
+		return await this.usersDao.createUser(createUser);
 	}
 
 	async sendFriendRequest(userId: string, newFriend: string) {
-		const { id } = await this.userDao.getUserByUsername(newFriend);
+		const { id } = await this.usersDao.getUserByUsername(newFriend);
 
 		try {
-			await this.userDao.createFriendship(userId, id);
+			await this.usersDao.createFriendship(userId, id);
 		} catch (error) {
 			// throwing p2002, already caught in filter
 			throw new BadRequestException('Friendship already exists');
@@ -83,16 +83,16 @@ export class UsersService {
 		newFriend: string,
 		status: FriendStatus,
 	) {
-		const { id } = await this.userDao.getUserByUsername(newFriend);
+		const { id } = await this.usersDao.getUserByUsername(newFriend);
 
-		await this.userDao.updateFriendship(userId, id, status);
+		await this.usersDao.updateFriendship(userId, id, status);
 	}
 
 	async updateUser(userId: string, attrs: Partial<CreateUserDto>) {
-		return await this.userDao.updateUser(userId, attrs);
+		return await this.usersDao.updateUser(userId, attrs);
 	}
 
 	async deleteUser(userId: string) {
-		return await this.userDao.deleteUser(userId);
+		return await this.usersDao.deleteUser(userId);
 	}
 }
