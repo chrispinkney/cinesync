@@ -10,8 +10,10 @@ import Link from 'next/link';
 import CardActions from '@mui/material/CardActions';
 import ListActions from '../ListActions';
 import { useLists } from '@/context/lists.context';
+import ListCreator from './ListCreator';
+import Grid from '@mui/material/Unstable_Grid2';
 
-const ListCard = ({ id, name, isPrivate, movie }: MovieListLite) => {
+const ListCard = ({ id, name, isPrivate, movie, creatorId }: MovieListLite) => {
 	const { refreshListsContext } = useLists();
 	const movieCount = movie.length;
 	const firstFiveMovies: MovieItem[] = movie.slice(0, 5);
@@ -22,9 +24,32 @@ const ListCard = ({ id, name, isPrivate, movie }: MovieListLite) => {
 			<Card>
 				<CardActionArea component={Link} href={`/dashboard/list/${id}`}>
 					<CardContent sx={{ height: 420 }}>
-						<Typography variant="h5" align="center">
-							{name}
-						</Typography>
+						<Grid container>
+							<Grid
+								sx={{
+									display: { xs: 'none', sm: 'flex' },
+									justifyContent: 'center',
+									alignItems: 'center',
+									paddingLeft: 1,
+								}}
+								xs={1}
+							>
+								<ListCreator id={creatorId} />
+							</Grid>
+							<Grid
+								sx={{
+									display: 'flex',
+									justifyContent: 'left',
+									alignItems: 'center',
+								}}
+								xs={12}
+								sm={11}
+							>
+								<Typography variant="h5" align="center" paddingLeft={2}>
+									{name}
+								</Typography>
+							</Grid>
+						</Grid>
 						<Typography variant="caption">{`${movieCount} movie${
 							movieCount == 1 ? '' : 's'
 						}`}</Typography>
