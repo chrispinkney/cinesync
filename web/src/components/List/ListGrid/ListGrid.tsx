@@ -11,13 +11,14 @@ const ListGrid = () => {
 		<Fragment>
 			<Grid container spacing={4}>
 				{lists &&
-					lists.map(({ id, name, isPrivate, movie }) => (
+					lists.map(({ id, name, isPrivate, movie, creatorId }) => (
 						<Grid xs={6} lg={4} xl={3} key={id}>
 							<ListCard
 								id={id}
 								name={name}
 								isPrivate={isPrivate}
 								movie={movie}
+								creatorId={creatorId}
 							/>
 						</Grid>
 					))}

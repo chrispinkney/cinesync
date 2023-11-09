@@ -18,12 +18,14 @@ const ListShareModal = ({
 	handleClose,
 	listId,
 	name,
+	getListShareesUsers,
 }: {
 	open: boolean;
 	setShareModalOpen: Dispatch<SetStateAction<boolean>>;
 	handleClose: () => void;
 	listId: string;
 	name: string;
+	getListShareesUsers: () => Promise<void>;
 }) => {
 	const { token } = useGlobalContext();
 	const [recipientEmail, setRecipientEmail] = useState('');
@@ -56,6 +58,7 @@ const ListShareModal = ({
 				setRecipientEmail('');
 				setErrorText('');
 				setShareModalOpen(false);
+				getListShareesUsers();
 			}
 		}
 	};

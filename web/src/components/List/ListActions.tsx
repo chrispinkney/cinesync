@@ -4,12 +4,16 @@ import ShareIcon from '@mui/icons-material/Share';
 import IconButton from '@mui/material/IconButton';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ListShareModal from '@/components/List/ListShareModal';
 import ListDeleteConfirmationModal from '@/components/List/ListDeleteConfirmationModal';
 import Tooltip from '@mui/material/Tooltip';
-import { toggleListPrivacy } from '@/utils/cinesync-api/fetch-list';
+import {
+	getListSharees,
+	toggleListPrivacy,
+} from '@/utils/cinesync-api/fetch-list';
 import { useGlobalContext } from '@/context/store';
+import ListShareeAvatars from './ListGrid/ListShareeAvatars';
 
 const ListActions = ({
 	listId,
@@ -25,6 +29,7 @@ const ListActions = ({
 	const { token } = useGlobalContext();
 	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
+	const [sharees, setSharees] = useState<ShareeUserReturnDto[]>([]);
 
 	const handleDeleteConfirmationOpen = () => setDeleteConfirmationOpen(true);
 	const handleDeleteConfirmationClose = () => setDeleteConfirmationOpen(false);
@@ -37,6 +42,20 @@ const ListActions = ({
 			refreshContext();
 		}
 	};
+
+	const getListShareesUsers = async () => {
+		const { success, fetchResponseJson } = await getListSharees({
+			token: token,
+			listId: listId,
+		});
+		if (success && Array.isArray(fetchResponseJson)) {
+			setSharees(fetchResponseJson);
+		}
+	};
+
+	useEffect(() => {
+		getListShareesUsers();
+	}, []);
 
 	return (
 		<>
@@ -60,6 +79,7 @@ const ListActions = ({
 				handleClose={handleShareModalClose}
 				listId={listId}
 				name={name}
+				getListShareesUsers={getListShareesUsers}
 			/>
 			<Tooltip title={isPrivate ? 'Private' : 'Public'}>
 				<IconButton
@@ -75,6 +95,7 @@ const ListActions = ({
 					{isPrivate ? <VisibilityOffIcon /> : <VisibilityIcon />}
 				</IconButton>
 			</Tooltip>
+			<ListShareeAvatars token={token} sharees={sharees} />
 			<Tooltip title="Delete list">
 				<IconButton
 					sx={{

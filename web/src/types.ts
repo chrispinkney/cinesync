@@ -22,7 +22,7 @@ type MovieListLite = {
 	id: string;
 	name: string;
 	isPrivate: boolean;
-	creatorId?: number;
+	creatorId: string;
 	createdAt?: string;
 	updatedAt?: string;
 	movie: MovieItem[];
@@ -45,6 +45,13 @@ type User = {
 	id: string;
 	username: string;
 	email: string;
+};
+
+type ShareeUser = {
+	username: string;
+	email: string;
+	creator: boolean;
+	watched: string[];
 };
 
 enum Role {
@@ -221,9 +228,11 @@ type ListReturnDto =
 type ShareeReturnDto =
 	| {
 			success: boolean;
-			fetchResponseJson: UserReturnDto[];
+			fetchResponseJson: ShareeUserReturnDto[];
 	  }
 	| ErrorReturnDto;
+
+type ShareeUserReturnDto = ShareeUser | ErrorReturnDto;
 
 type UserReturnDto =
 	| {
