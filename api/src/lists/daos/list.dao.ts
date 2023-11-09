@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UpdateListDto } from '../dtos/update-list.dto';
 import { CreateListDto } from '../dtos/create-list.dto';
@@ -6,6 +6,16 @@ import { CreateListDto } from '../dtos/create-list.dto';
 @Injectable()
 export class ListDao {
 	constructor(private readonly prisma: PrismaService) {}
+
+	async getPublicList(listId: string) {
+		const list = await this.getList(listId);
+
+		if (!list.isPrivate) {
+			return list;
+		}
+
+		throw new BadRequestException('List is private');
+	}
 
 	async getList(listId: string) {
 		const list = await this.prisma.list.findUniqueOrThrow({

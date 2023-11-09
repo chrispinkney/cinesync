@@ -22,14 +22,20 @@ import { CreateListDto } from './dtos/create-list.dto';
 import { UpdateListDto } from './dtos/update-list.dto';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { UpdateCommentDto } from './dtos/update-comment.dto';
-import { JwtAuthGuard } from '../users/guards/jwt-auth.guard';
 import { CommentAuthorizationGuard } from '../users/guards/comment-auth.guard';
 import { CloneListDto } from './dtos/clone-list.dto';
+import { Public } from '../users/decorators/public.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('lists')
 export class ListsController {
 	constructor(private listsService: ListsService) {}
+
+	@UseInterceptors(RemoveListCreateFieldsInterceptor)
+	@Public()
+	@Get('/public/list')
+	getPublicList(@Query('listId') listId: string) {
+		return this.listsService.getPublicList(listId);
+	}
 
 	@UseInterceptors(RemoveListCreateFieldsInterceptor)
 	@UseGuards(ListAuthorizationGuard)
@@ -45,7 +51,6 @@ export class ListsController {
 		return this.listsService.getLists(req.user.id);
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@Get('/watched')
 	getWatchedMovies(@Req() req: Request) {
 		if (!req.user) throw new BadRequestException('req contains no user');
@@ -134,7 +139,6 @@ export class ListsController {
 	}
 
 	@UseInterceptors(RemoveListFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Patch('/updateWatchedStatus')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	updateWatchedStatus(

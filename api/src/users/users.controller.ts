@@ -29,11 +29,11 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { ListsService } from '../lists/lists.service';
 import { Response, Request } from 'express';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RemoveFieldsInterceptor } from './interceptors/remove-fields.interceptor';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FriendStatus } from './users.service';
 import { AvatarService } from './avatar/avatar.service';
+import { Public } from './decorators/public.decorator';
 
 declare global {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
@@ -58,42 +58,31 @@ export class UsersController {
 	) {}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Get('/whoami')
 	whoAmI(@Req() req: Request) {
 		return req.user;
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Get('/')
 	fetchUserById(@Query('userId') userId: string) {
 		return this.usersService.getUser(userId);
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Get('/username')
 	fetchUserByUsername(@Query('username') username: string) {
 		return this.usersService.getUserByUsername(username);
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Get('/email')
 	fetchUserByEmail(@Query('email') email: string) {
 		return this.usersService.getUserByEmail(email);
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
-	@Post('/signout')
-	@HttpCode(HttpStatus.NO_CONTENT)
-	signout(@Res({ passthrough: true }) response: Response) {
-		response.setHeader('Authorization', '');
-	}
-
-	@UseInterceptors(RemoveFieldsInterceptor)
+	@Public()
 	@Post('/signup')
 	async signup(@Body() body: CreateUserDto) {
 		const user = await this.authService.signup(body);
@@ -105,6 +94,7 @@ export class UsersController {
 
 	@UseInterceptors(RemoveFieldsInterceptor)
 	@UseGuards(LocalAuthGuard)
+	@Public()
 	@Post('/signin')
 	@HttpCode(HttpStatus.OK)
 	async signin(@Req() req: Request) {
@@ -114,7 +104,6 @@ export class UsersController {
 		return user;
 	}
 
-	@UseGuards(JwtAuthGuard)
 	@Get('/friends')
 	async getFriends(@Req() req: Request) {
 		if (!req.user) throw new BadRequestException('req contains no user');
@@ -122,7 +111,6 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Post('/friends/send')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async sendFriendRequest(
@@ -134,7 +122,6 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Post('/friends/update')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	async updateFriendRequest(
@@ -150,7 +137,6 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Patch('/update')
 	async updateUser(@Req() req: Request, @Body() body: UpdateUserDto) {
 		if (!req.user) throw new BadRequestException('req contains no user');
@@ -164,7 +150,7 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard, AdminGuard)
+	@UseGuards(AdminGuard)
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Delete('/delete')
 	async deleteUser(@Req() req: Request) {
@@ -185,7 +171,6 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Get('/avatar')
 	async downloadUsersAvatar(
 		@Query('username') username: string,
@@ -198,7 +183,6 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@Get('/avatar/download')
 	async downloadAvatar(@Req() req: Request, @Res() res: Response) {
 		if (!req.user) throw new BadRequestException('req contains no user');
@@ -207,7 +191,6 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard)
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Post('/avatar/upload')
 	@UseInterceptors(FileInterceptor('image'))
@@ -228,7 +211,7 @@ export class UsersController {
 	}
 
 	@UseInterceptors(RemoveFieldsInterceptor)
-	@UseGuards(JwtAuthGuard, AdminGuard)
+	@UseGuards(AdminGuard)
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@Delete('/avatar/delete')
 	async deleteUserAvatar(@Req() req: Request) {

@@ -29,6 +29,10 @@ export class ListsService {
 		private emailService: EmailService,
 	) {}
 
+	async getPublicList(listId: string) {
+		return await this.listDao.getPublicList(listId);
+	}
+
 	async getList(listId: string) {
 		const list = await this.listDao.getList(listId);
 
