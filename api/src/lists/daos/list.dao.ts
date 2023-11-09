@@ -2,9 +2,10 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UpdateListDto } from '../dtos/update-list.dto';
 import { CreateListDto } from '../dtos/create-list.dto';
+import { Role, User } from '@prisma/client';
 
 @Injectable()
-export class ListDao {
+export class ListsDao {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getPublicList(listId: string) {
@@ -256,16 +257,16 @@ export class ListDao {
 		});
 	}
 
-	async deleteList(listId: string, userId: string) {
+	async deleteList(listId: string, user: User) {
 		const list = await this.prisma.list.findUniqueOrThrow({
 			where: { id: listId },
 			select: { creatorId: true },
 		});
 
-		// if the list isnt owned by the user (i.e., shared) do not delete it
-		if (list.creatorId === userId) {
+		// if the list isnt owned by the user (i.e., shared) do not delete it- unless admin
+		if (list.creatorId === user.id || user.role === Role.ADMIN) {
 			await this.prisma.user.update({
-				where: { id: userId },
+				where: { id: list.creatorId },
 				data: {
 					list: {
 						disconnect: { id: listId },

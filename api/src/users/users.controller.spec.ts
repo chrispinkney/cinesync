@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { User } from '@prisma/client';
+import { Role, User } from '@prisma/client';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { AuthService } from './auth/auth.service';
@@ -88,7 +88,7 @@ describe('UsersController', () => {
 					password: '123',
 					createdAt: new Date(),
 					updatedAt: new Date(),
-					role: 'USER',
+					role: Role.USER,
 					avatar: null,
 					list: [
 						{
@@ -212,7 +212,7 @@ describe('UsersController', () => {
 				id: '-1',
 				username: 'testuser',
 				email: 'test@test.test',
-				role: 'USER',
+				role: Role.USER,
 			},
 		};
 		const user = await controller.signin(req);
@@ -231,7 +231,7 @@ describe('UsersController', () => {
 				id: '-1',
 				username: 'testuser',
 				email: 'test@test.test',
-				role: 'USER',
+				role: Role.USER,
 			},
 		};
 

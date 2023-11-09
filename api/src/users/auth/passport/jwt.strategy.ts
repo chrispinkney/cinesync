@@ -5,7 +5,7 @@ import { UsersService } from '../../users.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-	constructor(private userService: UsersService) {
+	constructor(private usersService: UsersService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: false,
@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	async validate(payload: any) {
 		// set req user object, used in ever route
-		const user = this.userService.getUser(payload.sub);
+		const user = this.usersService.getUser(payload.sub);
 
 		if (!user) {
 			throw new UnauthorizedException();

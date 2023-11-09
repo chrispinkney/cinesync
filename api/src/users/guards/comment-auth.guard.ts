@@ -1,9 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { ListDao } from '../../lists/daos/list.dao';
+import { ListsDao } from '../../lists/daos/list.dao';
 
 @Injectable()
 export class CommentAuthorizationGuard implements CanActivate {
-	constructor(private listDao: ListDao) {}
+	constructor(private listsDao: ListsDao) {}
 
 	async canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest();
@@ -11,7 +11,7 @@ export class CommentAuthorizationGuard implements CanActivate {
 		const listId = request.body.listId;
 		const commentId = request.body.commentId;
 
-		const list = await this.listDao.getList(listId);
+		const list = await this.listsDao.getList(listId);
 
 		const comment = list.comments.find((c) => c.id === commentId);
 

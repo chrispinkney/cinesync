@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { FriendStatus } from '../users.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
-export class UserDao {
+export class UsersDao {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getUser(userId: string) {
@@ -63,7 +64,7 @@ export class UserDao {
 		return await this.prisma.user.create({
 			data: {
 				...createUser,
-				role: 'USER',
+				role: Role.USER,
 			},
 		});
 	}
