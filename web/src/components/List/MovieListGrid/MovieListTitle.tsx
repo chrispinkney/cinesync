@@ -5,11 +5,15 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import UndoIcon from '@mui/icons-material/Undo';
 import { useMovieList } from '@/context/movielist.context';
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
+import Fab from '@mui/material/Fab';
+import { useRouter } from 'next/navigation';
 
 const MovieListTitle = ({ name }: { name: string }) => {
+	const { replace } = useRouter();
 	const { setMovieList, setListEdited } = useMovieList();
 	const [title, setTitle] = useState<string>(name);
 	const [editing, setEditing] = useState<boolean>(false);
@@ -43,6 +47,19 @@ const MovieListTitle = ({ name }: { name: string }) => {
 
 	return (
 		<Box display="flex" flexDirection="row" alignItems="center">
+			<Tooltip title="Back to lists">
+				<Fab
+					size="small"
+					color="primary"
+					aria-label="listsPage"
+					onClick={() => {
+						replace('/dashboard');
+					}}
+					sx={{ marginRight: 2 }}
+				>
+					<UndoIcon />
+				</Fab>
+			</Tooltip>
 			{!editing ? (
 				<>
 					<Typography
