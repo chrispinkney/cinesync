@@ -13,6 +13,7 @@ import { useMovieList } from '@/context/movielist.context';
 import { deleteComment, updateComment } from '@/utils/cinesync-api/fetch-list';
 import { useGlobalContext } from '@/context/store';
 import { useUser } from '@/context/user.context';
+import DeleteConfirmationDialog from '@/components/common/DeleteConfirmationDialog/DeleteConfirmationDialog';
 
 const MovieListCommentEdit = ({
 	commentText,
@@ -35,12 +36,18 @@ const MovieListCommentEdit = ({
 	const [text, setText] = useState<string>(commentText);
 	const [editing, setEditing] = useState<boolean>(false);
 	const [editText, setEditText] = useState<string>(text);
+	const [deleteConfirmationOpen, setDeleteConfirmationOpen] =
+		useState<boolean>(false);
 
 	const handleEditClick = () => {
 		setEditing(true);
 	};
 
-	const handleDeleteClick = async () => {
+	const handleDeleteClick = () => {
+		setDeleteConfirmationOpen(true);
+	};
+
+	const handleDeleteConfirm = async () => {
 		const { success } = await deleteComment({
 			token: token,
 			listId: id,
@@ -75,68 +82,76 @@ const MovieListCommentEdit = ({
 		setEditText(newText);
 	};
 
-	return !editing ? (
+	return (
 		<>
-			<Grid>
-				<Typography sx={{ whiteSpace: 'pre-wrap' }}>{editText}</Typography>
-			</Grid>
-			{enableDeletion && (
-				<Grid>
-					<Box>
-						{enableEditing && (
-							<Tooltip title="Edit Comment">
-								<IconButton aria-label="edit" onClick={handleEditClick}>
-									<EditIcon fontSize="small" />
+			{!editing ? (
+				<>
+					<Grid>
+						<Typography>{editText}</Typography>
+					</Grid>
+					{enableDeletion && (
+						<Grid>
+							<Box>
+								{enableEditing && (
+									<Tooltip title="Edit Comment">
+										<IconButton aria-label="edit" onClick={handleEditClick}>
+											<EditIcon fontSize="small" />
+										</IconButton>
+									</Tooltip>
+								)}
+								<Tooltip title="Delete Comment">
+									<IconButton aria-label="delete" onClick={handleDeleteClick}>
+										<DeleteIcon fontSize="small" />
+									</IconButton>
+								</Tooltip>
+							</Box>
+						</Grid>
+					)}
+				</>
+			) : (
+				<>
+					<TextField
+						variant="outlined"
+						label="Comment Text"
+						value={editText}
+						autoFocus
+						onChange={handleCommentTextChange}
+						onKeyDown={(e) =>
+							e.key === 'Enter' && editText != text && editText.length > 0
+								? handleSubmitClick()
+								: e.key === 'Escape'
+								? handleCancelClick()
+								: null
+						}
+					/>
+					<Grid>
+						<Box>
+							<Tooltip title="Submit">
+								<span>
+									<IconButton
+										aria-label="submit"
+										onClick={handleSubmitClick}
+										disabled={editText == text || editText.length == 0}
+									>
+										<CheckCircleIcon fontSize="small" />
+									</IconButton>
+								</span>
+							</Tooltip>
+							<Tooltip title="Cancel">
+								<IconButton aria-label="cancel" onClick={handleCancelClick}>
+									<CancelIcon fontSize="small" />
 								</IconButton>
 							</Tooltip>
-						)}
-						<Tooltip title="Delete Comment">
-							<IconButton aria-label="delete" onClick={handleDeleteClick}>
-								<DeleteIcon fontSize="small" />
-							</IconButton>
-						</Tooltip>
-					</Box>
-				</Grid>
+						</Box>
+					</Grid>
+				</>
 			)}
-		</>
-	) : (
-		<>
-			<TextField
-				variant="outlined"
-				label="Comment Text"
-				value={editText}
-				multiline
-				minRows={3}
-				autoFocus
-				onChange={handleCommentTextChange}
-				onKeyDown={(e) =>
-					e.key === 'Enter' && editText != text && editText.length > 0
-						? handleSubmitClick()
-						: e.key === 'Escape'
-						? handleCancelClick()
-						: null
-				}
+			<DeleteConfirmationDialog
+				open={deleteConfirmationOpen}
+				deletionItemDescription="this comment"
+				handleConfirm={handleDeleteConfirm}
+				handleCancel={() => setDeleteConfirmationOpen(false)}
 			/>
-			<Grid>
-				<Box>
-					<Tooltip title="Submit">
-						<span>
-							<IconButton
-								aria-label="submit"
-								onClick={handleSubmitClick}
-								disabled={editText == text || editText.length == 0}
-							>
-								<CheckCircleIcon fontSize="small" />
-							</IconButton>
-						</span>
-					</Tooltip>
-					<Tooltip title="Cancel">
-						<IconButton aria-label="cancel" onClick={handleCancelClick}>
-							<CancelIcon fontSize="small" />
-						</IconButton>
-					</Tooltip>
-				</Box>
-			</Grid>
 		</>
 	);
 };

@@ -6,14 +6,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import SvgIcon from '@mui/material/SvgIcon';
+import { useState } from 'react';
+import DeleteConfirmationDialog from '@/components/common/DeleteConfirmationDialog/DeleteConfirmationDialog';
 
 const MovieActions = ({ movie }: { movie: MovieItem }) => {
-	const { id: movieId, imdbId, isNew } = movie;
+	const { id: movieId, title, imdbId, isNew } = movie;
 	const { token } = useGlobalContext();
 	const { movieList, setMovieList, refreshMovieListContext, setListEdited } =
 		useMovieList();
 
-	const handleDeleteMovie = async (movieId: string) => {
+	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+
+	const handleDeleteClick = () => {
+		setDeleteConfirmationOpen(true);
+	};
+
+	const handleDeleteConfirm = async () => {
 		if (isNew) {
 			setMovieList((oldMovieList) => {
 				return oldMovieList
@@ -83,11 +91,17 @@ const MovieActions = ({ movie }: { movie: MovieItem }) => {
 						},
 					}}
 					aria-label="delete movie"
-					onClick={() => handleDeleteMovie(movieId)}
+					onClick={() => handleDeleteClick()}
 				>
 					<DeleteIcon />
 				</IconButton>
 			</Tooltip>
+			<DeleteConfirmationDialog
+				open={deleteConfirmationOpen}
+				deletionItemDescription={`"${title}" from "${movieList.name}"`}
+				handleConfirm={handleDeleteConfirm}
+				handleCancel={() => setDeleteConfirmationOpen(false)}
+			/>
 		</>
 	);
 };
