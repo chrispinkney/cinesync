@@ -9,12 +9,21 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import UploadAvatarImage from './UploadAvatarImage';
 import DeleteUserProfile from './DeleteUserProfile';
 import ExportUserData from './ExportUserData';
+import DeleteConfirmationDialog from '../common/DeleteConfirmationDialog/DeleteConfirmationDialog';
+import { useState } from 'react';
 
 const ProfileTop = () => {
 	const userContext = useUser();
+	const [deleteConfirmationOpen, setDeleteConfirmationOpen] =
+		useState<boolean>(false);
 
-	const handleDeleteAvatar = () => {
+	const handleDeleteClick = () => {
+		setDeleteConfirmationOpen(true);
+	};
+
+	const handleDeleteConfirm = () => {
 		userContext.deleteAvatarUser();
+		setDeleteConfirmationOpen(false);
 	};
 
 	return (
@@ -45,7 +54,7 @@ const ProfileTop = () => {
 							variant="contained"
 							color="error"
 							startIcon={<DeleteOutlineIcon />}
-							onClick={handleDeleteAvatar}
+							onClick={handleDeleteClick}
 							sx={{ maxWidth: 170, minWidth: 'auto' }}
 							disabled={userContext.avatar == '' ? true : false}
 						>
@@ -91,6 +100,12 @@ const ProfileTop = () => {
 					<DeleteUserProfile />
 				</Grid>
 			</Grid>
+			<DeleteConfirmationDialog
+				open={deleteConfirmationOpen}
+				deletionItemDescription={`your user avatar`}
+				handleConfirm={handleDeleteConfirm}
+				handleCancel={() => setDeleteConfirmationOpen(false)}
+			/>
 		</>
 	);
 };

@@ -6,14 +6,16 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from 'react';
 import ListShareModal from '@/components/List/ListShareModal';
-import ListDeleteConfirmationModal from '@/components/List/ListDeleteConfirmationModal';
 import Tooltip from '@mui/material/Tooltip';
-import {
-	getListSharees,
-	toggleListPrivacy,
-} from '@/utils/cinesync-api/fetch-list';
 import { useGlobalContext } from '@/context/store';
 import ListShareeAvatars from './ListGrid/ListShareeAvatars';
+import {
+	getListSharees,
+	deleteList,
+	toggleListPrivacy,
+} from '@/utils/cinesync-api/fetch-list';
+import { usePathname, useRouter } from 'next/navigation';
+import DeleteConfirmationDialog from '../common/DeleteConfirmationDialog/DeleteConfirmationDialog';
 
 const ListActions = ({
 	listId,
@@ -26,13 +28,13 @@ const ListActions = ({
 	isPrivate: boolean;
 	refreshContext: () => Promise<void>;
 }) => {
+	const { replace } = useRouter();
+	const pathname = usePathname();
 	const { token } = useGlobalContext();
 	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
 	const [sharees, setSharees] = useState<ShareeUserReturnDto[]>([]);
 
-	const handleDeleteConfirmationOpen = () => setDeleteConfirmationOpen(true);
-	const handleDeleteConfirmationClose = () => setDeleteConfirmationOpen(false);
 	const handleShareModalOpen = () => setShareModalOpen(true);
 	const handleShareModalClose = () => setShareModalOpen(false);
 
@@ -50,6 +52,27 @@ const ListActions = ({
 		});
 		if (success && Array.isArray(fetchResponseJson)) {
 			setSharees(fetchResponseJson);
+		}
+	};
+
+	const handleDeleteClick = () => {
+		setDeleteConfirmationOpen(true);
+	};
+
+	const handleDeleteConfirm = async () => {
+		// Send delete request to api
+		const { success } = await deleteList({
+			token: token,
+			listId: listId,
+		});
+		if (success) {
+			setDeleteConfirmationOpen(false);
+			// Redirect to /dashboard
+			if (pathname == '/dashboard') {
+				refreshContext();
+			} else {
+				replace('/dashboard');
+			}
 		}
 	};
 
@@ -106,17 +129,16 @@ const ListActions = ({
 						},
 					}}
 					aria-label="delete list"
-					onClick={handleDeleteConfirmationOpen}
+					onClick={handleDeleteClick}
 				>
 					<DeleteIcon />
 				</IconButton>
 			</Tooltip>
-			<ListDeleteConfirmationModal
+			<DeleteConfirmationDialog
 				open={deleteConfirmationOpen}
-				handleClose={handleDeleteConfirmationClose}
-				listId={listId}
-				refreshContext={refreshContext}
-				name={name}
+				deletionItemDescription={`the movie list "${name}"`}
+				handleConfirm={handleDeleteConfirm}
+				handleCancel={() => setDeleteConfirmationOpen(false)}
 			/>
 		</>
 	);
