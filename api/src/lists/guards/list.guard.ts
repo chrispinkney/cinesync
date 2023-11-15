@@ -1,10 +1,14 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Role } from '@prisma/client';
+import { CacheService } from '../../cache/cache.service';
 
 @Injectable()
 export class ListAuthGuard implements CanActivate {
-	constructor(private prisma: PrismaService) {}
+	constructor(
+		private prisma: PrismaService,
+		private cacheService: CacheService,
+	) {}
 
 	async canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest();
@@ -16,8 +20,12 @@ export class ListAuthGuard implements CanActivate {
 			where: { id: listId },
 			include: {
 				user: true,
+				movie: true,
 			},
 		});
+		console.log(`ListAuthGuard  canActivate  list:`, list);
+
+		await this.cacheService.set(listId, list);
 
 		// allow access to list if the user is an admin
 		if (user.role === Role.ADMIN) {

@@ -9,18 +9,36 @@ services:
       - 5432:5432
     environment:
       - POSTGRES_USER=cinesync-dev
-      - POSTGRES_PASSWORD=@BarelyAnInconvenience@
+      - POSTGRES_PASSWORD=@ActuallyItllBeSuperEasy@
       - POSTGRES_DB=cinesync-dev
       - TZ=America/Toronto
     volumes:
       - ./api/postgres-data:/var/lib/postgresql/data
+    networks:
+      - my-network
+
+  redis:
+    container_name: redis
+    image: redis:alpine
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    environment:
+      - REDIS_USER=cinesync-dev
+      - REDIS_PASSWORD=@BarelyAnInconvenience@
+    depends_on:
+      - db
+    networks:
+      - my-network
+
   api:
     container_name: api
     build:
       context: .
     environment:
       - TZ=America/Toronto
-      - DATABASE_URL=postgresql://cinesync-dev:@BarelyAnInconvenience@@db:5432/cinesync-dev
+      - DATABASE_URL=postgresql://cinesync-dev:@ActuallyItllBeSuperEasy@@db:5432/cinesync-dev
+      - REDIS_URL=redis://:@BarelyAnInconvenience@@redis:6379
       - JWT_SECRET=${JWT_SECRET}
       - MAILGUN_KEY=${MAILGUN_KEY}
       - MAILGUN_DOMAIN=${MAILGUN_DOMAIN}
@@ -29,4 +47,8 @@ services:
       - 3000:3000
     depends_on:
       - db
+      - redis
     restart: always
+
+networks:
+  my-network:

@@ -10,9 +10,17 @@ import { UsersModule } from './users/users.module';
 import { ListsModule } from './lists/lists.module';
 import { EmailModule } from './email/email.module';
 import { AvatarModule } from './users/avatar/avatar.module';
+import { CacheModule } from './cache/cache.module';
 
 @Module({
-	imports: [ConfigModule, UsersModule, ListsModule, EmailModule, AvatarModule],
+	imports: [
+		ConfigModule,
+		UsersModule,
+		ListsModule,
+		EmailModule,
+		AvatarModule,
+		CacheModule,
+	],
 	controllers: [AppController],
 	providers: [
 		{

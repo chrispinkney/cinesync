@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 
-export class MovieItem {
+class Movie {
 	@Expose()
 	id: string;
 
@@ -21,13 +21,33 @@ export class MovieItem {
 	posterUrl: string;
 
 	@Expose()
-	rating: string;
+	rating: number;
 
 	@Expose()
 	imdbId: string;
 }
 
-export class ListItem {
+class User {
+	@Expose()
+	id: string;
+
+	@Expose()
+	username: string;
+
+	@Expose()
+	email: string;
+
+	@Expose()
+	createdAt: Date;
+
+	@Expose()
+	updatedAt: Date;
+
+	@Expose()
+	role: string;
+}
+
+export class ListCacheDto {
 	@Expose()
 	id: string;
 
@@ -47,23 +67,12 @@ export class ListItem {
 	updatedAt: Date;
 
 	@Expose()
-	movie: MovieItem[];
-}
-
-export class ListDto {
-	@Expose()
-	username: string;
-
-	@Expose()
-	email: string;
-
-	@Expose()
-	@Type(() => ListItem)
+	@Type(() => User)
 	@ValidateNested()
-	list: ListItem[];
+	user: User[];
 
 	@Expose()
-	@Type(() => MovieItem)
+	@Type(() => Movie)
 	@ValidateNested()
-	movie: MovieItem[];
+	movie: Movie[];
 }
