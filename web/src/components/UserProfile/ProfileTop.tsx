@@ -8,6 +8,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import UploadAvatarImage from './UploadAvatarImage';
 import DeleteUserProfile from './DeleteUserProfile';
+import ExportUserData from './ExportUserData';
 
 const ProfileTop = () => {
 	const userContext = useUser();
@@ -18,15 +19,14 @@ const ProfileTop = () => {
 
 	return (
 		<>
-			<Grid container spacing={4} pb={4}>
-				<Grid xs={6} lg={4} xl={3}>
-					<div style={{ width: '30%' }}>
-						<Typography variant="h4" gutterBottom color="primary.main">
-							User Profile
-						</Typography>
-						<Divider />
-					</div>
+			<Grid container spacing={4} mb={4}>
+				<Grid xs={2} justifyContent="left" alignItems="center">
+					<Typography variant="h4" gutterBottom color="primary.main">
+						User Profile
+					</Typography>
+					<Divider />
 				</Grid>
+				<ExportUserData />
 			</Grid>
 			<Grid container spacing={4} columns={12} pb={8}>
 				<Grid xs={12} sm={12} md={9} lg={6} xl={2}>

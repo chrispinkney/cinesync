@@ -186,3 +186,15 @@ export const updateFriendRequest = async ({
 		body: JSON.stringify(body),
 	});
 };
+
+export const getUserExport = async ({
+	token,
+}: {
+	token: string;
+}): Promise<UserDataExportDto> => {
+	return await cinesyncFetch({
+		token,
+		method: 'GET',
+		endpoint: '/export',
+	});
+};

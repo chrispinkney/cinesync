@@ -161,6 +161,15 @@ type sendUserFriendRequestDto = {
 	username: string;
 };
 
+type ExportDataDto = {
+	username: string;
+	email: string;
+	createdAt: string;
+	updatedAt: string;
+	lists: MovieList[];
+	watched: MovieItem[];
+};
+
 // Fetch Return Data Types
 type CinesyncFetchReturnDto =
 	| ListsReturnDto
@@ -233,5 +242,12 @@ type UserFriendsDto =
 	| {
 			success: boolean;
 			fetchResponseJson: FriendsDto[];
+	  }
+	| ErrorReturnDto;
+
+type UserDataExportDto =
+	| {
+			success: boolean;
+			fetchResponseJson: ExportDataDto;
 	  }
 	| ErrorReturnDto;
