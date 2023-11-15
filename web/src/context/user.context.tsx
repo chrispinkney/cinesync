@@ -38,27 +38,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 	const [avatar, setAvatar] = useState<string>('');
 
 	const getAvatar = useCallback(async () => {
-		const headers = { Authorization: `${token}` };
-		try {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/auth/avatar/download` ||
-					'http://localhost:3000/auth/avatar/download',
-				{
-					method: 'GET',
-					headers: { ...headers },
-				},
-			);
-			if (response.ok) {
-				const buffer = await response.arrayBuffer();
-				const blob = new Blob([buffer], {
-					type: `${response.headers.get('content-type')}`,
-				});
-				setAvatar(URL.createObjectURL(blob));
-			} else {
-				setAvatar('');
-			}
-		} catch (error: any) {
-			console.log(error);
+		const { success, fetchResponseJson } = await getUserAvatar({
+			token: token,
+		});
+		if (success && 'imageUrl' in fetchResponseJson) {
+			setAvatar(fetchResponseJson.imageUrl);
+		} else {
+			setAvatar('');
 		}
 	}, [token]);
 
