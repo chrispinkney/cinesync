@@ -6,6 +6,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import FriendAction from './FriendAction';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
+import { getAvatarByUsername } from '@/utils/cinesync-api/fetch-user';
 
 type FriendsCardProps = {
 	username: string;
@@ -23,27 +24,14 @@ const FriendsCard = ({
 	const [avatar, setAvatar] = useState<string>('');
 
 	const getAvatar = async () => {
-		const headers = { Authorization: `${token}` };
-		try {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/auth/avatar?username=${username}` ||
-					`http://localhost:3000/auth/avatar?username=${username}`,
-				{
-					method: 'GET',
-					headers: { ...headers },
-				},
-			);
-			if (response.ok) {
-				const buffer = await response.arrayBuffer();
-				const blob = new Blob([buffer], {
-					type: `${response.headers.get('content-type')}`,
-				});
-				setAvatar(URL.createObjectURL(blob));
-			} else {
-				setAvatar('');
-			}
-		} catch (error: any) {
-			console.log(error);
+		const { success, fetchResponseJson } = await getAvatarByUsername({
+			token: token,
+			username: username,
+		});
+		if (success && 'imageUrl' in fetchResponseJson) {
+			setAvatar(fetchResponseJson.imageUrl);
+		} else {
+			setAvatar('');
 		}
 	};
 

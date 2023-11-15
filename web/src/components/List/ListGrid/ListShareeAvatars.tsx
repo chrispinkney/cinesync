@@ -2,6 +2,7 @@
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import { useState, useEffect } from 'react';
+import { getAvatarByUsername } from '@/utils/cinesync-api/fetch-user';
 
 type ListShareeAvatarsProps = {
 	token: string;
@@ -12,29 +13,15 @@ const ListShareeAvatars = ({ token, sharees }: ListShareeAvatarsProps) => {
 	const [shareeAvatars, setShareeAvatars] = useState<string[]>([]);
 
 	const getAvatars = async () => {
-		const headers = { Authorization: `${token}` };
 		try {
 			const avatars = await Promise.all(
 				sharees.slice(0, 2).map(async (sharee) => {
-					const response = await fetch(
-						`${process.env.NEXT_PUBLIC_URL}/auth/avatar?username=${
-							(sharee as ShareeUser).username
-						}` ||
-							`http://localhost:3000/auth/avatar?username=${
-								(sharee as ShareeUser).username
-							}`,
-						{
-							method: 'GET',
-							headers: { ...headers },
-						},
-					);
-
-					if (response.ok) {
-						const buffer = await response.arrayBuffer();
-						const blob = new Blob([buffer], {
-							type: `${response.headers.get('content-type')}`,
-						});
-						return URL.createObjectURL(blob);
+					const { success, fetchResponseJson } = await getAvatarByUsername({
+						token: token,
+						username: (sharee as ShareeUser).username,
+					});
+					if (success && 'imageUrl' in fetchResponseJson) {
+						return fetchResponseJson.imageUrl;
 					} else {
 						return '';
 					}

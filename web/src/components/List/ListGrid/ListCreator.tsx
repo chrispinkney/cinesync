@@ -1,7 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useGlobalContext } from '@/context/store';
-import { getUserById } from '@/utils/cinesync-api/fetch-user';
+import {
+	getAvatarByUsername,
+	getUserById,
+} from '@/utils/cinesync-api/fetch-user';
 import Avatar from '@mui/material/Avatar';
 
 type ListCreatorProps = {
@@ -26,27 +29,14 @@ const ListCreator = ({ id }: ListCreatorProps) => {
 	};
 
 	const getAvatar = async () => {
-		const headers = { Authorization: `${token}` };
-		try {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_URL}/auth/avatar?username=${creator}` ||
-					`http://localhost:3000/auth/avatar?username=${creator}`,
-				{
-					method: 'GET',
-					headers: { ...headers },
-				},
-			);
-			if (response.ok) {
-				const buffer = await response.arrayBuffer();
-				const blob = new Blob([buffer], {
-					type: `${response.headers.get('content-type')}`,
-				});
-				setAvatar(URL.createObjectURL(blob));
-			} else {
-				setAvatar('');
-			}
-		} catch (error: any) {
-			console.log(error);
+		const { success, fetchResponseJson } = await getAvatarByUsername({
+			token: token,
+			username: creator,
+		});
+		if (success && 'imageUrl' in fetchResponseJson) {
+			setAvatar(fetchResponseJson.imageUrl);
+		} else {
+			setAvatar('');
 		}
 	};
 
