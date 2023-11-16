@@ -18,6 +18,8 @@ const MovieListContainer = () => {
 	const [loading, setLoading] = useState(false);
 	const [movielistUpdateSuccess, setmovielistUpdateSuccess] = useState(false);
 
+	const creatorId = movieList.creatorId;
+
 	const addMovie = (movie: TmdbMovie) => {
 		setMovieList((oldMovieList: MovieList | null) => {
 			if (!oldMovieList) {
@@ -77,12 +79,13 @@ const MovieListContainer = () => {
 						justifyContent="space-between"
 						alignItems="center"
 					>
-						<MovieListTitle name={movieList.name} />
+						<MovieListTitle name={movieList.name} creatorId={creatorId} />
 						<Box display="flex" flexDirection={{ xs: 'column', md: 'row' }}>
 							<ListActions
 								listId={movieList.id}
 								refreshContext={refreshMovieListContext}
 								name={movieList.name}
+								creatorId={creatorId}
 								isPrivate={movieList.isPrivate}
 							/>
 						</Box>

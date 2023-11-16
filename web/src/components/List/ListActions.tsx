@@ -16,24 +16,33 @@ import {
 } from '@/utils/cinesync-api/fetch-list';
 import { usePathname, useRouter } from 'next/navigation';
 import DeleteConfirmationDialog from '../common/DeleteConfirmationDialog/DeleteConfirmationDialog';
+import { useUser } from '@/context/user.context';
 
 const ListActions = ({
 	listId,
 	name,
+	creatorId,
 	isPrivate,
 	refreshContext,
 }: {
 	listId: string;
 	name: string;
+	creatorId: string;
 	isPrivate: boolean;
 	refreshContext: () => Promise<void>;
 }) => {
 	const { replace } = useRouter();
 	const pathname = usePathname();
 	const { token } = useGlobalContext();
+	const { user } = useUser();
+	const { id: userId } = user;
+
 	const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
 	const [shareModalOpen, setShareModalOpen] = useState(false);
 	const [sharees, setSharees] = useState<ShareeUserReturnDto[]>([]);
+
+	const canEdit = creatorId === userId;
+	const canDelete = canEdit;
 
 	const handleShareModalOpen = () => setShareModalOpen(true);
 	const handleShareModalClose = () => setShareModalOpen(false);
@@ -82,64 +91,72 @@ const ListActions = ({
 
 	return (
 		<>
-			<Tooltip title="Share list">
-				<IconButton
-					sx={{
-						'&:hover': {
-							backgroundColor: 'info.main',
-							color: 'info.contrastText',
-						},
-					}}
-					aria-label="share list"
-					onClick={handleShareModalOpen}
-				>
-					<ShareIcon />
-				</IconButton>
-			</Tooltip>
-			<ListShareModal
-				open={shareModalOpen}
-				setShareModalOpen={setShareModalOpen}
-				handleClose={handleShareModalClose}
-				listId={listId}
-				name={name}
-				getListShareesUsers={getListShareesUsers}
-			/>
-			<Tooltip title={isPrivate ? 'Private' : 'Public'}>
-				<IconButton
-					sx={{
-						'&:hover': {
-							backgroundColor: 'info.main',
-							color: 'info.contrastText',
-						},
-					}}
-					aria-label="toggle privacy"
-					onClick={handlePrivacyClick}
-				>
-					{isPrivate ? <VisibilityOffIcon /> : <VisibilityIcon />}
-				</IconButton>
-			</Tooltip>
+			{canEdit && (
+				<>
+					<Tooltip title="Share list">
+						<IconButton
+							sx={{
+								'&:hover': {
+									backgroundColor: 'info.main',
+									color: 'info.contrastText',
+								},
+							}}
+							aria-label="share list"
+							onClick={handleShareModalOpen}
+						>
+							<ShareIcon />
+						</IconButton>
+					</Tooltip>
+					<ListShareModal
+						open={shareModalOpen}
+						setShareModalOpen={setShareModalOpen}
+						handleClose={handleShareModalClose}
+						listId={listId}
+						name={name}
+						getListShareesUsers={getListShareesUsers}
+					/>
+					<Tooltip title={isPrivate ? 'Private' : 'Public'}>
+						<IconButton
+							sx={{
+								'&:hover': {
+									backgroundColor: 'info.main',
+									color: 'info.contrastText',
+								},
+							}}
+							aria-label="toggle privacy"
+							onClick={handlePrivacyClick}
+						>
+							{isPrivate ? <VisibilityOffIcon /> : <VisibilityIcon />}
+						</IconButton>
+					</Tooltip>
+				</>
+			)}
 			<ListShareeAvatars token={token} sharees={sharees} />
-			<Tooltip title="Delete list">
-				<IconButton
-					sx={{
-						marginLeft: 'auto',
-						'&:hover': {
-							backgroundColor: 'error.main',
-							color: 'error.contrastText',
-						},
-					}}
-					aria-label="delete list"
-					onClick={handleDeleteClick}
-				>
-					<DeleteIcon />
-				</IconButton>
-			</Tooltip>
-			<DeleteConfirmationDialog
-				open={deleteConfirmationOpen}
-				deletionItemDescription={`the movie list "${name}"`}
-				handleConfirm={handleDeleteConfirm}
-				handleCancel={() => setDeleteConfirmationOpen(false)}
-			/>
+			{canDelete && (
+				<>
+					<Tooltip title="Delete list">
+						<IconButton
+							sx={{
+								marginLeft: 'auto',
+								'&:hover': {
+									backgroundColor: 'error.main',
+									color: 'error.contrastText',
+								},
+							}}
+							aria-label="delete list"
+							onClick={handleDeleteClick}
+						>
+							<DeleteIcon />
+						</IconButton>
+					</Tooltip>
+					<DeleteConfirmationDialog
+						open={deleteConfirmationOpen}
+						deletionItemDescription={`the movie list "${name}"`}
+						handleConfirm={handleDeleteConfirm}
+						handleCancel={() => setDeleteConfirmationOpen(false)}
+					/>
+				</>
+			)}
 		</>
 	);
 };

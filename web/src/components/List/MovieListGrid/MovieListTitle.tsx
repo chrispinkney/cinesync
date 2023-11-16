@@ -11,12 +11,25 @@ import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Fab from '@mui/material/Fab';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/user.context';
 
-const MovieListTitle = ({ name }: { name: string }) => {
+const MovieListTitle = ({
+	name,
+	creatorId,
+}: {
+	name: string;
+	creatorId: string;
+}) => {
 	const { replace } = useRouter();
 	const { setMovieList, setListEdited } = useMovieList();
+	const { user } = useUser();
+	const { id: userId } = user;
+
 	const [title, setTitle] = useState<string>(name);
 	const [editing, setEditing] = useState<boolean>(false);
+
+	const canEdit = creatorId === userId;
+
 	const handleEditClick = () => {
 		setEditing(true);
 	};
@@ -69,11 +82,13 @@ const MovieListTitle = ({ name }: { name: string }) => {
 						fontSize="calc(20px + 2vw)"
 					>
 						{title}
-						<Tooltip title="Edit Title">
-							<IconButton aria-label="edit" onClick={handleEditClick}>
-								<EditIcon />
-							</IconButton>
-						</Tooltip>
+						{canEdit && (
+							<Tooltip title="Edit Title">
+								<IconButton aria-label="edit" onClick={handleEditClick}>
+									<EditIcon />
+								</IconButton>
+							</Tooltip>
+						)}
 					</Typography>
 				</>
 			) : (

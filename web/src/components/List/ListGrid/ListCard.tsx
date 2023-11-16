@@ -73,11 +73,12 @@ const ListCard = ({ id, name, isPrivate, movie, creatorId }: MovieListLite) => {
 						</List>
 					</CardContent>
 				</CardActionArea>
-				<CardActions disableSpacing>
+				<CardActions disableSpacing sx={{ height: '56px' }}>
 					<ListActions
 						listId={id}
 						refreshContext={refreshListsContext}
 						name={name}
+						creatorId={creatorId}
 						isPrivate={isPrivate}
 					/>
 				</CardActions>
