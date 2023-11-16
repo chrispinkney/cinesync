@@ -87,7 +87,7 @@ const MovieListCommentEdit = ({
 			{!editing ? (
 				<>
 					<Grid>
-						<Typography>{editText}</Typography>
+						<Typography sx={{ whiteSpace: 'pre-wrap' }}>{editText}</Typography>
 					</Grid>
 					{enableDeletion && (
 						<Grid>
@@ -114,6 +114,8 @@ const MovieListCommentEdit = ({
 						variant="outlined"
 						label="Comment Text"
 						value={editText}
+						multiline
+						minRows={3}
 						autoFocus
 						onChange={handleCommentTextChange}
 						onKeyDown={(e) =>
